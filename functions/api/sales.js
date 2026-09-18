@@ -44,3 +44,33 @@ export async function onRequestPost(context) {
 
   return Response.json({ success: true, saleId });
 }
+
+export async function onRequestDelete(context) {
+  const db = context.env.DB;
+  const url = new URL(context.request.url);
+  const id = url.searchParams.get("id");
+
+  if (!id) {
+    return Response.json({ error: "Missing sale ID" }, { status: 400 });
+  }
+
+  // 1. Fetch items sold under this bill to restore stock
+  const { results: items } = await db.prepare(
+    "SELECT product_id, quantity FROM sale_items WHERE sale_id = ?"
+  ).bind(id).all();
+
+  // 2. Put stock back into products table
+  if (items && items.length > 0) {
+    for (const item of items) {
+      await db.prepare(
+        "UPDATE products SET quantity = quantity + ? WHERE id = ?"
+      ).bind(item.quantity, item.product_id).run();
+    }
+  }
+
+  // 3. Delete sale items and sale record
+  await db.prepare("DELETE FROM sale_items WHERE sale_id = ?").bind(id).run();
+  await db.prepare("DELETE FROM sales WHERE id = ?").bind(id).run();
+
+  return Response.json({ success: true, reversedId: id });
+}
