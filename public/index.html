@@ -10,7 +10,7 @@
   <style>
     :root {
       --bg: #f2f2f7;
-      --card-bg: rgba(255, 255, 255, 0.8);
+      --card-bg: rgba(255, 255, 255, 0.82);
       --card-border: rgba(255, 255, 255, 0.85);
       --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
       --text: #1d1d1f;
@@ -28,7 +28,7 @@
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #000000;
-        --card-bg: rgba(28, 28, 30, 0.75);
+        --card-bg: rgba(28, 28, 30, 0.78);
         --card-border: rgba(255, 255, 255, 0.1);
         --card-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
         --text: #f5f5f7;
@@ -49,7 +49,7 @@
       -webkit-tap-highlight-color: transparent;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
       letter-spacing: -0.015em;
     }
 
@@ -115,7 +115,6 @@
       50% { opacity: 0.5; transform: scale(0.85); }
     }
 
-    /* Screen Views */
     .view-tab { display: none; }
     .view-tab.active { display: block; animation: fadeIn 0.25s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -170,7 +169,6 @@
       font-weight: 500;
     }
 
-    /* General Cards */
     .card {
       background: var(--card-bg);
       backdrop-filter: blur(30px);
@@ -182,7 +180,6 @@
       box-shadow: var(--card-shadow);
     }
 
-    /* Stats Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -200,7 +197,6 @@
     .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
     .stat-box .val { font-size: 24px; font-weight: 700; margin-top: 4px; }
 
-    /* Inputs & Buttons */
     .app-input {
       background: var(--pill-bg);
       border: none;
@@ -249,7 +245,6 @@
     .btn-green { background: var(--tint-green); }
     .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
 
-    /* Category Filter Pills */
     .category-scroll {
       display: flex;
       gap: 8px;
@@ -277,7 +272,6 @@
       color: var(--bg);
     }
 
-    /* Stepper Controls */
     .stepper {
       display: inline-flex;
       align-items: center;
@@ -310,7 +304,6 @@
       text-align: center;
     }
 
-    /* Coupon Selection */
     .coupon-row {
       display: flex;
       gap: 8px;
@@ -338,7 +331,6 @@
       box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
     }
 
-    /* Editable Price Bar */
     .bill-price-card {
       background: var(--pill-bg);
       border-radius: 18px;
@@ -349,7 +341,6 @@
       margin: 14px 0;
     }
 
-    /* POS Item Row */
     .pos-item {
       display: flex;
       justify-content: space-between;
@@ -359,7 +350,6 @@
     }
     .pos-item:last-child { border-bottom: none; }
 
-    /* Dock */
     .dock-wrap {
       position: fixed;
       bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
@@ -369,7 +359,6 @@
       z-index: 100;
       pointer-events: none;
     }
-
     .dock {
       pointer-events: auto;
       background: var(--dock-bg);
@@ -382,7 +371,6 @@
       gap: 5px;
       box-shadow: 0 16px 40px rgba(0,0,0,0.16);
     }
-
     .dock button {
       background: transparent;
       border: none;
@@ -393,22 +381,21 @@
       border-radius: 26px;
       cursor: pointer;
     }
-
     .dock button.active {
       background: var(--card-bg);
       color: var(--text);
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
 
-    /* 58mm Thermal Receipt CSS */
     #receipt-print-area { display: none; }
     @media print {
-      body * { visibility: hidden; }
-      #receipt-print-area, #receipt-print-area * { visibility: visible; }
+      body * { visibility: hidden !important; }
+      #receipt-print-area, #receipt-print-area * { visibility: visible !important; }
       #receipt-print-area {
         display: block !important;
-        position: absolute; left: 0; top: 0;
-        width: 58mm; margin: 0; padding: 4mm;
+        position: absolute;
+        left: 0; top: 0; width: 58mm;
+        margin: 0; padding: 2mm;
         font-family: monospace; font-size: 11px;
         color: #000; background: #fff;
       }
@@ -420,7 +407,6 @@
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
   <header>
     <div>
       <div class="greeting-sub" id="greeting-time">Good Afternoon,</div>
@@ -434,7 +420,6 @@
 
   <!-- TAB 1: DASHBOARD -->
   <section id="view-dashboard" class="view-tab active">
-    <!-- Aquapet Intelligence Glow Card -->
     <div class="intelligence-card">
       <div class="intelligence-header">
         <span class="intelligence-badge">✦ Aquapet Intelligence</span>
@@ -444,7 +429,6 @@
       </div>
     </div>
 
-    <!-- Balance Sheet Cards -->
     <div class="stats-grid">
       <div class="stat-box">
         <div class="title">Today's Sales</div>
@@ -464,7 +448,6 @@
       </div>
     </div>
 
-    <!-- Quick Expense Entry -->
     <div class="card">
       <h3 style="font-size: 17px; margin-bottom: 14px;">+ Record Expense (Breeder / Store)</h3>
       <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -480,7 +463,6 @@
       </div>
     </div>
 
-    <!-- Quick Direct Sale -->
     <div class="card">
       <h3 style="font-size: 17px; margin-bottom: 12px;">+ Direct Counter Sale (Quick Cash)</h3>
       <div style="display: flex; gap: 10px;">
@@ -495,19 +477,16 @@
     <div class="card">
       <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
       
-      <!-- Customer Information -->
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
         <input type="text" id="cust-name" class="app-input" placeholder="Customer Name (e.g. Rahul Sharma)">
         <input type="tel" id="cust-phone" class="app-input" placeholder="Phone Number (e.g. 9876543210)">
       </div>
 
-      <!-- Live Search Bar -->
       <div class="search-box">
         <span style="opacity: 0.5;">🔍</span>
         <input type="text" id="pos-search" placeholder="Search fish, Sobo filter, heater, wave maker..." oninput="renderPOSPicker()">
       </div>
 
-      <!-- Category Filter Pills -->
       <div class="category-scroll" id="cat-filters">
         <button class="cat-pill active" onclick="filterPOS('All', this)">All</button>
         <button class="cat-pill" onclick="filterPOS('Fish', this)">Fishes</button>
@@ -518,10 +497,8 @@
         <button class="cat-pill" onclick="filterPOS('Toys', this)">Accessories</button>
       </div>
 
-      <!-- Items List -->
       <div id="pos-product-picker" style="max-height: 250px; overflow-y: auto; margin-bottom: 10px;"></div>
 
-      <!-- Coupon Discounts -->
       <div style="font-size: 12px; font-weight: 700; color: var(--subtext); text-transform: uppercase; margin-top: 10px;">Apply Coupon Discount:</div>
       <div class="coupon-row">
         <button class="coupon-pill active" onclick="applyCoupon(0, this)">None</button>
@@ -529,7 +506,6 @@
         <button class="coupon-pill" onclick="applyCoupon(15, this)">15% OFF</button>
       </div>
 
-      <!-- Editable Total Price -->
       <div class="bill-price-card">
         <div>
           <div style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase;">
@@ -542,7 +518,7 @@
         </button>
       </div>
 
-      <button class="btn btn-green" style="width: 100%; padding: 15px; font-size: 16px;" onclick="checkoutAndPrint()">
+      <button class="btn btn-green" id="btn-print-bill" style="width: 100%; padding: 15px; font-size: 16px;" onclick="checkoutAndPrint()">
         Print the Bill
       </button>
     </div>
@@ -551,7 +527,10 @@
   <!-- TAB 3: CUSTOMERS & SALES HISTORY -->
   <section id="view-customers" class="view-tab">
     <div class="card">
-      <h3 style="font-size: 18px; margin-bottom: 14px;">Customer Database & Sales</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 18px;">Customer Database & Sales</h3>
+        <button class="btn btn-sm" onclick="loadCustomerSales()">🔄 Refresh</button>
+      </div>
       <div id="customer-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
   </section>
@@ -580,7 +559,7 @@
   <!-- 58mm Thermal Print Receipt -->
   <div id="receipt-print-area">
     <div class="receipt-center">
-      <h2 style="font-size: 15px;">AQUAPET</h2>
+      <h2 style="font-size: 14px;">AQUAPET</h2>
       <div>Aquarium & Pet Studio</div>
       <div id="rec-date"></div>
       <div class="receipt-line"></div>
@@ -768,19 +747,50 @@
       }
     }
 
-    async function checkoutAndPrint() {
+    function checkoutAndPrint() {
       const finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) return alert('Add at least one item to bill.');
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) {
+        return alert('Add at least one item to bill.');
+      }
 
-      const custName = document.getElementById('cust-name').value.trim() || 'Valued Customer';
-      const custPhone = document.getElementById('cust-phone').value.trim() || 'N/A';
+      const rawCust = document.getElementById('cust-name').value.trim();
+      const rawPhone = document.getElementById('cust-phone').value.trim();
+      const custName = rawCust ? rawCust : 'Walk-in Customer';
+      const custPhone = rawPhone ? rawPhone : 'N/A';
 
       const items = Object.entries(cart).map(([id, qty]) => {
         const p = products.find(item => item.id == id);
         return { id: p.id, name: p.name, quantity: qty, price: p.price };
       });
 
-      const res = await fetch('/api/sales', {
+      // Populate thermal print receipt layout synchronously
+      document.getElementById('rec-date').innerText = new Date().toLocaleString('en-IN');
+      document.getElementById('rec-cust').innerText = custName;
+      document.getElementById('rec-phone').innerText = custPhone;
+      document.getElementById('rec-total').innerText = '₹' + finalTotal;
+      document.getElementById('rec-items').innerHTML = items.map(i => `
+        <div class="receipt-row">
+          <span>${i.name} x${i.quantity}</span>
+          <span>₹${i.price * i.quantity}</span>
+        </div>
+      `).join('');
+
+      const rawSub = calculateRawSubtotal();
+      if (discountPercent > 0 || customOverrideTotal !== null) {
+        const discountDiff = rawSub - finalTotal;
+        if (discountDiff > 0) {
+          document.getElementById('rec-discount-row').style.display = 'flex';
+          document.getElementById('rec-discount-val').innerText = '-₹' + Math.round(discountDiff);
+        }
+      } else {
+        document.getElementById('rec-discount-row').style.display = 'none';
+      }
+
+      // Fire print dialog immediately within the direct user gesture
+      window.print();
+
+      // Submit background database sync and stock deduction
+      fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -789,33 +799,7 @@
           total_amount: finalTotal,
           items: items
         })
-      });
-
-      if (res.ok) {
-        document.getElementById('rec-date').innerText = new Date().toLocaleString('en-IN');
-        document.getElementById('rec-cust').innerText = custName;
-        document.getElementById('rec-phone').innerText = custPhone;
-        document.getElementById('rec-total').innerText = '₹' + finalTotal;
-        document.getElementById('rec-items').innerHTML = items.map(i => `
-          <div class="receipt-row">
-            <span>${i.name} x${i.quantity}</span>
-            <span>₹${i.price * i.quantity}</span>
-          </div>
-        `).join('');
-
-        const rawSub = calculateRawSubtotal();
-        if (discountPercent > 0 || customOverrideTotal !== null) {
-          const discountDiff = rawSub - finalTotal;
-          if (discountDiff > 0) {
-            document.getElementById('rec-discount-row').style.display = 'flex';
-            document.getElementById('rec-discount-val').innerText = '-₹' + Math.round(discountDiff);
-          }
-        } else {
-          document.getElementById('rec-discount-row').style.display = 'none';
-        }
-
-        window.print();
-
+      }).then(() => {
         cart = {};
         customOverrideTotal = null;
         discountPercent = 0;
@@ -825,7 +809,7 @@
         document.querySelectorAll('.coupon-pill').forEach((b, idx) => b.classList.toggle('active', idx === 0));
         updateTotal();
         loadData();
-      }
+      }).catch(err => console.error("Sync error", err));
     }
 
     async function loadCustomerSales() {
@@ -834,29 +818,33 @@
         const res = await fetch('/api/sales');
         const sales = await res.json();
         if (sales && sales.length > 0) {
-          el.innerHTML = sales.map(s => `
-            <div style="background: var(--pill-bg); padding: 14px; border-radius: 18px;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="font-weight: 700; font-size: 16px;">${s.customer_name}</div>
-                <div style="font-weight: 700; color: var(--tint-green);">₹${s.total_amount}</div>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-                <div style="font-size: 13px; color: var(--subtext);">${s.customer_phone || 'No phone'}</div>
-                <div style="font-size: 12px; color: var(--subtext);">${new Date(s.created_at).toLocaleDateString()}</div>
-              </div>
-              ${s.customer_phone && s.customer_phone !== 'N/A' ? `
-                <div style="margin-top: 10px; display: flex; gap: 8px;">
-                  <a href="tel:${s.customer_phone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
-                  <a href="https://wa.me/91${s.customer_phone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
+          el.innerHTML = sales.map(s => {
+            const hasPhone = s.customer_phone && s.customer_phone !== 'N/A' && s.customer_phone.length >= 8;
+            const cleanPhone = hasPhone ? s.customer_phone.replace(/[^0-9]/g, '') : '';
+            return `
+              <div style="background: var(--pill-bg); padding: 14px; border-radius: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div style="font-weight: 700; font-size: 16px;">${s.customer_name || 'Walk-in Customer'}</div>
+                  <div style="font-weight: 700; color: var(--tint-green); font-size: 16px;">₹${s.total_amount}</div>
                 </div>
-              ` : ''}
-            </div>
-          `).join('');
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                  <div style="font-size: 13px; color: var(--subtext);">${s.customer_phone || 'No phone'}</div>
+                  <div style="font-size: 12px; color: var(--subtext);">${new Date(s.created_at).toLocaleDateString()}</div>
+                </div>
+                ${hasPhone ? `
+                  <div style="margin-top: 10px; display: flex; gap: 8px;">
+                    <a href="tel:${cleanPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
+                    <a href="https://wa.me/91${cleanPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('');
         } else {
           el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No customer transactions recorded yet.</div>';
         }
       } catch(e) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center;">Transactions will show here.</div>';
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center;">Unable to load customers.</div>';
       }
     }
 
@@ -901,6 +889,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer_name: 'Walk-in Counter',
+          customer_phone: 'N/A',
           total_amount: amount,
           is_direct_sale: 1
         })
@@ -921,7 +910,7 @@
     async function addNewProductPrompt() {
       const name = prompt('Product/Fish Name:');
       if (!name) return;
-      const category = prompt('Category (Fish, Aquarium, Top Filter, Biomedia, Toys, Wood, Stones):', 'Fish');
+      const category = prompt('Category (Fish, Top Filter, Aquarium, Biomedia, Toys, Wood, Stones):', 'Top Filter');
       const price = prompt('Selling Price (₹):', '100');
       const qty = prompt('Stock Quantity:', '10');
 
