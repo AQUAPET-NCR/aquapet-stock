@@ -253,6 +253,7 @@
     }
     .btn:active { transform: scale(0.96); opacity: 0.9; }
     .btn-green { background: var(--tint-green); }
+    .btn-red { background: var(--tint-red); }
     .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
 
     .category-scroll {
@@ -443,8 +444,18 @@
     </div>
   </header>
 
-  <!-- TAB 1: POS BILLING -->
+  <!-- TAB 1: POS BILLING (MAIN SCREEN) -->
   <section id="view-pos" class="view-tab active">
+    <!-- Restored Homepage Store Intelligence Summary -->
+    <div class="intelligence-card">
+      <div class="intelligence-header">
+        <span class="intelligence-badge">✦ Store Intelligence</span>
+      </div>
+      <div id="homepage-intel-text" style="font-size: 14.5px; line-height: 1.45; font-weight: 500;">
+        Auditing live inventory and store balance sheet...
+      </div>
+    </div>
+
     <div class="card">
       <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
       
@@ -495,16 +506,15 @@
     </div>
   </section>
 
-  <!-- TAB 2: BALANCE SHEET & P&L (NEW DEDICATED TAB) -->
+  <!-- TAB 2: BALANCE SHEET & P&L -->
   <section id="view-balancesheet" class="view-tab">
-    <!-- Aquapet AI Executive Chat -->
     <div class="intelligence-card">
       <div class="intelligence-header">
         <span class="intelligence-badge">✦ Aquapet AI Advisor (Llama 3)</span>
-        <span style="font-size: 11px; color: var(--subtext); font-weight: 600;">Max 20/hr Free</span>
+        <span style="font-size: 11px; color: var(--subtext); font-weight: 600;">20 Queries / Hour</span>
       </div>
       <div id="ai-chat-response" style="font-size: 14px; margin-bottom: 12px; line-height: 1.4;">
-        Ask me anything: "What's my profit this month?", "Which items should I reorder?", or "Evaluate inventory value."
+        Ask me anything about your finances or inventory.
       </div>
       <div style="display: flex; gap: 8px;">
         <input type="text" id="ai-chat-input" class="app-input" placeholder="Ask store AI..." style="padding: 10px 14px; font-size: 14px;">
@@ -512,7 +522,6 @@
       </div>
     </div>
 
-    <!-- Core Financial Metrics Grid -->
     <div class="stats-grid">
       <div class="stat-box">
         <div class="title">Today's Sales</div>
@@ -532,26 +541,21 @@
       </div>
     </div>
 
-    <!-- Balance Sheet Asset Valuation Card -->
     <div class="card" style="background: linear-gradient(135deg, rgba(0,113,227,0.06), rgba(52,199,89,0.06));">
       <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Current Inventory Valuation</div>
       <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px;">
         <div style="font-size: 28px; font-weight: 800; color: var(--tint-blue);" id="metric-inv-valuation">₹0</div>
         <div style="font-size: 13px; font-weight: 600; color: var(--subtext);" id="metric-inv-units">0 total units in stock</div>
       </div>
-      <div style="font-size: 12px; color: var(--subtext); margin-top: 6px;">
-        Total liquid asset value sitting in tanks and shop shelves at selling price.
-      </div>
     </div>
 
-    <!-- Expense Recording Form -->
     <div class="card">
       <h3 style="font-size: 17px; margin-bottom: 12px;">+ Record Shop Expense / Stock Purchase</h3>
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <select id="exp-category" class="app-input">
           <option value="Breeder Stock">Breeder Fish Stock (15K-20K)</option>
           <option value="Accessories Reorder">Sobo / Accessories Wholesale Restock</option>
-          <option value="Fish Food">Fish Food & Medications</option>
+          <option value="Fish Food">Fish Food & Supplies</option>
           <option value="Electricity/Rent">Shop Rent / Electricity</option>
           <option value="Mortality Loss">Dead Stock / Tank Loss</option>
           <option value="Misc">Other Shop Expenses</option>
@@ -562,24 +566,22 @@
       </div>
     </div>
 
-    <!-- Expense Breakdown by Category -->
     <div class="card">
       <h3 style="font-size: 17px; margin-bottom: 12px;">Expenses Breakdown</h3>
       <div id="expense-category-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
 
-    <!-- Recent Expenses Log -->
     <div class="card">
       <h3 style="font-size: 17px; margin-bottom: 12px;">Recent Expense Ledger</h3>
       <div id="recent-expenses-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
   </section>
 
-  <!-- TAB 3: CUSTOMERS & SALES -->
+  <!-- TAB 3: CUSTOMERS & BILL REVERSAL -->
   <section id="view-customers" class="view-tab">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 18px;">Customer Transactions</h3>
+        <h3 style="font-size: 18px;">Customer Bills & Sales</h3>
         <button class="btn btn-sm" onclick="loadCustomerSales()">🔄 Refresh</button>
       </div>
       <div id="customer-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -597,7 +599,7 @@
     </div>
   </section>
 
-  <!-- Floating Navigation Dock (5 Tabs) -->
+  <!-- Floating Navigation Dock -->
   <div class="dock-wrap">
     <nav class="dock">
       <button class="active" onclick="switchTab('pos', this)">Billing</button>
@@ -669,7 +671,10 @@
         products = await prodRes.json();
         const sum = await sumRes.json();
 
-        // Populate Balance Sheet stats
+        // Homepage Intelligence
+        updateHomepageIntelligence(sum);
+
+        // Balance Sheet Stats
         document.getElementById('metric-today').innerText = '₹' + sum.todaySales;
         document.getElementById('metric-sales').innerText = '₹' + sum.totalSales;
         document.getElementById('metric-expenses').innerText = '₹' + sum.totalExpenses;
@@ -684,6 +689,27 @@
         loadCustomerSales();
       } catch (err) {
         console.warn("Connecting...", err);
+      }
+    }
+
+    function updateHomepageIntelligence(sum) {
+      const intel = document.getElementById('homepage-intel-text');
+      const totalItems = products.length;
+      if (totalItems === 0) {
+        intel.innerText = "No inventory recorded. Add stock items to begin audit.";
+        return;
+      }
+
+      const lowStockItems = products.filter(p => p.quantity < 5 && p.quantity > 0);
+      const outOfStockItems = products.filter(p => p.quantity <= 0);
+      const healthPct = Math.max(10, Math.round(((totalItems - outOfStockItems.length) / totalItems) * 100));
+
+      if (outOfStockItems.length > 0) {
+        intel.innerHTML = `<strong>${outOfStockItems.length} items depleted</strong> (including ${outOfStockItems[0].name}). Catalog health is at <strong>${healthPct}%</strong>. Supplier reorder advised.`;
+      } else if (lowStockItems.length > 0) {
+        intel.innerHTML = `Overall catalog is healthy at <strong>${healthPct}%</strong>. <strong>${lowStockItems.length} items running low</strong>. Today's revenue: <strong>₹${sum.todaySales}</strong>.`;
+      } else {
+        intel.innerHTML = `All inventory and fish tanks are operating at <strong>${healthPct}% peak capacity</strong>. Net balance profit: <strong>₹${sum.netProfit}</strong>.`;
       }
     }
 
@@ -1017,6 +1043,27 @@
       document.getElementById('receipt-modal').classList.remove('show');
     }
 
+    async function deleteBill(saleId) {
+      if (!confirm(`Are you sure you want to delete bill #${saleId}? This will remove it from sales revenue and RESTORE all its items back to stock.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/sales?id=${saleId}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`Bill #${saleId} deleted successfully and stock has been restored.`);
+          loadData();
+        } else {
+          alert('Failed to delete bill.');
+        }
+      } catch (err) {
+        alert('Error connecting to server.');
+      }
+    }
+
     async function loadCustomerSales() {
       const el = document.getElementById('customer-list');
       try {
@@ -1029,19 +1076,23 @@
             return `
               <div style="background: var(--pill-bg); padding: 14px; border-radius: 18px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <div style="font-weight: 700; font-size: 16px;">${s.customer_name || 'Walk-in Customer'}</div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 16px;">${s.customer_name || 'Walk-in Customer'}</div>
+                    <div style="font-size: 11px; color: var(--subtext);">Bill #${s.id}</div>
+                  </div>
                   <div style="font-weight: 700; color: var(--tint-green); font-size: 16px;">₹${s.total_amount}</div>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
                   <div style="font-size: 13px; color: var(--subtext);">${s.customer_phone || 'No phone'}</div>
                   <div style="font-size: 12px; color: var(--subtext);">${new Date(s.created_at).toLocaleDateString()}</div>
                 </div>
-                ${hasPhone ? `
-                  <div style="margin-top: 10px; display: flex; gap: 8px;">
+                <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                  ${hasPhone ? `
                     <a href="tel:${cleanPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
                     <a href="https://wa.me/91${cleanPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
-                  </div>
-                ` : ''}
+                  ` : ''}
+                  <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete & Restock</button>
+                </div>
               </div>
             `;
           }).join('');
