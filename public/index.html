@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>Aquapet Ecosystem</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root {
+      --bg: #f2f2f7;
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --card-border: rgba(255, 255, 255, 0.7);
+      --text: #000000;
+      --subtext: #86868b;
+      --tint-blue: #0071e3;
+      --tint-green: #34c759;
+      --tint-orange: #ff9500;
+      --tint-red: #ff3b30;
+      --dock-bg: rgba(255, 255, 255, 0.85);
+      --pill-bg: rgba(118, 118, 128, 0.12);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --card-bg: rgba(28, 28, 30, 0.75);
+        --card-border: rgba(255, 255, 255, 0.1);
+        --text: #f5f5f7;
+        --subtext: #a1a1a6;
+        --tint-blue: #2997ff;
+        --tint-green: #30d158;
+        --tint-orange: #ff9f0a;
+        --tint-red: #ff453a;
+        --dock-bg: rgba(30, 30, 32, 0.85);
+        --pill-bg: rgba(118, 118, 128, 0.24);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-top: calc(env(safe-area-inset-top, 24px) + 14px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 95px);
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .greeting-sub { font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--subtext); }
+    .greeting-title { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; }
+
+    .view-tab { display: none; }
+    .view-tab.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 14px;
+      border: 1px solid var(--card-border);
+    }
+    .stat-box .title { font-size: 12px; color: var(--subtext); text-transform: uppercase; font-weight: 600; }
+    .stat-box .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
+
+    .ai-card {
+      border: 1px solid rgba(175, 82, 222, 0.4);
+      background: linear-gradient(135deg, rgba(175, 82, 222, 0.08), rgba(0, 113, 227, 0.08));
+    }
+    .ai-input-row { display: flex; gap: 8px; margin-top: 10px; }
+    .ai-input {
+      flex: 1;
+      background: var(--pill-bg);
+      border: none;
+      padding: 10px 14px;
+      border-radius: 12px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .pos-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 0.5px solid var(--pill-bg);
+    }
+    .pos-item:last-child { border-bottom: none; }
+
+    .btn {
+      background: var(--tint-blue);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .btn-green { background: var(--tint-green); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 10px; }
+
+    .dock-wrap {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 20px) + 10px);
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .dock {
+      pointer-events: auto;
+      background: var(--dock-bg);
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
+      border: 1px solid var(--card-border);
+      border-radius: 34px;
+      padding: 6px;
+      display: flex;
+      gap: 6px;
+      box-shadow: 0 14px 36px rgba(0,0,0,0.18);
+    }
+    .dock button {
+      background: transparent;
+      border: none;
+      padding: 9px 15px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--subtext);
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .dock button.active {
+      background: var(--card-bg);
+      color: var(--text);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    #receipt-print-area { display: none; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #receipt-print-area, #receipt-print-area * {
+        visibility: visible;
+      }
+      #receipt-print-area {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 58mm;
+        margin: 0;
+        padding: 4mm;
+        font-family: monospace;
+        font-size: 11px;
+        color: #000;
+        background: #fff;
+      }
+      .receipt-center { text-align: center; }
+      .receipt-line { border-bottom: 1px dashed #000; margin: 4px 0; }
+      .receipt-row { display: flex; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <div class="greeting-sub" id="greeting-time">Good Morning,</div>
+      <div class="greeting-title">Mittar</div>
+    </div>
+    <div style="font-size: 13px; font-weight: 600; color: var(--tint-green);" id="live-indicator">● D1 Synced</div>
+  </header>
+
+  <!-- TAB 1: DASHBOARD & BALANCE SHEET -->
+  <section id="view-dashboard" class="view-tab active">
+    <!-- Aquapet AI Bot -->
+    <div class="card ai-card">
+      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #af52de;">✦ Aquapet Bot Assistant</div>
+      <div id="ai-response" style="font-size: 14px; margin-top: 6px; font-weight: 500;">Ask me about your sales, breeder spend, or stock count.</div>
+      <div class="ai-input-row">
+        <input type="text" id="ai-query" class="ai-input" placeholder="e.g. Total sales today?">
+        <button class="btn btn-sm" onclick="askAIBot()">Ask</button>
+      </div>
+    </div>
+
+    <!-- Balance Sheet / Metrics -->
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="title">Today's Sales</div>
+        <div class="val" id="metric-today" style="color: var(--tint-green);">₹0</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Total Revenue</div>
+        <div class="val" id="metric-sales">₹0</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Total Expenses</div>
+        <div class="val" id="metric-expenses" style="color: var(--tint-red);">₹0</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Net Profit</div>
+        <div class="val" id="metric-profit" style="color: var(--tint-blue);">₹0</div>
+      </div>
+    </div>
+
+    <!-- Quick Expense Entry -->
+    <div class="card">
+      <h3 style="font-size: 16px; margin-bottom: 12px;">+ Record Expense (Breeder / Store)</h3>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <select id="exp-category" class="ai-input">
+          <option value="Breeder Stock">Breeder Fish Purchase (15K-20K)</option>
+          <option value="Fish Food">Fish Food & Supplies</option>
+          <option value="Electricity/Rent">Shop Electricity & Maintenance</option>
+          <option value="Misc">Other Shop Expenses</option>
+        </select>
+        <input type="number" id="exp-amount" class="ai-input" placeholder="Amount (₹)">
+        <input type="text" id="exp-desc" class="ai-input" placeholder="Breeder name / Remarks (Optional)">
+        <button class="btn" style="background: var(--tint-red);" onclick="saveExpense()">Save Expense</button>
+      </div>
+    </div>
+
+    <!-- Quick Direct Sale -->
+    <div class="card">
+      <h3 style="font-size: 16px; margin-bottom: 12px;">+ Quick Direct Sale (No Item Bill)</h3>
+      <div style="display: flex; gap: 10px;">
+        <input type="number" id="direct-sale-amt" class="ai-input" placeholder="Amount (₹)">
+        <button class="btn btn-green" onclick="saveDirectSale()">Add Sale</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: POINT OF SALE & THERMAL BILLING -->
+  <section id="view-pos" class="view-tab">
+    <div class="card">
+      <h3 style="font-size: 17px; margin-bottom: 10px;">New Customer Bill</h3>
+      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+        <input type="text" id="cust-name" class="ai-input" placeholder="Customer Name">
+        <input type="tel" id="cust-phone" class="ai-input" placeholder="Phone Number">
+      </div>
+
+      <div style="font-size: 13px; font-weight: 700; color: var(--subtext); margin-bottom: 8px;">TAP ITEMS TO ADD TO BILL:</div>
+      <div id="pos-product-picker" style="max-height: 250px; overflow-y: auto; margin-bottom: 14px;"></div>
+
+      <div style="border-top: 1px solid var(--pill-bg); padding-top: 12px;">
+        <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; margin-bottom: 14px;">
+          <span>Total Payable:</span>
+          <span id="bill-total" style="color: var(--tint-green);">₹0</span>
+        </div>
+        <button class="btn btn-green" style="width: 100%; font-size: 16px; padding: 14px;" onclick="checkoutAndPrint()">Print 58mm Bill & Deduct Stock</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: INVENTORY TRACKER -->
+  <section id="view-inventory" class="view-tab">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 17px;">Live Inventory</h3>
+        <button class="btn btn-sm" onclick="addNewProductPrompt()">+ New Item</button>
+      </div>
+      <div id="inventory-list"></div>
+    </div>
+  </section>
+
+  <!-- Floating Navigation Dock -->
+  <div class="dock-wrap">
+    <nav class="dock">
+      <button class="active" onclick="switchTab('dashboard', this)">Dashboard</button>
+      <button onclick="switchTab('pos', this)">Billing POS</button>
+      <button onclick="switchTab('inventory', this)">Stock</button>
+    </nav>
+  </div>
+
+  <!-- 58mm Thermal Print Receipt -->
+  <div id="receipt-print-area">
+    <div class="receipt-center">
+      <h2 style="font-size: 14px;">AQUAPET</h2>
+      <div>Aquarium & Pet Store</div>
+      <div id="rec-date"></div>
+      <div class="receipt-line"></div>
+    </div>
+    <div>Customer: <span id="rec-cust"></span></div>
+    <div>Phone: <span id="rec-phone"></span></div>
+    <div class="receipt-line"></div>
+    <div id="rec-items"></div>
+    <div class="receipt-line"></div>
+    <div class="receipt-row" style="font-weight: bold; font-size: 12px;">
+      <span>TOTAL:</span>
+      <span id="rec-total"></span>
+    </div>
+    <div class="receipt-center" style="margin-top: 6mm;">
+      <div>Thank You! Visit Again</div>
+      <div>Goods once sold cannot be returned</div>
+    </div>
+  </div>
+
+  <script>
+    let products = [];
+    let cart = {};
+
+    function updateGreeting() {
+      const hour = new Date().getHours();
+      const el = document.getElementById('greeting-time');
+      if (hour < 12) el.innerText = "Good Morning,";
+      else if (hour < 17) el.innerText = "Good Afternoon,";
+      else el.innerText = "Good Evening,";
+    }
+
+    async function loadData() {
+      try {
+        const [prodRes, sumRes] = await Promise.all([
+          fetch('/api/products'),
+          fetch('/api/summary')
+        ]);
+        products = await prodRes.json();
+        const sum = await sumRes.json();
+
+        document.getElementById('metric-today').innerText = '₹' + sum.todaySales;
+        document.getElementById('metric-sales').innerText = '₹' + sum.totalSales;
+        document.getElementById('metric-expenses').innerText = '₹' + sum.totalExpenses;
+        document.getElementById('metric-profit').innerText = '₹' + sum.netProfit;
+
+        renderPOSPicker();
+        renderInventory();
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+
+    function renderPOSPicker() {
+      const el = document.getElementById('pos-product-picker');
+      el.innerHTML = products.map(p => `
+        <div class="pos-item">
+          <div>
+            <div style="font-weight: 600;">${p.name}</div>
+            <div style="font-size: 12px; color: var(--subtext);">₹${p.price} | In Stock: ${p.quantity}</div>
+          </div>
+          <div>
+            <button class="btn btn-sm" onclick="addToCart(${p.id})">
+              + Add ${cart[p.id] ? `(${cart[p.id]})` : ''}
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderInventory() {
+      const el = document.getElementById('inventory-list');
+      el.innerHTML = products.map(p => `
+        <div class="pos-item">
+          <div>
+            <div style="font-weight: 600;">${p.name}</div>
+            <div style="font-size: 12px; color: var(--subtext);">${p.category} | ₹${p.price}</div>
+          </div>
+          <div style="font-weight: 700; ${p.quantity < 5 ? 'color: var(--tint-red);' : ''}">
+            ${p.quantity} left
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addToCart(id) {
+      cart[id] = (cart[id] || 0) + 1;
+      calculateTotal();
+      renderPOSPicker();
+    }
+
+    function calculateTotal() {
+      let total = 0;
+      for (const [id, qty] of Object.entries(cart)) {
+        const p = products.find(prod => prod.id == id);
+        if (p) total += p.price * qty;
+      }
+      document.getElementById('bill-total').innerText = '₹' + total;
+      return total;
+    }
+
+    async function checkoutAndPrint() {
+      const total = calculateTotal();
+      if (total === 0) return alert('Select at least one product.');
+
+      const custName = document.getElementById('cust-name').value.trim() || 'Valued Customer';
+      const custPhone = document.getElementById('cust-phone').value.trim() || 'N/A';
+
+      const items = Object.entries(cart).map(([id, qty]) => {
+        const p = products.find(prod => prod.id == id);
+        return { id: p.id, name: p.name, quantity: qty, price: p.price };
+      });
+
+      const res = await fetch('/api/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: custName,
+          customer_phone: custPhone,
+          total_amount: total,
+          items: items
+        })
+      });
+
+      if (res.ok) {
+        document.getElementById('rec-date').innerText = new Date().toLocaleString('en-IN');
+        document.getElementById('rec-cust').innerText = custName;
+        document.getElementById('rec-phone').innerText = custPhone;
+        document.getElementById('rec-total').innerText = '₹' + total;
+        document.getElementById('rec-items').innerHTML = items.map(i => `
+          <div class="receipt-row">
+            <span>${i.name} x${i.quantity}</span>
+            <span>₹${i.price * i.quantity}</span>
+          </div>
+        `).join('');
+
+        window.print();
+
+        cart = {};
+        document.getElementById('cust-name').value = '';
+        document.getElementById('cust-phone').value = '';
+        calculateTotal();
+        loadData();
+      }
+    }
+
+    async function saveExpense() {
+      const category = document.getElementById('exp-category').value;
+      const amount = document.getElementById('exp-amount').value;
+      const description = document.getElementById('exp-desc').value;
+      if (!amount) return;
+
+      await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, amount, description })
+      });
+      document.getElementById('exp-amount').value = '';
+      document.getElementById('exp-desc').value = '';
+      alert('Expense recorded.');
+      loadData();
+    }
+
+    async function saveDirectSale() {
+      const amount = document.getElementById('direct-sale-amt').value;
+      if (!amount) return;
+
+      await fetch('/api/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: 'Counter Direct Sale',
+          total_amount: amount,
+          is_direct_sale: 1
+        })
+      });
+      document.getElementById('direct-sale-amt').value = '';
+      alert('Sale recorded in balance sheet.');
+      loadData();
+    }
+
+    async function askAIBot() {
+      const q = document.getElementById('ai-query').value.trim();
+      if (!q) return;
+      document.getElementById('ai-response').innerText = 'Aquapet AI thinking...';
+
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q })
+      });
+      const data = await res.json();
+      document.getElementById('ai-response').innerText = data.answer;
+    }
+
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.dock button').forEach(b => b.classList.remove('active'));
+      document.getElementById('view-' + tab).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    async function addNewProductPrompt() {
+      const name = prompt('Product/Fish Name:');
+      if (!name) return;
+      const category = prompt('Category (Fish, Aquarium, Top Filter, Biomedia, Toys, Wood, Stones):', 'Fish');
+      const price = prompt('Selling Price (₹):', '100');
+      const qty = prompt('Stock Quantity:', '10');
+
+      await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, category, price, quantity: qty })
+      });
+      loadData();
+    }
+
+    updateGreeting();
+    loadData();
+  </script>
+</body>
+</html>
