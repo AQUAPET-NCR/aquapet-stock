@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>Aquapet</title>
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/logo.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
   <link rel="icon" type="image/png" href="/logo.png">
-  <title>Aquapet Ecosystem</title>
-  <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
@@ -78,6 +77,21 @@
       padding: 0 4px;
     }
 
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      background: #fff;
+    }
+
     .greeting-sub {
       font-size: 13px;
       font-weight: 600;
@@ -87,7 +101,7 @@
     }
 
     .greeting-title {
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 700;
       letter-spacing: -0.03em;
       margin-top: 2px;
@@ -123,7 +137,6 @@
     .view-tab.active { display: block; animation: fadeIn 0.25s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Apple Intelligence Glow Card */
     .intelligence-card {
       position: relative;
       background: var(--card-bg);
@@ -391,20 +404,35 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
 
+    /* 58mm Dedicated Print Styling */
     #receipt-print-area { display: none; }
     @media print {
-      body * { visibility: hidden !important; }
-      #receipt-print-area, #receipt-print-area * { visibility: visible !important; }
+      @page {
+        size: 58mm auto;
+        margin: 0;
+      }
+      html, body {
+        width: 58mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+      }
+      body > *:not(#receipt-print-area) {
+        display: none !important;
+      }
       #receipt-print-area {
         display: block !important;
-        position: absolute;
-        left: 0; top: 0; width: 58mm;
-        margin: 0; padding: 2mm;
-        font-family: monospace; font-size: 11px;
-        color: #000; background: #fff;
+        position: relative !important;
+        width: 100% !important;
+        padding: 3mm !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Courier New", monospace !important;
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+        color: #000 !important;
+        background: #fff !important;
       }
       .receipt-center { text-align: center; }
-      .receipt-line { border-bottom: 1px dashed #000; margin: 4px 0; }
+      .receipt-line { border-bottom: 1px dashed #000; margin: 5px 0; }
       .receipt-row { display: flex; justify-content: space-between; }
     }
   </style>
@@ -412,9 +440,12 @@
 <body>
 
   <header>
-    <div>
-      <div class="greeting-sub" id="greeting-time">Good Afternoon,</div>
-      <div class="greeting-title">Mittar</div>
+    <div class="brand-wrap">
+      <img src="/logo.png" alt="Aquapet Logo" class="brand-logo">
+      <div>
+        <div class="greeting-sub" id="greeting-time">Good Afternoon,</div>
+        <div class="greeting-title">Mittar</div>
+      </div>
     </div>
     <div class="status-badge">
       <div class="dot-online"></div>
@@ -564,7 +595,7 @@
   <div id="receipt-print-area">
     <div class="receipt-center">
       <h2 style="font-size: 14px;">AQUAPET</h2>
-      <div>Aquarium & Pet Studio</div>
+      <div>PET SHOP & CARE</div>
       <div id="rec-date"></div>
       <div class="receipt-line"></div>
     </div>
@@ -583,7 +614,7 @@
     </div>
     <div class="receipt-center" style="margin-top: 6mm;">
       <div>Thank You! Visit Again</div>
-      <div>Live Fish & Pets Care</div>
+      <div>Pet Care & Aquarium Needs</div>
     </div>
   </div>
 
@@ -754,7 +785,8 @@
     function checkoutAndPrint() {
       const finalTotal = updateTotal();
       if (finalTotal <= 0 && Object.keys(cart).length === 0) {
-        return alert('Add at least one item to bill.');
+        alert('Please add at least one item to the bill.');
+        return;
       }
 
       const rawCust = document.getElementById('cust-name').value.trim();
@@ -767,13 +799,13 @@
         return { id: p.id, name: p.name, quantity: qty, price: p.price };
       });
 
-      // Populate thermal print receipt layout synchronously
+      // Synchronously populate the print template
       document.getElementById('rec-date').innerText = new Date().toLocaleString('en-IN');
       document.getElementById('rec-cust').innerText = custName;
       document.getElementById('rec-phone').innerText = custPhone;
       document.getElementById('rec-total').innerText = '₹' + finalTotal;
       document.getElementById('rec-items').innerHTML = items.map(i => `
-        <div class="receipt-row">
+        <div class="receipt-row" style="margin: 2px 0;">
           <span>${i.name} x${i.quantity}</span>
           <span>₹${i.price * i.quantity}</span>
         </div>
@@ -790,10 +822,16 @@
         document.getElementById('rec-discount-row').style.display = 'none';
       }
 
-      // Fire print dialog immediately within the direct user gesture
-      window.print();
+      // 50ms tick allows iOS WebKit to calculate the print DOM before invocation
+      setTimeout(() => {
+        try {
+          window.print();
+        } catch (e) {
+          console.warn("Print dialog invocation failed:", e);
+        }
+      }, 50);
 
-      // Submit background database sync and stock deduction
+      // Submit sale and deduct inventory
       fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -803,7 +841,9 @@
           total_amount: finalTotal,
           items: items
         })
-      }).then(() => {
+      })
+      .then(res => res.json())
+      .then(() => {
         cart = {};
         customOverrideTotal = null;
         discountPercent = 0;
@@ -813,7 +853,8 @@
         document.querySelectorAll('.coupon-pill').forEach((b, idx) => b.classList.toggle('active', idx === 0));
         updateTotal();
         loadData();
-      }).catch(err => console.error("Sync error", err));
+      })
+      .catch(err => console.error("Database sync failed:", err));
     }
 
     async function loadCustomerSales() {
