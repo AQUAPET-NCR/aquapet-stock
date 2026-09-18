@@ -162,7 +162,7 @@
     .intelligence-header {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
       margin-bottom: 8px;
     }
 
@@ -177,13 +177,6 @@
       background: linear-gradient(135deg, #ff2d55, #af52de, #0071e3);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-
-    .intelligence-body {
-      font-size: 14.5px;
-      line-height: 1.5;
-      color: var(--text);
-      font-weight: 500;
     }
 
     .card {
@@ -313,10 +306,7 @@
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
-    .step-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
+    .step-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
     .step-qty {
       font-weight: 700;
@@ -395,7 +385,7 @@
     .dock button {
       background: transparent;
       border: none;
-      padding: 10px 16px;
+      padding: 10px 14px;
       font-size: 13px;
       font-weight: 600;
       color: var(--subtext);
@@ -408,7 +398,6 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
 
-    /* Modal Receipt Preview */
     .receipt-modal-bg {
       display: none;
       position: fixed;
@@ -435,14 +424,7 @@
       line-height: 1.4;
     }
 
-    /* Print Frame */
-    #print-iframe {
-      display: none;
-      width: 0;
-      height: 0;
-      position: absolute;
-      border: none;
-    }
+    #print-iframe { display: none; width: 0; height: 0; position: absolute; border: none; }
   </style>
 </head>
 <body>
@@ -461,62 +443,8 @@
     </div>
   </header>
 
-  <!-- TAB 1: DASHBOARD -->
-  <section id="view-dashboard" class="view-tab active">
-    <div class="intelligence-card">
-      <div class="intelligence-header">
-        <span class="intelligence-badge">✦ Aquapet Intelligence</span>
-      </div>
-      <div class="intelligence-body" id="intelligence-text">
-        Auditing live inventory and store balance sheet...
-      </div>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="title">Today's Sales</div>
-        <div class="val" id="metric-today" style="color: var(--tint-green);">₹0</div>
-      </div>
-      <div class="stat-box">
-        <div class="title">Total Revenue</div>
-        <div class="val" id="metric-sales">₹0</div>
-      </div>
-      <div class="stat-box">
-        <div class="title">Total Expenses</div>
-        <div class="val" id="metric-expenses" style="color: var(--tint-red);">₹0</div>
-      </div>
-      <div class="stat-box">
-        <div class="title">Net Profit</div>
-        <div class="val" id="metric-profit" style="color: var(--tint-blue);">₹0</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3 style="font-size: 17px; margin-bottom: 14px;">+ Record Expense (Breeder / Store)</h3>
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <select id="exp-category" class="app-input">
-          <option value="Breeder Stock">Breeder Fish Purchase (15K-20K)</option>
-          <option value="Fish Food">Fish Food & Supplies</option>
-          <option value="Electricity/Rent">Shop Rent / Electricity</option>
-          <option value="Misc">Other Shop Expenses</option>
-        </select>
-        <input type="number" id="exp-amount" class="app-input" placeholder="Amount (₹)">
-        <input type="text" id="exp-desc" class="app-input" placeholder="Breeder Details / Remarks (Optional)">
-        <button class="btn" style="background: var(--tint-red);" onclick="saveExpense()">Save to Balance Sheet</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3 style="font-size: 17px; margin-bottom: 12px;">+ Direct Counter Sale (Quick Cash)</h3>
-      <div style="display: flex; gap: 10px;">
-        <input type="number" id="direct-sale-amt" class="app-input" placeholder="Amount (₹)">
-        <button class="btn btn-green" onclick="saveDirectSale()">Add Sale</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 2: BILLING & POS -->
-  <section id="view-pos" class="view-tab">
+  <!-- TAB 1: POS BILLING -->
+  <section id="view-pos" class="view-tab active">
     <div class="card">
       <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
       
@@ -567,11 +495,91 @@
     </div>
   </section>
 
-  <!-- TAB 3: CUSTOMERS & SALES HISTORY -->
+  <!-- TAB 2: BALANCE SHEET & P&L (NEW DEDICATED TAB) -->
+  <section id="view-balancesheet" class="view-tab">
+    <!-- Aquapet AI Executive Chat -->
+    <div class="intelligence-card">
+      <div class="intelligence-header">
+        <span class="intelligence-badge">✦ Aquapet AI Advisor (Llama 3)</span>
+        <span style="font-size: 11px; color: var(--subtext); font-weight: 600;">Max 20/hr Free</span>
+      </div>
+      <div id="ai-chat-response" style="font-size: 14px; margin-bottom: 12px; line-height: 1.4;">
+        Ask me anything: "What's my profit this month?", "Which items should I reorder?", or "Evaluate inventory value."
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="ai-chat-input" class="app-input" placeholder="Ask store AI..." style="padding: 10px 14px; font-size: 14px;">
+        <button class="btn btn-sm" onclick="askStoreAI()">Ask</button>
+      </div>
+    </div>
+
+    <!-- Core Financial Metrics Grid -->
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="title">Today's Sales</div>
+        <div class="val" id="metric-today" style="color: var(--tint-green);">₹0</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Total Revenue</div>
+        <div class="val" id="metric-sales">₹0</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Total Expenses</div>
+        <div class="val" id="metric-expenses" style="color: var(--tint-red);">₹0</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Net Profit</div>
+        <div class="val" id="metric-profit" style="color: var(--tint-blue);">₹0</div>
+      </div>
+    </div>
+
+    <!-- Balance Sheet Asset Valuation Card -->
+    <div class="card" style="background: linear-gradient(135deg, rgba(0,113,227,0.06), rgba(52,199,89,0.06));">
+      <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Current Inventory Valuation</div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px;">
+        <div style="font-size: 28px; font-weight: 800; color: var(--tint-blue);" id="metric-inv-valuation">₹0</div>
+        <div style="font-size: 13px; font-weight: 600; color: var(--subtext);" id="metric-inv-units">0 total units in stock</div>
+      </div>
+      <div style="font-size: 12px; color: var(--subtext); margin-top: 6px;">
+        Total liquid asset value sitting in tanks and shop shelves at selling price.
+      </div>
+    </div>
+
+    <!-- Expense Recording Form -->
+    <div class="card">
+      <h3 style="font-size: 17px; margin-bottom: 12px;">+ Record Shop Expense / Stock Purchase</h3>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <select id="exp-category" class="app-input">
+          <option value="Breeder Stock">Breeder Fish Stock (15K-20K)</option>
+          <option value="Accessories Reorder">Sobo / Accessories Wholesale Restock</option>
+          <option value="Fish Food">Fish Food & Medications</option>
+          <option value="Electricity/Rent">Shop Rent / Electricity</option>
+          <option value="Mortality Loss">Dead Stock / Tank Loss</option>
+          <option value="Misc">Other Shop Expenses</option>
+        </select>
+        <input type="number" id="exp-amount" class="app-input" placeholder="Amount (₹)">
+        <input type="text" id="exp-desc" class="app-input" placeholder="Supplier / Breeder / Notes (Optional)">
+        <button class="btn" style="background: var(--tint-red);" onclick="saveExpense()">Add to Balance Sheet</button>
+      </div>
+    </div>
+
+    <!-- Expense Breakdown by Category -->
+    <div class="card">
+      <h3 style="font-size: 17px; margin-bottom: 12px;">Expenses Breakdown</h3>
+      <div id="expense-category-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
+
+    <!-- Recent Expenses Log -->
+    <div class="card">
+      <h3 style="font-size: 17px; margin-bottom: 12px;">Recent Expense Ledger</h3>
+      <div id="recent-expenses-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: CUSTOMERS & SALES -->
   <section id="view-customers" class="view-tab">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 18px;">Customer Database & Sales</h3>
+        <h3 style="font-size: 18px;">Customer Transactions</h3>
         <button class="btn btn-sm" onclick="loadCustomerSales()">🔄 Refresh</button>
       </div>
       <div id="customer-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -589,11 +597,11 @@
     </div>
   </section>
 
-  <!-- Floating Navigation Dock -->
+  <!-- Floating Navigation Dock (5 Tabs) -->
   <div class="dock-wrap">
     <nav class="dock">
-      <button class="active" onclick="switchTab('dashboard', this)">Dashboard</button>
-      <button onclick="switchTab('pos', this)">Billing</button>
+      <button class="active" onclick="switchTab('pos', this)">Billing</button>
+      <button onclick="switchTab('balancesheet', this)">Balance Sheet</button>
       <button onclick="switchTab('customers', this)">Customers</button>
       <button onclick="switchTab('inventory', this)">Stock</button>
     </nav>
@@ -623,13 +631,12 @@
         Thank you! Visit again.<br>Live Fish & Pets Care
       </div>
       
-      <!-- Action Buttons -->
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
         <div style="display: flex; gap: 6px;">
-          <button class="btn btn-sm" style="flex: 1; background: var(--tint-green);" onclick="shareBillWhatsApp()">📲 WhatsApp Bill</button>
+          <button class="btn btn-sm" style="flex: 1; background: var(--tint-green);" onclick="shareBillWhatsApp()">📲 WhatsApp</button>
           <button class="btn btn-sm" style="flex: 1; background: #000;" onclick="triggerIframePrint()">🖨️ AirPrint</button>
         </div>
-        <button class="btn btn-sm" style="background: var(--pill-bg); color: var(--text);" onclick="copyThermalText()">📋 Copy Text for Bluetooth App</button>
+        <button class="btn btn-sm" style="background: var(--pill-bg); color: var(--text);" onclick="copyThermalText()">📋 Copy Text for Bluetooth</button>
         <button class="btn btn-sm" style="background: transparent; color: var(--subtext);" onclick="closeReceiptModal()">Close</button>
       </div>
     </div>
@@ -662,12 +669,16 @@
         products = await prodRes.json();
         const sum = await sumRes.json();
 
+        // Populate Balance Sheet stats
         document.getElementById('metric-today').innerText = '₹' + sum.todaySales;
         document.getElementById('metric-sales').innerText = '₹' + sum.totalSales;
         document.getElementById('metric-expenses').innerText = '₹' + sum.totalExpenses;
         document.getElementById('metric-profit').innerText = '₹' + sum.netProfit;
+        document.getElementById('metric-inv-valuation').innerText = '₹' + sum.inventoryValuation;
+        document.getElementById('metric-inv-units').innerText = `${sum.totalInventoryUnits || 0} total units in stock`;
 
-        updateIntelligence(sum);
+        renderExpenseBreakdown(sum.expenseBreakdown || []);
+        renderRecentExpenses(sum.recentExpenses || []);
         renderPOSPicker();
         renderInventory();
         loadCustomerSales();
@@ -676,24 +687,56 @@
       }
     }
 
-    function updateIntelligence(sum) {
-      const intel = document.getElementById('intelligence-text');
-      const totalItems = products.length;
-      if (totalItems === 0) {
-        intel.innerText = "No inventory recorded. Add stock items to begin audit.";
+    function renderExpenseBreakdown(list) {
+      const el = document.getElementById('expense-category-list');
+      if (!list || list.length === 0) {
+        el.innerHTML = '<div style="color: var(--subtext); font-size: 13px;">No expenses recorded yet.</div>';
         return;
       }
+      el.innerHTML = list.map(item => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 0.5px solid var(--pill-bg);">
+          <span style="font-weight: 600; font-size: 14px;">${item.category}</span>
+          <span style="font-weight: 700; color: var(--tint-red); font-size: 14px;">₹${item.total}</span>
+        </div>
+      `).join('');
+    }
 
-      const lowStockItems = products.filter(p => p.quantity < 5 && p.quantity > 0);
-      const outOfStockItems = products.filter(p => p.quantity <= 0);
-      const healthPct = Math.max(10, Math.round(((totalItems - outOfStockItems.length) / totalItems) * 100));
+    function renderRecentExpenses(list) {
+      const el = document.getElementById('recent-expenses-list');
+      if (!list || list.length === 0) {
+        el.innerHTML = '<div style="color: var(--subtext); font-size: 13px;">No recent records.</div>';
+        return;
+      }
+      el.innerHTML = list.map(item => `
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--pill-bg); padding: 10px 14px; border-radius: 14px;">
+          <div>
+            <div style="font-weight: 600; font-size: 14px;">${item.category}</div>
+            <div style="font-size: 12px; color: var(--subtext);">${item.description || 'No description'} • ${new Date(item.created_at).toLocaleDateString()}</div>
+          </div>
+          <div style="font-weight: 700; color: var(--tint-red); font-size: 15px;">-₹${item.amount}</div>
+        </div>
+      `).join('');
+    }
 
-      if (outOfStockItems.length > 0) {
-        intel.innerHTML = `<strong>${outOfStockItems.length} items depleted</strong>. Store stock health is at <strong>${healthPct}%</strong>. Supplier reorder advised.`;
-      } else if (lowStockItems.length > 0) {
-        intel.innerHTML = `Overall catalog is healthy at <strong>${healthPct}%</strong>. <strong>${lowStockItems.length} items running low</strong>. Today's recorded revenue stands at <strong>₹${sum.todaySales}</strong>.`;
-      } else {
-        intel.innerHTML = `All inventory and fish tanks are operating at <strong>${healthPct}% peak capacity</strong>. Net balance profit: <strong>₹${sum.netProfit}</strong>.`;
+    async function askStoreAI() {
+      const input = document.getElementById('ai-chat-input');
+      const question = input.value.trim();
+      if (!question) return;
+
+      const respBox = document.getElementById('ai-chat-response');
+      respBox.innerHTML = '<span style="color: var(--tint-blue);">Aquapet AI is calculating metrics...</span>';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+        respBox.innerText = data.answer;
+        input.value = '';
+      } catch (e) {
+        respBox.innerText = "Error contacting AI. Check network connection.";
       }
     }
 
@@ -750,7 +793,6 @@
       const current = cart[id] || 0;
       const next = current + delta;
 
-      // Prevent adding beyond available stock
       if (delta > 0 && next > p.quantity) {
         alert(`Only ${p.quantity} units available in stock.`);
         return;
@@ -840,7 +882,6 @@
       const rawSub = calculateRawSubtotal();
       const discountDiff = (discountPercent > 0 || customOverrideTotal !== null) ? Math.round(rawSub - finalTotal) : 0;
 
-      // Save latest bill context
       latestBillData = {
         date: dateStr,
         customer: custName,
@@ -850,7 +891,6 @@
         discount: discountDiff
       };
 
-      // Populate On-Screen Receipt Modal
       document.getElementById('modal-date').innerText = dateStr;
       document.getElementById('modal-cust').innerText = custName;
       document.getElementById('modal-phone').innerText = custPhone;
@@ -869,10 +909,8 @@
         document.getElementById('modal-discount-row').style.display = 'none';
       }
 
-      // Open Modal
       document.getElementById('receipt-modal').classList.add('show');
 
-      // Submit Sale & Deduct Stock in background
       fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -898,7 +936,6 @@
       .catch(err => console.error("Database sync failed:", err));
     }
 
-    // Force AirPrint via Iframe to bypass PWA sandbox
     function triggerIframePrint() {
       if (!latestBillData) return;
       const iframe = document.getElementById('print-iframe');
@@ -953,7 +990,6 @@
       doc.close();
     }
 
-    // Share Bill to Customer's WhatsApp
     function shareBillWhatsApp() {
       if (!latestBillData) return;
       const cleanPhone = latestBillData.phone.replace(/[^0-9]/g, '');
@@ -967,14 +1003,13 @@
       window.open(url, '_blank');
     }
 
-    // Copy raw text formatted for POS-Printer companion app
     function copyThermalText() {
       if (!latestBillData) return;
       const itemsText = latestBillData.items.map(i => `${i.name} x${i.quantity}  ₹${i.price * i.quantity}`).join('\n');
       const text = `AQUAPET\nPET SHOP & CARE\n--------------------------------\nDate: ${latestBillData.date}\nCust: ${latestBillData.customer}\nPhone: ${latestBillData.phone}\n--------------------------------\n${itemsText}\n--------------------------------\nTOTAL: ₹${latestBillData.total}\n--------------------------------\nThank you! Visit again.`;
       
       navigator.clipboard.writeText(text).then(() => {
-        alert('Receipt text copied! Paste it directly into your Bluetooth Printer companion app.');
+        alert('Receipt text copied! Ready to paste into your Bluetooth companion app.');
       });
     }
 
@@ -1046,26 +1081,7 @@
       });
       document.getElementById('exp-amount').value = '';
       document.getElementById('exp-desc').value = '';
-      alert('Expense recorded.');
-      loadData();
-    }
-
-    async function saveDirectSale() {
-      const amount = document.getElementById('direct-sale-amt').value;
-      if (!amount) return;
-
-      await fetch('/api/sales', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customer_name: 'Walk-in Counter',
-          customer_phone: 'N/A',
-          total_amount: amount,
-          is_direct_sale: 1
-        })
-      });
-      document.getElementById('direct-sale-amt').value = '';
-      alert('Sale saved to balance sheet.');
+      alert('Expense recorded into Balance Sheet.');
       loadData();
     }
 
@@ -1075,6 +1091,7 @@
       document.getElementById('view-' + tab).classList.add('active');
       btn.classList.add('active');
       if (tab === 'customers') loadCustomerSales();
+      if (tab === 'balancesheet') loadData();
     }
 
     async function addNewProductPrompt() {
