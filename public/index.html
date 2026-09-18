@@ -313,6 +313,10 @@
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
+    .step-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
 
     .step-qty {
       font-weight: 700;
@@ -414,7 +418,7 @@
       z-index: 200;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 16px;
     }
     .receipt-modal-bg.show { display: flex; }
 
@@ -423,33 +427,21 @@
       color: #000000;
       width: 100%;
       max-width: 320px;
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 18px;
+      padding: 18px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.3);
       font-family: monospace;
       font-size: 12px;
       line-height: 1.4;
     }
 
-    /* 58mm Thermal Print Media */
-    #receipt-print-area { display: none; }
-    @media print {
-      @page { size: 58mm auto; margin: 0; }
-      html, body { width: 58mm !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
-      body > *:not(#receipt-print-area) { display: none !important; }
-      #receipt-print-area {
-        display: block !important;
-        position: relative !important;
-        width: 100% !important;
-        padding: 3mm !important;
-        font-family: monospace !important;
-        font-size: 11px !important;
-        color: #000 !important;
-        background: #fff !important;
-      }
-      .receipt-center { text-align: center; }
-      .receipt-line { border-bottom: 1px dashed #000; margin: 5px 0; }
-      .receipt-row { display: flex; justify-content: space-between; }
+    /* Print Frame */
+    #print-iframe {
+      display: none;
+      width: 0;
+      height: 0;
+      position: absolute;
+      border: none;
     }
   </style>
 </head>
@@ -526,12 +518,7 @@
   <!-- TAB 2: BILLING & POS -->
   <section id="view-pos" class="view-tab">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 18px;">Create Customer Bill</h3>
-        <button class="btn btn-sm" id="btn-bt" style="background: var(--pill-bg); color: var(--text);" onclick="pairBluetoothPrinter()">
-          🖨️ Connect 58mm Bluetooth
-        </button>
-      </div>
+      <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
       
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
         <input type="text" id="cust-name" class="app-input" placeholder="Customer Name (e.g. Rahul Sharma)">
@@ -632,42 +619,23 @@
       <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px;">
         <span>TOTAL:</span><span id="modal-total"></span>
       </div>
-      <div style="text-align: center; margin-top: 12px; font-size: 10px; color: #444;">
+      <div style="text-align: center; margin-top: 10px; font-size: 10px; color: #444;">
         Thank you! Visit again.<br>Live Fish & Pets Care
       </div>
-      <div style="display: flex; gap: 8px; margin-top: 14px;">
-        <button class="btn btn-sm" style="flex: 1; background: #000; color: #fff;" onclick="triggerNativePrint()">🖨️ AirPrint</button>
-        <button class="btn btn-sm" style="flex: 1; background: var(--pill-bg); color: var(--text);" onclick="closeReceiptModal()">Done</button>
+      
+      <!-- Action Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-sm" style="flex: 1; background: var(--tint-green);" onclick="shareBillWhatsApp()">📲 WhatsApp Bill</button>
+          <button class="btn btn-sm" style="flex: 1; background: #000;" onclick="triggerIframePrint()">🖨️ AirPrint</button>
+        </div>
+        <button class="btn btn-sm" style="background: var(--pill-bg); color: var(--text);" onclick="copyThermalText()">📋 Copy Text for Bluetooth App</button>
+        <button class="btn btn-sm" style="background: transparent; color: var(--subtext);" onclick="closeReceiptModal()">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- 58mm Thermal Print Receipt -->
-  <div id="receipt-print-area">
-    <div class="receipt-center">
-      <h2 style="font-size: 14px;">AQUAPET</h2>
-      <div>PET SHOP & CARE</div>
-      <div id="rec-date"></div>
-      <div class="receipt-line"></div>
-    </div>
-    <div>Customer: <span id="rec-cust"></span></div>
-    <div>Phone: <span id="rec-phone"></span></div>
-    <div class="receipt-line"></div>
-    <div id="rec-items"></div>
-    <div class="receipt-line"></div>
-    <div class="receipt-row" id="rec-discount-row" style="display:none; color:#555;">
-      <span>DISCOUNT:</span>
-      <span id="rec-discount-val"></span>
-    </div>
-    <div class="receipt-row" style="font-weight: bold; font-size: 12px; margin-top:2px;">
-      <span>TOTAL:</span>
-      <span id="rec-total"></span>
-    </div>
-    <div class="receipt-center" style="margin-top: 6mm;">
-      <div>Thank You! Visit Again</div>
-      <div>Pet Care & Aquarium Needs</div>
-    </div>
-  </div>
+  <iframe id="print-iframe"></iframe>
 
   <script>
     let products = [];
@@ -675,8 +643,7 @@
     let customOverrideTotal = null;
     let selectedCategory = 'All';
     let discountPercent = 0;
-    let bluetoothDevice = null;
-    let bluetoothCharacteristic = null;
+    let latestBillData = null;
 
     function setGreeting() {
       const hr = new Date().getHours();
@@ -717,9 +684,9 @@
         return;
       }
 
-      const lowStockItems = products.filter(p => p.quantity < 5);
-      const outOfStockItems = products.filter(p => p.quantity === 0);
-      const healthPct = Math.max(10, Math.round(((totalItems - lowStockItems.length) / totalItems) * 100));
+      const lowStockItems = products.filter(p => p.quantity < 5 && p.quantity > 0);
+      const outOfStockItems = products.filter(p => p.quantity <= 0);
+      const healthPct = Math.max(10, Math.round(((totalItems - outOfStockItems.length) / totalItems) * 100));
 
       if (outOfStockItems.length > 0) {
         intel.innerHTML = `<strong>${outOfStockItems.length} items depleted</strong>. Store stock health is at <strong>${healthPct}%</strong>. Supplier reorder advised.`;
@@ -747,18 +714,25 @@
 
       el.innerHTML = filtered.map(p => {
         const qtyInCart = cart[p.id] || 0;
+        const isOutOfStock = p.quantity <= 0;
+        const reachedMax = qtyInCart >= p.quantity;
+
         return `
-          <div class="pos-item">
+          <div class="pos-item" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
             <div>
               <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
-              <div style="font-size: 12px; color: var(--subtext);">₹${p.price} | Stock: ${p.quantity}</div>
+              <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'}; font-weight: ${isOutOfStock ? '600' : 'normal'};">
+                ₹${p.price} | ${isOutOfStock ? 'Out of Stock' : `Stock: ${p.quantity}`}
+              </div>
             </div>
             <div>
-              ${qtyInCart > 0 ? `
+              ${isOutOfStock ? `
+                <span style="font-size: 12px; font-weight: 700; color: var(--tint-red); padding: 4px 8px; background: rgba(255, 59, 48, 0.1); border-radius: 8px;">Depleted</span>
+              ` : qtyInCart > 0 ? `
                 <div class="stepper">
                   <button class="step-btn" onclick="modifyCart(${p.id}, -1)">−</button>
                   <span class="step-qty">${qtyInCart}</span>
-                  <button class="step-btn" onclick="modifyCart(${p.id}, 1)">+</button>
+                  <button class="step-btn" ${reachedMax ? 'disabled' : ''} onclick="modifyCart(${p.id}, 1)">+</button>
                 </div>
               ` : `
                 <button class="btn btn-sm" onclick="modifyCart(${p.id}, 1)">+ Add</button>
@@ -770,8 +744,18 @@
     }
 
     function modifyCart(id, delta) {
+      const p = products.find(item => item.id == id);
+      if (!p) return;
+
       const current = cart[id] || 0;
       const next = current + delta;
+
+      // Prevent adding beyond available stock
+      if (delta > 0 && next > p.quantity) {
+        alert(`Only ${p.quantity} units available in stock.`);
+        return;
+      }
+
       if (next <= 0) delete cart[id];
       else cart[id] = next;
 
@@ -835,25 +819,6 @@
       }
     }
 
-    // Direct Web Bluetooth Connection for 58mm ESC/POS Printers
-    async function pairBluetoothPrinter() {
-      try {
-        if (!navigator.bluetooth) {
-          alert('Web Bluetooth is not supported on this browser. For iOS Bluetooth thermal printers, use the printer companion app (like Pos-Printer) or AirPrint.');
-          return;
-        }
-        bluetoothDevice = await navigator.bluetooth.requestDevice({
-          acceptAllDevices: true,
-          optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2']
-        });
-        const server = await bluetoothDevice.gatt.connect();
-        document.getElementById('btn-bt').innerText = '🟢 Printer Paired';
-        alert('Bluetooth Printer connected!');
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-
     function checkoutAndPrint() {
       const finalTotal = updateTotal();
       if (finalTotal <= 0 && Object.keys(cart).length === 0) {
@@ -875,19 +840,17 @@
       const rawSub = calculateRawSubtotal();
       const discountDiff = (discountPercent > 0 || customOverrideTotal !== null) ? Math.round(rawSub - finalTotal) : 0;
 
-      // 1. Populate Hidden 58mm AirPrint Area
-      document.getElementById('rec-date').innerText = dateStr;
-      document.getElementById('rec-cust').innerText = custName;
-      document.getElementById('rec-phone').innerText = custPhone;
-      document.getElementById('rec-total').innerText = '₹' + finalTotal;
-      document.getElementById('rec-items').innerHTML = items.map(i => `
-        <div class="receipt-row" style="margin: 2px 0;">
-          <span>${i.name} x${i.quantity}</span>
-          <span>₹${i.price * i.quantity}</span>
-        </div>
-      `).join('');
+      // Save latest bill context
+      latestBillData = {
+        date: dateStr,
+        customer: custName,
+        phone: custPhone,
+        items: items,
+        total: finalTotal,
+        discount: discountDiff
+      };
 
-      // 2. Populate On-Screen Receipt Modal
+      // Populate On-Screen Receipt Modal
       document.getElementById('modal-date').innerText = dateStr;
       document.getElementById('modal-cust').innerText = custName;
       document.getElementById('modal-phone').innerText = custPhone;
@@ -900,22 +863,16 @@
       `).join('');
 
       if (discountDiff > 0) {
-        document.getElementById('rec-discount-row').style.display = 'flex';
-        document.getElementById('rec-discount-val').innerText = '-₹' + discountDiff;
         document.getElementById('modal-discount-row').style.display = 'flex';
         document.getElementById('modal-discount-val').innerText = '-₹' + discountDiff;
       } else {
-        document.getElementById('rec-discount-row').style.display = 'none';
         document.getElementById('modal-discount-row').style.display = 'none';
       }
 
-      // 3. Open On-Screen Receipt Preview Immediately
+      // Open Modal
       document.getElementById('receipt-modal').classList.add('show');
 
-      // 4. Trigger print attempt
-      triggerNativePrint();
-
-      // 5. Submit Sale & Deduct Stock in background
+      // Submit Sale & Deduct Stock in background
       fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -941,12 +898,84 @@
       .catch(err => console.error("Database sync failed:", err));
     }
 
-    function triggerNativePrint() {
-      try {
-        window.print();
-      } catch(e) {
-        console.warn("Native print skipped (no printer connected)", e);
-      }
+    // Force AirPrint via Iframe to bypass PWA sandbox
+    function triggerIframePrint() {
+      if (!latestBillData) return;
+      const iframe = document.getElementById('print-iframe');
+      const doc = iframe.contentWindow.document;
+
+      doc.open();
+      doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            @page { size: 58mm auto; margin: 0; }
+            body { font-family: monospace; font-size: 11px; width: 54mm; margin: 0; padding: 2mm; }
+            .center { text-align: center; }
+            .line { border-bottom: 1px dashed #000; margin: 4px 0; }
+            .row { display: flex; justify-content: space-between; }
+          </style>
+        </head>
+        <body onload="window.focus(); window.print();">
+          <div class="center">
+            <h3>AQUAPET</h3>
+            <div>PET SHOP & CARE</div>
+            <div>${latestBillData.date}</div>
+          </div>
+          <div class="line"></div>
+          <div>Cust: ${latestBillData.customer}</div>
+          <div>Tel: ${latestBillData.phone}</div>
+          <div class="line"></div>
+          ${latestBillData.items.map(i => `
+            <div class="row">
+              <span>${i.name} x${i.quantity}</span>
+              <span>₹${i.price * i.quantity}</span>
+            </div>
+          `).join('')}
+          <div class="line"></div>
+          ${latestBillData.discount > 0 ? `
+            <div class="row">
+              <span>Discount:</span>
+              <span>-₹${latestBillData.discount}</span>
+            </div>
+          ` : ''}
+          <div class="row" style="font-weight: bold; font-size: 12px;">
+            <span>TOTAL:</span>
+            <span>₹${latestBillData.total}</span>
+          </div>
+          <div class="center" style="margin-top: 8px;">
+            Thank you! Visit again.
+          </div>
+        </body>
+        </html>
+      `);
+      doc.close();
+    }
+
+    // Share Bill to Customer's WhatsApp
+    function shareBillWhatsApp() {
+      if (!latestBillData) return;
+      const cleanPhone = latestBillData.phone.replace(/[^0-9]/g, '');
+      const itemsText = latestBillData.items.map(i => `• ${i.name} x${i.quantity} = ₹${i.price * i.quantity}`).join('\n');
+      const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n\n*Total Payable: ₹${latestBillData.total}*\n\nThank you for shopping with us!`;
+
+      const url = cleanPhone.length >= 10 
+        ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`
+        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+      window.open(url, '_blank');
+    }
+
+    // Copy raw text formatted for POS-Printer companion app
+    function copyThermalText() {
+      if (!latestBillData) return;
+      const itemsText = latestBillData.items.map(i => `${i.name} x${i.quantity}  ₹${i.price * i.quantity}`).join('\n');
+      const text = `AQUAPET\nPET SHOP & CARE\n--------------------------------\nDate: ${latestBillData.date}\nCust: ${latestBillData.customer}\nPhone: ${latestBillData.phone}\n--------------------------------\n${itemsText}\n--------------------------------\nTOTAL: ₹${latestBillData.total}\n--------------------------------\nThank you! Visit again.`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Receipt text copied! Paste it directly into your Bluetooth Printer companion app.');
+      });
     }
 
     function closeReceiptModal() {
