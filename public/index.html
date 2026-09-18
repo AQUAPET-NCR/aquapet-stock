@@ -404,30 +404,46 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
 
-    /* 58mm Dedicated Print Styling */
+    /* Modal Receipt Preview */
+    .receipt-modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .receipt-modal-bg.show { display: flex; }
+
+    .receipt-paper {
+      background: #ffffff;
+      color: #000000;
+      width: 100%;
+      max-width: 320px;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    /* 58mm Thermal Print Media */
     #receipt-print-area { display: none; }
     @media print {
-      @page {
-        size: 58mm auto;
-        margin: 0;
-      }
-      html, body {
-        width: 58mm !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-      }
-      body > *:not(#receipt-print-area) {
-        display: none !important;
-      }
+      @page { size: 58mm auto; margin: 0; }
+      html, body { width: 58mm !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
+      body > *:not(#receipt-print-area) { display: none !important; }
       #receipt-print-area {
         display: block !important;
         position: relative !important;
         width: 100% !important;
         padding: 3mm !important;
-        font-family: -apple-system, BlinkMacSystemFont, "Courier New", monospace !important;
+        font-family: monospace !important;
         font-size: 11px !important;
-        line-height: 1.3 !important;
         color: #000 !important;
         background: #fff !important;
       }
@@ -510,7 +526,12 @@
   <!-- TAB 2: BILLING & POS -->
   <section id="view-pos" class="view-tab">
     <div class="card">
-      <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 18px;">Create Customer Bill</h3>
+        <button class="btn btn-sm" id="btn-bt" style="background: var(--pill-bg); color: var(--text);" onclick="pairBluetoothPrinter()">
+          🖨️ Connect 58mm Bluetooth
+        </button>
+      </div>
       
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
         <input type="text" id="cust-name" class="app-input" placeholder="Customer Name (e.g. Rahul Sharma)">
@@ -591,6 +612,36 @@
     </nav>
   </div>
 
+  <!-- On-Screen Digital Thermal Receipt Popup -->
+  <div class="receipt-modal-bg" id="receipt-modal" onclick="closeReceiptModal(event)">
+    <div class="receipt-paper" onclick="event.stopPropagation()">
+      <div style="text-align: center; margin-bottom: 8px;">
+        <strong style="font-size: 15px;">AQUAPET</strong><br>
+        <span style="font-size: 11px;">PET SHOP & CARE</span><br>
+        <span id="modal-date" style="font-size: 10px; color:#666;"></span>
+      </div>
+      <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+      <div>Customer: <span id="modal-cust"></span></div>
+      <div>Phone: <span id="modal-phone"></span></div>
+      <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+      <div id="modal-items" style="margin: 6px 0;"></div>
+      <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+      <div id="modal-discount-row" style="display:none; justify-content:space-between; margin-bottom:2px;">
+        <span>Discount:</span><span id="modal-discount-val"></span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px;">
+        <span>TOTAL:</span><span id="modal-total"></span>
+      </div>
+      <div style="text-align: center; margin-top: 12px; font-size: 10px; color: #444;">
+        Thank you! Visit again.<br>Live Fish & Pets Care
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 14px;">
+        <button class="btn btn-sm" style="flex: 1; background: #000; color: #fff;" onclick="triggerNativePrint()">🖨️ AirPrint</button>
+        <button class="btn btn-sm" style="flex: 1; background: var(--pill-bg); color: var(--text);" onclick="closeReceiptModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 58mm Thermal Print Receipt -->
   <div id="receipt-print-area">
     <div class="receipt-center">
@@ -624,6 +675,8 @@
     let customOverrideTotal = null;
     let selectedCategory = 'All';
     let discountPercent = 0;
+    let bluetoothDevice = null;
+    let bluetoothCharacteristic = null;
 
     function setGreeting() {
       const hr = new Date().getHours();
@@ -669,7 +722,7 @@
       const healthPct = Math.max(10, Math.round(((totalItems - lowStockItems.length) / totalItems) * 100));
 
       if (outOfStockItems.length > 0) {
-        intel.innerHTML = `<strong>${outOfStockItems.length} items depleted</strong> (including ${outOfStockItems[0].name}). Store stock health is at <strong>${healthPct}%</strong>. Supplier reorder advised.`;
+        intel.innerHTML = `<strong>${outOfStockItems.length} items depleted</strong>. Store stock health is at <strong>${healthPct}%</strong>. Supplier reorder advised.`;
       } else if (lowStockItems.length > 0) {
         intel.innerHTML = `Overall catalog is healthy at <strong>${healthPct}%</strong>. <strong>${lowStockItems.length} items running low</strong>. Today's recorded revenue stands at <strong>₹${sum.todaySales}</strong>.`;
       } else {
@@ -782,6 +835,25 @@
       }
     }
 
+    // Direct Web Bluetooth Connection for 58mm ESC/POS Printers
+    async function pairBluetoothPrinter() {
+      try {
+        if (!navigator.bluetooth) {
+          alert('Web Bluetooth is not supported on this browser. For iOS Bluetooth thermal printers, use the printer companion app (like Pos-Printer) or AirPrint.');
+          return;
+        }
+        bluetoothDevice = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true,
+          optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2']
+        });
+        const server = await bluetoothDevice.gatt.connect();
+        document.getElementById('btn-bt').innerText = '🟢 Printer Paired';
+        alert('Bluetooth Printer connected!');
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+
     function checkoutAndPrint() {
       const finalTotal = updateTotal();
       if (finalTotal <= 0 && Object.keys(cart).length === 0) {
@@ -799,8 +871,12 @@
         return { id: p.id, name: p.name, quantity: qty, price: p.price };
       });
 
-      // Synchronously populate the print template
-      document.getElementById('rec-date').innerText = new Date().toLocaleString('en-IN');
+      const dateStr = new Date().toLocaleString('en-IN');
+      const rawSub = calculateRawSubtotal();
+      const discountDiff = (discountPercent > 0 || customOverrideTotal !== null) ? Math.round(rawSub - finalTotal) : 0;
+
+      // 1. Populate Hidden 58mm AirPrint Area
+      document.getElementById('rec-date').innerText = dateStr;
       document.getElementById('rec-cust').innerText = custName;
       document.getElementById('rec-phone').innerText = custPhone;
       document.getElementById('rec-total').innerText = '₹' + finalTotal;
@@ -811,27 +887,35 @@
         </div>
       `).join('');
 
-      const rawSub = calculateRawSubtotal();
-      if (discountPercent > 0 || customOverrideTotal !== null) {
-        const discountDiff = rawSub - finalTotal;
-        if (discountDiff > 0) {
-          document.getElementById('rec-discount-row').style.display = 'flex';
-          document.getElementById('rec-discount-val').innerText = '-₹' + Math.round(discountDiff);
-        }
+      // 2. Populate On-Screen Receipt Modal
+      document.getElementById('modal-date').innerText = dateStr;
+      document.getElementById('modal-cust').innerText = custName;
+      document.getElementById('modal-phone').innerText = custPhone;
+      document.getElementById('modal-total').innerText = '₹' + finalTotal;
+      document.getElementById('modal-items').innerHTML = items.map(i => `
+        <div style="display:flex; justify-content:space-between; margin:2px 0;">
+          <span>${i.name} x${i.quantity}</span>
+          <span>₹${i.price * i.quantity}</span>
+        </div>
+      `).join('');
+
+      if (discountDiff > 0) {
+        document.getElementById('rec-discount-row').style.display = 'flex';
+        document.getElementById('rec-discount-val').innerText = '-₹' + discountDiff;
+        document.getElementById('modal-discount-row').style.display = 'flex';
+        document.getElementById('modal-discount-val').innerText = '-₹' + discountDiff;
       } else {
         document.getElementById('rec-discount-row').style.display = 'none';
+        document.getElementById('modal-discount-row').style.display = 'none';
       }
 
-      // 50ms tick allows iOS WebKit to calculate the print DOM before invocation
-      setTimeout(() => {
-        try {
-          window.print();
-        } catch (e) {
-          console.warn("Print dialog invocation failed:", e);
-        }
-      }, 50);
+      // 3. Open On-Screen Receipt Preview Immediately
+      document.getElementById('receipt-modal').classList.add('show');
 
-      // Submit sale and deduct inventory
+      // 4. Trigger print attempt
+      triggerNativePrint();
+
+      // 5. Submit Sale & Deduct Stock in background
       fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -855,6 +939,18 @@
         loadData();
       })
       .catch(err => console.error("Database sync failed:", err));
+    }
+
+    function triggerNativePrint() {
+      try {
+        window.print();
+      } catch(e) {
+        console.warn("Native print skipped (no printer connected)", e);
+      }
+    }
+
+    function closeReceiptModal() {
+      document.getElementById('receipt-modal').classList.remove('show');
     }
 
     async function loadCustomerSales() {
