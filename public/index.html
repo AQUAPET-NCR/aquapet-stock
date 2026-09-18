@@ -10,8 +10,8 @@
   <style>
     :root {
       --bg: #f2f2f7;
-      --card-bg: rgba(255, 255, 255, 0.78);
-      --card-border: rgba(255, 255, 255, 0.8);
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --card-border: rgba(255, 255, 255, 0.85);
       --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
       --text: #1d1d1f;
       --subtext: #86868b;
@@ -70,7 +70,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       padding: 0 4px;
     }
 
@@ -89,7 +89,6 @@
       margin-top: 2px;
     }
 
-    /* Online Green Dot Pill */
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -121,7 +120,57 @@
     .view-tab.active { display: block; animation: fadeIn 0.25s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Apple Cards */
+    /* Apple Intelligence Glow Card */
+    .intelligence-card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
+      border: 1px solid var(--intel-border);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .intelligence-card::before {
+      content: "";
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle at center, rgba(175, 82, 222, 0.15), rgba(0, 113, 227, 0.1), transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .intelligence-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .intelligence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: linear-gradient(135deg, #ff2d55, #af52de, #0071e3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .intelligence-body {
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* General Cards */
     .card {
       background: var(--card-bg);
       backdrop-filter: blur(30px);
@@ -151,7 +200,7 @@
     .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
     .stat-box .val { font-size: 24px; font-weight: 700; margin-top: 4px; }
 
-    /* Buttons & Inputs */
+    /* Inputs & Buttons */
     .app-input {
       background: var(--pill-bg);
       border: none;
@@ -161,6 +210,25 @@
       font-size: 15px;
       outline: none;
       width: 100%;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--pill-bg);
+      border-radius: 14px;
+      padding: 0 12px;
+      margin-bottom: 12px;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      padding: 12px 8px;
+      width: 100%;
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
     }
 
     .btn {
@@ -179,15 +247,15 @@
     }
     .btn:active { transform: scale(0.96); opacity: 0.9; }
     .btn-green { background: var(--tint-green); }
-    .btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 12px; }
+    .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
 
-    /* Category Filter Pills in POS */
+    /* Category Filter Pills */
     .category-scroll {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 14px;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
       scrollbar-width: none;
     }
     .category-scroll::-webkit-scrollbar { display: none; }
@@ -209,17 +277,89 @@
       color: var(--bg);
     }
 
-    /* POS Products List */
+    /* Stepper Controls */
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      background: var(--pill-bg);
+      border-radius: 12px;
+      padding: 2px;
+      gap: 4px;
+    }
+
+    .step-btn {
+      background: var(--card-bg);
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .step-qty {
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* Coupon Selection */
+    .coupon-row {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .coupon-pill {
+      flex: 1;
+      border: 1px solid var(--card-border);
+      background: var(--pill-bg);
+      padding: 10px;
+      border-radius: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--subtext);
+    }
+
+    .coupon-pill.active {
+      border-color: var(--tint-blue);
+      background: rgba(0, 113, 227, 0.12);
+      color: var(--tint-blue);
+      box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+    }
+
+    /* Editable Price Bar */
+    .bill-price-card {
+      background: var(--pill-bg);
+      border-radius: 18px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 14px 0;
+    }
+
+    /* POS Item Row */
     .pos-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 4px;
+      padding: 10px 2px;
       border-bottom: 0.5px solid var(--pill-bg);
     }
     .pos-item:last-child { border-bottom: none; }
 
-    /* Floating Dock */
+    /* Dock */
     .dock-wrap {
       position: fixed;
       bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
@@ -229,6 +369,7 @@
       z-index: 100;
       pointer-events: none;
     }
+
     .dock {
       pointer-events: auto;
       background: var(--dock-bg);
@@ -241,6 +382,7 @@
       gap: 5px;
       box-shadow: 0 16px 40px rgba(0,0,0,0.16);
     }
+
     .dock button {
       background: transparent;
       border: none;
@@ -250,23 +392,12 @@
       color: var(--subtext);
       border-radius: 26px;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
+
     .dock button.active {
       background: var(--card-bg);
       color: var(--text);
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-    }
-
-    /* Editable Price Section */
-    .bill-price-card {
-      background: var(--pill-bg);
-      border-radius: 18px;
-      padding: 14px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 16px 0;
     }
 
     /* 58mm Thermal Receipt CSS */
@@ -292,7 +423,7 @@
   <!-- Top Navigation Header -->
   <header>
     <div>
-      <div class="greeting-sub" id="greeting-time">Good Morning,</div>
+      <div class="greeting-sub" id="greeting-time">Good Afternoon,</div>
       <div class="greeting-title">Mittar</div>
     </div>
     <div class="status-badge">
@@ -303,6 +434,16 @@
 
   <!-- TAB 1: DASHBOARD -->
   <section id="view-dashboard" class="view-tab active">
+    <!-- Aquapet Intelligence Glow Card -->
+    <div class="intelligence-card">
+      <div class="intelligence-header">
+        <span class="intelligence-badge">✦ Aquapet Intelligence</span>
+      </div>
+      <div class="intelligence-body" id="intelligence-text">
+        Auditing live inventory and store balance sheet...
+      </div>
+    </div>
+
     <!-- Balance Sheet Cards -->
     <div class="stats-grid">
       <div class="stat-box">
@@ -354,39 +495,55 @@
     <div class="card">
       <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
       
-      <!-- Customer Information Fields -->
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+      <!-- Customer Information -->
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
         <input type="text" id="cust-name" class="app-input" placeholder="Customer Name (e.g. Rahul Sharma)">
         <input type="tel" id="cust-phone" class="app-input" placeholder="Phone Number (e.g. 9876543210)">
+      </div>
+
+      <!-- Live Search Bar -->
+      <div class="search-box">
+        <span style="opacity: 0.5;">🔍</span>
+        <input type="text" id="pos-search" placeholder="Search fish, Sobo filter, heater, wave maker..." oninput="renderPOSPicker()">
       </div>
 
       <!-- Category Filter Pills -->
       <div class="category-scroll" id="cat-filters">
         <button class="cat-pill active" onclick="filterPOS('All', this)">All</button>
         <button class="cat-pill" onclick="filterPOS('Fish', this)">Fishes</button>
+        <button class="cat-pill" onclick="filterPOS('Top Filter', this)">Sobo Filters</button>
         <button class="cat-pill" onclick="filterPOS('Aquarium', this)">Aquariums</button>
-        <button class="cat-pill" onclick="filterPOS('Top Filter', this)">Filters</button>
         <button class="cat-pill" onclick="filterPOS('Biomedia', this)">Biomedia</button>
         <button class="cat-pill" onclick="filterPOS('Wood', this)">Hardscape</button>
-        <button class="cat-pill" onclick="filterPOS('Toys', this)">Toys</button>
+        <button class="cat-pill" onclick="filterPOS('Toys', this)">Accessories</button>
       </div>
 
       <!-- Items List -->
-      <div id="pos-product-picker" style="max-height: 260px; overflow-y: auto; margin-bottom: 10px;"></div>
+      <div id="pos-product-picker" style="max-height: 250px; overflow-y: auto; margin-bottom: 10px;"></div>
 
-      <!-- Editable Total Price Section -->
+      <!-- Coupon Discounts -->
+      <div style="font-size: 12px; font-weight: 700; color: var(--subtext); text-transform: uppercase; margin-top: 10px;">Apply Coupon Discount:</div>
+      <div class="coupon-row">
+        <button class="coupon-pill active" onclick="applyCoupon(0, this)">None</button>
+        <button class="coupon-pill" onclick="applyCoupon(10, this)">10% OFF</button>
+        <button class="coupon-pill" onclick="applyCoupon(15, this)">15% OFF</button>
+      </div>
+
+      <!-- Editable Total Price -->
       <div class="bill-price-card">
         <div>
-          <div style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase;">Total Bill Amount</div>
+          <div style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase;">
+            Total Bill <span id="discount-note" style="color: var(--tint-blue); font-weight: 700;"></span>
+          </div>
           <div style="font-size: 26px; font-weight: 700; color: var(--tint-green);" id="display-bill-total">₹0</div>
         </div>
-        <button class="btn btn-sm" style="background: var(--pill-bg); color: var(--text);" onclick="editBillPrice()">
+        <button class="btn btn-sm" style="background: var(--card-bg); color: var(--text); border: 1px solid var(--card-border);" onclick="editBillPrice()">
           ✏️ Edit Price
         </button>
       </div>
 
       <button class="btn btn-green" style="width: 100%; padding: 15px; font-size: 16px;" onclick="checkoutAndPrint()">
-        Print 58mm Bill & Deduct Stock
+        Print the Bill
       </button>
     </div>
   </section>
@@ -433,7 +590,11 @@
     <div class="receipt-line"></div>
     <div id="rec-items"></div>
     <div class="receipt-line"></div>
-    <div class="receipt-row" style="font-weight: bold; font-size: 12px;">
+    <div class="receipt-row" id="rec-discount-row" style="display:none; color:#555;">
+      <span>DISCOUNT:</span>
+      <span id="rec-discount-val"></span>
+    </div>
+    <div class="receipt-row" style="font-weight: bold; font-size: 12px; margin-top:2px;">
       <span>TOTAL:</span>
       <span id="rec-total"></span>
     </div>
@@ -448,6 +609,7 @@
     let cart = {};
     let customOverrideTotal = null;
     let selectedCategory = 'All';
+    let discountPercent = 0;
 
     function setGreeting() {
       const hr = new Date().getHours();
@@ -471,33 +633,84 @@
         document.getElementById('metric-expenses').innerText = '₹' + sum.totalExpenses;
         document.getElementById('metric-profit').innerText = '₹' + sum.netProfit;
 
+        updateIntelligence(sum);
         renderPOSPicker();
         renderInventory();
         loadCustomerSales();
       } catch (err) {
-        console.warn("Offline or connecting...", err);
+        console.warn("Connecting...", err);
+      }
+    }
+
+    function updateIntelligence(sum) {
+      const intel = document.getElementById('intelligence-text');
+      const totalItems = products.length;
+      if (totalItems === 0) {
+        intel.innerText = "No inventory recorded. Add stock items to begin audit.";
+        return;
+      }
+
+      const lowStockItems = products.filter(p => p.quantity < 5);
+      const outOfStockItems = products.filter(p => p.quantity === 0);
+      const healthPct = Math.max(10, Math.round(((totalItems - lowStockItems.length) / totalItems) * 100));
+
+      if (outOfStockItems.length > 0) {
+        intel.innerHTML = `<strong>${outOfStockItems.length} items depleted</strong> (including ${outOfStockItems[0].name}). Store stock health is at <strong>${healthPct}%</strong>. Supplier reorder advised.`;
+      } else if (lowStockItems.length > 0) {
+        intel.innerHTML = `Overall catalog is healthy at <strong>${healthPct}%</strong>. <strong>${lowStockItems.length} items running low</strong>. Today's recorded revenue stands at <strong>₹${sum.todaySales}</strong>.`;
+      } else {
+        intel.innerHTML = `All inventory and fish tanks are operating at <strong>${healthPct}% peak capacity</strong>. Net balance profit: <strong>₹${sum.netProfit}</strong>.`;
       }
     }
 
     function renderPOSPicker() {
       const el = document.getElementById('pos-product-picker');
-      const filtered = selectedCategory === 'All' 
-        ? products 
-        : products.filter(p => p.category.toLowerCase().includes(selectedCategory.toLowerCase()));
+      const searchQuery = (document.getElementById('pos-search')?.value || '').toLowerCase().trim();
 
-      el.innerHTML = filtered.map(p => `
-        <div class="pos-item">
-          <div>
-            <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
-            <div style="font-size: 12px; color: var(--subtext);">₹${p.price} | ${p.quantity} in stock</div>
+      const filtered = products.filter(p => {
+        const matchesCategory = selectedCategory === 'All' || p.category.toLowerCase().includes(selectedCategory.toLowerCase());
+        const matchesSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery);
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching items found.</div>';
+        return;
+      }
+
+      el.innerHTML = filtered.map(p => {
+        const qtyInCart = cart[p.id] || 0;
+        return `
+          <div class="pos-item">
+            <div>
+              <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
+              <div style="font-size: 12px; color: var(--subtext);">₹${p.price} | Stock: ${p.quantity}</div>
+            </div>
+            <div>
+              ${qtyInCart > 0 ? `
+                <div class="stepper">
+                  <button class="step-btn" onclick="modifyCart(${p.id}, -1)">−</button>
+                  <span class="step-qty">${qtyInCart}</span>
+                  <button class="step-btn" onclick="modifyCart(${p.id}, 1)">+</button>
+                </div>
+              ` : `
+                <button class="btn btn-sm" onclick="modifyCart(${p.id}, 1)">+ Add</button>
+              `}
+            </div>
           </div>
-          <div>
-            <button class="btn btn-sm" style="${cart[p.id] ? 'background: var(--tint-green);' : ''}" onclick="addToCart(${p.id})">
-              ${cart[p.id] ? `Added (${cart[p.id]})` : '+ Add'}
-            </button>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+    }
+
+    function modifyCart(id, delta) {
+      const current = cart[id] || 0;
+      const next = current + delta;
+      if (next <= 0) delete cart[id];
+      else cart[id] = next;
+
+      customOverrideTotal = null;
+      updateTotal();
+      renderPOSPicker();
     }
 
     function filterPOS(category, btn) {
@@ -507,32 +720,48 @@
       renderPOSPicker();
     }
 
-    function addToCart(id) {
-      cart[id] = (cart[id] || 0) + 1;
-      customOverrideTotal = null; // Reset override on item addition
+    function applyCoupon(percent, btn) {
+      discountPercent = percent;
+      document.querySelectorAll('.coupon-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      customOverrideTotal = null;
       updateTotal();
-      renderPOSPicker();
     }
 
-    function calculateStandardTotal() {
-      let total = 0;
+    function calculateRawSubtotal() {
+      let subtotal = 0;
       for (const [id, qty] of Object.entries(cart)) {
         const p = products.find(item => item.id == id);
-        if (p) total += p.price * qty;
+        if (p) subtotal += p.price * qty;
       }
-      return total;
+      return subtotal;
     }
 
     function updateTotal() {
-      const stdTotal = calculateStandardTotal();
-      const finalAmount = customOverrideTotal !== null ? customOverrideTotal : stdTotal;
+      const subtotal = calculateRawSubtotal();
+      let finalAmount = subtotal;
+
+      if (discountPercent > 0) {
+        const discountVal = (subtotal * discountPercent) / 100;
+        finalAmount = Math.max(0, subtotal - discountVal);
+        document.getElementById('discount-note').innerText = `(${discountPercent}% Coupon Applied)`;
+      } else {
+        document.getElementById('discount-note').innerText = '';
+      }
+
+      if (customOverrideTotal !== null) {
+        finalAmount = customOverrideTotal;
+        document.getElementById('discount-note').innerText = `(Price Manually Edited)`;
+      }
+
+      finalAmount = Math.round(finalAmount);
       document.getElementById('display-bill-total').innerText = '₹' + finalAmount;
       return finalAmount;
     }
 
     function editBillPrice() {
       const current = updateTotal();
-      const newPrice = prompt("Enter new total bill amount (₹):", current);
+      const newPrice = prompt("Enter revised total bill amount (₹):", current);
       if (newPrice !== null && !isNaN(newPrice) && newPrice.trim() !== '') {
         customOverrideTotal = parseFloat(newPrice);
         updateTotal();
@@ -541,7 +770,7 @@
 
     async function checkoutAndPrint() {
       const finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) return alert('Select at least one item.');
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) return alert('Add at least one item to bill.');
 
       const custName = document.getElementById('cust-name').value.trim() || 'Valued Customer';
       const custPhone = document.getElementById('cust-phone').value.trim() || 'N/A';
@@ -574,12 +803,26 @@
           </div>
         `).join('');
 
+        const rawSub = calculateRawSubtotal();
+        if (discountPercent > 0 || customOverrideTotal !== null) {
+          const discountDiff = rawSub - finalTotal;
+          if (discountDiff > 0) {
+            document.getElementById('rec-discount-row').style.display = 'flex';
+            document.getElementById('rec-discount-val').innerText = '-₹' + Math.round(discountDiff);
+          }
+        } else {
+          document.getElementById('rec-discount-row').style.display = 'none';
+        }
+
         window.print();
 
         cart = {};
         customOverrideTotal = null;
+        discountPercent = 0;
         document.getElementById('cust-name').value = '';
         document.getElementById('cust-phone').value = '';
+        document.getElementById('pos-search').value = '';
+        document.querySelectorAll('.coupon-pill').forEach((b, idx) => b.classList.toggle('active', idx === 0));
         updateTotal();
         loadData();
       }
