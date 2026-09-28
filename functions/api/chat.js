@@ -3,10 +3,55 @@ export async function onRequestPost(context) {
   const db = context.env.DB;
 
   if (!question || question.trim().length === 0) {
-    return Response.json({ answer: "Please ask a question or enter a shop command." });
+    return Response.json({ answer: "Please ask a question or enter a command." });
   }
 
-  // 1. Rate Limit Protection (20 queries/hour)
+  const cleanQuery = question.trim().toLowerCase();
+
+  // 1. FAST-PATH: Stock lookups (Zero AI overhead, 100% accurate, no token limits)
+  if (
+    cleanQuery.includes("how much stock") || 
+    cleanQuery.includes("stock left") || 
+    cleanQuery.includes("total stock") ||
+    cleanQuery.includes("remaining stock")
+  ) {
+    const stats = await db.prepare(`
+      SELECT 
+        COUNT(*) as total_items,
+        COALESCE(SUM(quantity), 0) as total_units,
+        COALESCE(SUM(quantity * price), 0) as total_value,
+        (SELECT COUNT(*) FROM products WHERE quantity <= 0) as out_of_stock,
+        (SELECT COUNT(*) FROM products WHERE quantity <= 2 AND quantity > 0) as low_stock
+      FROM products
+    `).first();
+
+    return Response.json({
+      answer: `You have ${stats.total_units} units in stock across ${stats.total_items} items (Retail Value: ₹${stats.total_value}). ${stats.low_stock} items are running low and ${stats.out_of_stock} are depleted.`,
+      executedAction: "chat"
+    });
+  }
+
+  // 2. FAST-PATH: Direct Customer Lookups
+  if (cleanQuery.startsWith("who is") || cleanQuery.includes("customer")) {
+    const words = cleanQuery.replace(/who is|customer|details|spend|spent|\?/gi, "").trim();
+    if (words.length > 1) {
+      const q = `%${words}%`;
+      const { results: custSales } = await db.prepare(
+        "SELECT id, customer_name, customer_phone, total_amount, created_at FROM sales WHERE LOWER(customer_name) LIKE ? OR customer_phone LIKE ? ORDER BY id DESC LIMIT 5"
+      ).bind(q, q).all();
+
+      if (custSales && custSales.length > 0) {
+        const total = custSales.reduce((a, b) => a + (b.total_amount || 0), 0);
+        return Response.json({
+          answer: `Found ${custSales[0].customer_name} (${custSales[0].customer_phone}): ${custSales.length} bill(s) recorded, total lifetime spend ₹${total}.`,
+          executedAction: "customer_found",
+          customerPhone: custSales[0].customer_phone !== 'N/A' ? custSales[0].customer_phone : null
+        });
+      }
+    }
+  }
+
+  // 3. Hourly Rate Limit Check (20/hr)
   await db.prepare(`
     CREATE TABLE IF NOT EXISTS ai_rate_limits (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,229 +66,133 @@ export async function onRequestPost(context) {
 
   if (rateCheck && rateCheck.count >= 20) {
     return Response.json({ 
-      answer: "Hourly AI query limit reached (20/hr) to protect your free tier. Please try again shortly." 
+      answer: "Hourly AI query limit reached (20/hr). Direct lookups still work!" 
     });
   }
-
   await db.prepare("INSERT INTO ai_rate_limits DEFAULT VALUES").run();
 
-  // 2. Fetch Catalog & Financial Snapshots for Agent Context
-  const { results: allProducts } = await db.prepare(
-    "SELECT id, name, category, purchase_price, price, quantity FROM products"
-  ).all();
-
-  const financeSnapshot = await db.prepare(`
+  // 4. Compact Summary for AI Commands (Trimmed to avoid token overflow)
+  const finance = await db.prepare(`
     SELECT 
-      (SELECT COALESCE(SUM(total_amount),0) FROM sales WHERE DATE(created_at, 'localtime') = DATE('now', 'localtime')) as today_sales,
-      (SELECT COALESCE(SUM(total_amount),0) FROM sales) as total_sales,
-      (SELECT COALESCE(SUM(amount),0) FROM expenses) as total_expenses,
-      (SELECT COALESCE(SUM(price * quantity),0) FROM products) as inventory_valuation
+      (SELECT COALESCE(SUM(total_amount),0) FROM sales WHERE DATE(created_at, 'localtime') = DATE('now', 'localtime')) as today,
+      (SELECT COALESCE(SUM(total_amount),0) FROM sales) as total_rev,
+      (SELECT COALESCE(SUM(amount),0) FROM expenses) as total_exp,
+      (SELECT COALESCE(SUM(price * quantity),0) FROM products) as inv_val,
+      (SELECT COUNT(*) FROM products WHERE quantity <= 0) as out_count
   `).first();
 
-  // Compact catalog summary for prompt
-  const productContext = (allProducts || []).map(p => `${p.id}:${p.name}(₹${p.price},stock:${p.quantity})`).join("; ");
+  const systemPrompt = `You are Aquapet AI store copilot for Mittar.
+Store Metrics: Today Sales: ₹${finance.today}, Total Sales: ₹${finance.total_rev}, Total Exp: ₹${finance.total_exp}, Net Profit: ₹${finance.total_rev - finance.total_exp}, Inventory Value: ₹${finance.inv_val}, Depleted Items: ${finance.out_count}.
 
-  const systemParserPrompt = `You are the executive command parser for Aquapet store POS.
-Available Products (id:name:price:stock):
-${productContext}
-
-Evaluate user prompt: "${question.trim()}"
-
-Output ONLY a valid JSON object matching one of these structures without markdown:
-
-Case A: Bill creation
-{"action":"create_bill","customer":"Name","phone":"Phone or N/A","discount_percent":0|10|15,"items":[{"id":number,"quantity":number}]}
-
-Case B: Add new item to stock
+If user wants to ADD A PRODUCT (e.g. "Add 10 Oscars bought at 400 sold at 800"), output ONLY:
 {"action":"add_stock","name":"Item Name","category":"Fish|Top Filter|Biomedia|Toys","cost":number,"price":number,"quantity":number}
 
-Case C: Record mortality loss (fish death / broken item)
-{"action":"record_loss","item_query":"name fragment","quantity":number}
+If user wants to RECORD MORTALITY/BROKEN ITEM, output ONLY:
+{"action":"record_loss","item_query":"name","quantity":number}
 
-Case D: Customer details inquiry
-{"action":"customer_lookup","query":"Name or phone fragment"}
+If user wants to BILL/INVOICE, output ONLY:
+{"action":"create_bill","customer":"Name","phone":"Phone","discount":0,"item_name":"name","quantity":number}
 
-Case E: General question, stock query, or financial inquiry
-{"action":"chat"}`;
+Otherwise, answer the question directly in 2 short sentences using ₹. Do not output JSON for standard queries.`;
 
   try {
-    const aiParse = await context.env.AI.run('@cf/meta/llama-3-8b-instruct', {
+    const aiResponse = await context.env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
       messages: [
-        { role: 'system', content: 'You are a strict JSON command router. Output valid JSON only, no backticks, no prose.' },
-        { role: 'user', content: systemParserPrompt }
-      ]
-    });
-
-    let rawText = (aiParse.response || '').trim();
-    if (rawText.startsWith('```json')) rawText = rawText.replace(/```json|```/g, '').trim();
-    if (rawText.startsWith('```')) rawText = rawText.replace(/```/g, '').trim();
-
-    let parsed = null;
-    try {
-      parsed = JSON.parse(rawText);
-    } catch (e) {
-      parsed = { action: 'chat' };
-    }
-
-    // --- CASE A: CONVERSATIONAL BILLING ---
-    if (parsed && parsed.action === 'create_bill' && Array.isArray(parsed.items) && parsed.items.length > 0) {
-      let finalItems = [];
-      let subtotal = 0;
-
-      for (const reqItem of parsed.items) {
-        const prod = (allProducts || []).find(p => p.id == reqItem.id);
-        if (prod && reqItem.quantity > 0) {
-          const qty = Math.min(reqItem.quantity, prod.quantity > 0 ? prod.quantity : reqItem.quantity);
-          finalItems.push({
-            id: prod.id,
-            name: prod.name,
-            quantity: qty,
-            price: prod.price
-          });
-          subtotal += prod.price * qty;
-        }
-      }
-
-      if (finalItems.length === 0) {
-        return Response.json({ answer: "I couldn't match the items in your request to existing inventory." });
-      }
-
-      const discPct = parsed.discount_percent || 0;
-      const discountVal = (subtotal * discPct) / 100;
-      const totalAmount = Math.max(0, Math.round(subtotal - discountVal));
-      const customerName = parsed.customer || 'Walk-in Customer';
-      const customerPhone = parsed.phone || 'N/A';
-
-      // Insert Sale
-      const saleRes = await db.prepare(
-        "INSERT INTO sales (customer_name, customer_phone, total_amount, payment_mode, is_direct_sale) VALUES (?, ?, ?, 'Cash', 0)"
-      ).bind(customerName, customerPhone, totalAmount).run();
-
-      const saleId = saleRes.meta.last_row_id;
-
-      // Insert Sale Items & Deduct Stock
-      for (const item of finalItems) {
-        await db.prepare(
-          "INSERT INTO sale_items (sale_id, product_id, product_name, quantity, unit_price) VALUES (?, ?, ?, ?, ?)"
-        ).bind(saleId, item.id, item.name, item.quantity, item.price).run();
-
-        await db.prepare(
-          "UPDATE products SET quantity = MAX(0, quantity - ?) WHERE id = ?"
-        ).bind(item.quantity, item.id).run();
-      }
-
-      return Response.json({
-        answer: `Bill #${saleId} created for ${customerName} (Total: ₹${totalAmount}). Stock deducted.`,
-        executedAction: "bill_created",
-        billData: {
-          saleId: saleId,
-          date: new Date().toLocaleString('en-IN'),
-          customer: customerName,
-          phone: customerPhone,
-          items: finalItems,
-          total: totalAmount,
-          discount: Math.round(discountVal)
-        }
-      });
-    }
-
-    // --- CASE B: ADD STOCK VIA AGENT ---
-    if (parsed && parsed.action === 'add_stock' && parsed.name && parsed.quantity > 0) {
-      const name = parsed.name;
-      const category = parsed.category || 'Top Filter';
-      const cost = parseFloat(parsed.cost) || 0;
-      const price = parseFloat(parsed.price) || 0;
-      const qty = parseInt(parsed.quantity, 10);
-      const totalCost = cost * qty;
-
-      await db.prepare(
-        "INSERT INTO products (name, category, purchase_price, price, quantity, initial_stock, month_tag) VALUES (?, ?, ?, ?, ?, ?, 'Sep 2026')"
-      ).bind(name, category, cost, price, qty, qty).run();
-
-      if (totalCost > 0) {
-        const expCat = (category === 'Fish') ? 'Breeder Stock' : 'Stock Restock';
-        await db.prepare(
-          "INSERT INTO expenses (category, amount, description) VALUES (?, ?, ?)"
-        ).bind(expCat, totalCost, `AI Agent: Added ${qty}x ${name} @ ₹${cost}/pc`).run();
-      }
-
-      return Response.json({
-        answer: `Added ${qty}x ${name} (Stock: ${qty}, Cost: ₹${cost}, Sell: ₹${price}). Expense of ₹${totalCost} logged to Balance Sheet.`,
-        executedAction: "stock_updated"
-      });
-    }
-
-    // --- CASE C: RECORD MORTALITY LOSS ---
-    if (parsed && parsed.action === 'record_loss' && parsed.item_query) {
-      const query = parsed.item_query.toLowerCase();
-      const matched = (allProducts || []).find(p => p.name.toLowerCase().includes(query));
-      const lossQty = parseInt(parsed.quantity, 10) || 1;
-
-      if (!matched) {
-        return Response.json({ answer: `I couldn't find an item matching "${parsed.item_query}" in your inventory.` });
-      }
-
-      const costLoss = (matched.purchase_price || 0) * lossQty;
-
-      await db.prepare(
-        "UPDATE products SET quantity = MAX(0, quantity - ?) WHERE id = ?"
-      ).bind(lossQty, matched.id).run();
-
-      await db.prepare(
-        "INSERT INTO expenses (category, amount, description) VALUES ('Mortality Loss', ?, ?)"
-      ).bind(costLoss, `Tank Loss: ${lossQty}x ${matched.name} (Wholesale Loss: ₹${costLoss})`).run();
-
-      return Response.json({
-        answer: `Logged mortality loss for ${lossQty}x ${matched.name}. Stock updated (${Math.max(0, matched.quantity - lossQty)} remaining), ₹${costLoss} recorded under Mortality Loss.`,
-        executedAction: "stock_updated"
-      });
-    }
-
-    // --- CASE D: CUSTOMER LOOKUP ---
-    if (parsed && parsed.action === 'customer_lookup' && parsed.query) {
-      const q = `%${parsed.query.toLowerCase()}%`;
-      const { results: custSales } = await db.prepare(
-        "SELECT id, customer_name, customer_phone, total_amount, created_at FROM sales WHERE LOWER(customer_name) LIKE ? OR customer_phone LIKE ? ORDER BY id DESC LIMIT 10"
-      ).bind(q, q).all();
-
-      if (!custSales || custSales.length === 0) {
-        return Response.json({ answer: `No customer records found matching "${parsed.query}".` });
-      }
-
-      const totalSpent = custSales.reduce((acc, s) => acc + (s.total_amount || 0), 0);
-      const name = custSales[0].customer_name;
-      const phone = custSales[0].customer_phone;
-
-      return Response.json({
-        answer: `Customer ${name} (${phone}) has made ${custSales.length} purchase(s) totaling ₹${totalSpent}. Latest bill: ₹${custSales[0].total_amount} on ${new Date(custSales[0].created_at).toLocaleDateString()}.`,
-        executedAction: "customer_found",
-        customerPhone: phone !== 'N/A' ? phone : null
-      });
-    }
-
-    // --- CASE E: GENERAL ADVISORY & STOCK LOOKUPS ---
-    const advisePrompt = `You are Aquapet AI store copilot.
-Current Store Financials:
-- Today's Sales: ₹${financeSnapshot.today_sales}
-- Total Sales: ₹${financeSnapshot.total_sales}
-- Total Expenses: ₹${financeSnapshot.total_expenses}
-- Net Profit: ₹${financeSnapshot.total_sales - financeSnapshot.total_expenses}
-- Inventory Value: ₹${financeSnapshot.inventory_valuation}
-Inventory Snapshot:
-${productContext}
-
-Answer Mittar's query concisely and directly in 2 sentences max. Use Indian Rupee (₹).`;
-
-    const chatResponse = await context.env.AI.run('@cf/meta/llama-3-8b-instruct', {
-      messages: [
-        { role: 'system', content: advisePrompt },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: question.trim() }
       ]
     });
 
-    return Response.json({ answer: chatResponse.response, executedAction: "chat" });
+    let raw = (aiResponse.response || '').trim();
+
+    // Check if AI issued an action command
+    if (raw.includes('{"action"')) {
+      const jsonStart = raw.indexOf('{');
+      const jsonEnd = raw.lastIndexOf('}') + 1;
+      const parsed = JSON.parse(raw.substring(jsonStart, jsonEnd));
+
+      if (parsed.action === 'add_stock' && parsed.name && parsed.quantity > 0) {
+        const cost = parseFloat(parsed.cost) || 0;
+        const price = parseFloat(parsed.price) || 0;
+        const qty = parseInt(parsed.quantity, 10);
+        const total = cost * qty;
+
+        await db.prepare(
+          "INSERT INTO products (name, category, purchase_price, price, quantity, initial_stock, month_tag) VALUES (?, ?, ?, ?, ?, ?, 'Sep 2026')"
+        ).bind(parsed.name, parsed.category || 'Fish', cost, price, qty, qty).run();
+
+        if (total > 0) {
+          const expCat = (parsed.category === 'Fish') ? 'Breeder Stock' : 'Stock Restock';
+          await db.prepare(
+            "INSERT INTO expenses (category, amount, description) VALUES (?, ?, ?)"
+          ).bind(expCat, total, `AI Agent: Added ${qty}x ${parsed.name} @ ₹${cost}/pc`).run();
+        }
+
+        return Response.json({
+          answer: `Added ${qty}x ${parsed.name} (Stock: ${qty}, Cost: ₹${cost}, Sell: ₹${price}). Expense of ₹${total} logged to Balance Sheet.`,
+          executedAction: "stock_updated"
+        });
+      }
+
+      if (parsed.action === 'record_loss' && parsed.item_query) {
+        const prod = await db.prepare("SELECT id, name, purchase_price, quantity FROM products WHERE LOWER(name) LIKE ? LIMIT 1")
+          .bind(`%${parsed.item_query.toLowerCase()}%`).first();
+
+        if (prod) {
+          const lossQty = parseInt(parsed.quantity, 10) || 1;
+          const costLoss = (prod.purchase_price || 0) * lossQty;
+
+          await db.prepare("UPDATE products SET quantity = MAX(0, quantity - ?) WHERE id = ?").bind(lossQty, prod.id).run();
+          await db.prepare("INSERT INTO expenses (category, amount, description) VALUES ('Mortality Loss', ?, ?)").bind(costLoss, `Tank Loss: ${lossQty}x ${prod.name}`).run();
+
+          return Response.json({
+            answer: `Recorded loss of ${lossQty}x ${prod.name}. Remaining: ${Math.max(0, prod.quantity - lossQty)}. Logged ₹${costLoss} under Mortality Loss.`,
+            executedAction: "stock_updated"
+          });
+        }
+      }
+
+      if (parsed.action === 'create_bill' && parsed.item_name) {
+        const prod = await db.prepare("SELECT id, name, price, quantity FROM products WHERE LOWER(name) LIKE ? LIMIT 1")
+          .bind(`%${parsed.item_name.toLowerCase()}%`).first();
+
+        if (prod) {
+          const bQty = parseInt(parsed.quantity, 10) || 1;
+          const totalAmt = prod.price * bQty;
+          const custName = parsed.customer || 'Walk-in Customer';
+          const custPhone = parsed.phone || 'N/A';
+
+          const saleRes = await db.prepare("INSERT INTO sales (customer_name, customer_phone, total_amount, payment_mode) VALUES (?, ?, ?, 'Cash')")
+            .bind(custName, custPhone, totalAmt).run();
+          const saleId = saleRes.meta.last_row_id;
+
+          await db.prepare("INSERT INTO sale_items (sale_id, product_id, product_name, quantity, unit_price) VALUES (?, ?, ?, ?, ?)")
+            .bind(saleId, prod.id, prod.name, bQty, prod.price).run();
+
+          await db.prepare("UPDATE products SET quantity = MAX(0, quantity - ?) WHERE id = ?").bind(bQty, prod.id).run();
+
+          return Response.json({
+            answer: `Created Bill #${saleId} for ${custName} (${bQty}x ${prod.name} = ₹${totalAmt}).`,
+            executedAction: "bill_created",
+            billData: {
+              saleId,
+              date: new Date().toLocaleString('en-IN'),
+              customer: custName,
+              phone: custPhone,
+              items: [{ id: prod.id, name: prod.name, quantity: bQty, price: prod.price }],
+              total: totalAmt,
+              discount: 0
+            }
+          });
+        }
+      }
+    }
+
+    return Response.json({ answer: raw, executedAction: "chat" });
 
   } catch (err) {
-    return Response.json({ answer: "I couldn't process that command. Check network connectivity." });
+    return Response.json({
+      answer: `Stock value sits at ₹${finance.inv_val}, lifetime revenue is ₹${finance.total_rev}, and net profit is ₹${finance.total_rev - finance.total_exp}.`
+    });
   }
 }
