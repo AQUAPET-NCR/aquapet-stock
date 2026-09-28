@@ -357,7 +357,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 2px;
+      padding: 12px 2px;
       border-bottom: 0.5px solid var(--pill-bg);
     }
     .pos-item:last-child { border-bottom: none; }
@@ -434,7 +434,7 @@
     <div class="brand-wrap">
       <img src="/logo.png" alt="Aquapet Logo" class="brand-logo">
       <div>
-        <div class="greeting-sub" id="greeting-time">Good Afternoon,</div>
+        <div class="greeting-sub" id="greeting-time">Good Morning,</div>
         <div class="greeting-title">Mittar</div>
       </div>
     </div>
@@ -444,9 +444,8 @@
     </div>
   </header>
 
-  <!-- TAB 1: POS BILLING (MAIN SCREEN) -->
+  <!-- TAB 1: POS BILLING -->
   <section id="view-pos" class="view-tab active">
-    <!-- Restored Homepage Store Intelligence Summary -->
     <div class="intelligence-card">
       <div class="intelligence-header">
         <span class="intelligence-badge">✦ Store Intelligence</span>
@@ -473,9 +472,7 @@
         <button class="cat-pill active" onclick="filterPOS('All', this)">All</button>
         <button class="cat-pill" onclick="filterPOS('Fish', this)">Fishes</button>
         <button class="cat-pill" onclick="filterPOS('Top Filter', this)">Sobo Filters</button>
-        <button class="cat-pill" onclick="filterPOS('Aquarium', this)">Aquariums</button>
-        <button class="cat-pill" onclick="filterPOS('Biomedia', this)">Biomedia</button>
-        <button class="cat-pill" onclick="filterPOS('Wood', this)">Hardscape</button>
+        <button class="cat-pill" onclick="filterPOS('Biomedia', this)">Sponge / Media</button>
         <button class="cat-pill" onclick="filterPOS('Toys', this)">Accessories</button>
       </div>
 
@@ -506,7 +503,7 @@
     </div>
   </section>
 
-  <!-- TAB 2: BALANCE SHEET & P&L -->
+  <!-- TAB 2: BALANCE SHEET -->
   <section id="view-balancesheet" class="view-tab">
     <div class="intelligence-card">
       <div class="intelligence-header">
@@ -577,7 +574,7 @@
     </div>
   </section>
 
-  <!-- TAB 3: CUSTOMERS & BILL REVERSAL -->
+  <!-- TAB 3: CUSTOMERS -->
   <section id="view-customers" class="view-tab">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
@@ -588,13 +585,30 @@
     </div>
   </section>
 
-  <!-- TAB 4: LIVE INVENTORY -->
+  <!-- TAB 4: ENHANCED STOCK MANAGEMENT -->
   <section id="view-inventory" class="view-tab">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 18px;">Live Inventory</h3>
-        <button class="btn btn-sm" onclick="addNewProductPrompt()">+ New Product</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 18px;">Stock Inventory</h3>
+        <button class="btn btn-sm" onclick="addNewProductPrompt()">+ Add Stock Item</button>
       </div>
+
+      <!-- Quick Status Filters: All, Getting Empty Soon, Empty -->
+      <div class="category-scroll">
+        <button class="cat-pill active" onclick="filterStockStatus('all', this)">All Stock</button>
+        <button class="cat-pill" onclick="filterStockStatus('low', this)">⚠️ Getting Empty Soon (≤2)</button>
+        <button class="cat-pill" onclick="filterStockStatus('empty', this)">🔴 Empty (0)</button>
+      </div>
+
+      <!-- Batch / Month Selector -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 6px 10px; background: var(--pill-bg); border-radius: 12px; font-size: 13px;">
+        <span style="font-weight: 600;">Stock Batch / Month:</span>
+        <select id="stock-month-filter" onchange="renderInventory()" style="background: transparent; border: none; font-weight: 700; color: var(--tint-blue); outline: none;">
+          <option value="All">All Batches</option>
+          <option value="Sep 2026" selected>Sep 2026 Batch</option>
+        </select>
+      </div>
+
       <div id="inventory-list"></div>
     </div>
   </section>
@@ -653,6 +667,7 @@
     let selectedCategory = 'All';
     let discountPercent = 0;
     let latestBillData = null;
+    let stockStatusFilter = 'all';
 
     function setGreeting() {
       const hr = new Date().getHours();
@@ -671,10 +686,8 @@
         products = await prodRes.json();
         const sum = await sumRes.json();
 
-        // Homepage Intelligence
         updateHomepageIntelligence(sum);
 
-        // Balance Sheet Stats
         document.getElementById('metric-today').innerText = '₹' + sum.todaySales;
         document.getElementById('metric-sales').innerText = '₹' + sum.totalSales;
         document.getElementById('metric-expenses').innerText = '₹' + sum.totalExpenses;
@@ -700,14 +713,14 @@
         return;
       }
 
-      const lowStockItems = products.filter(p => p.quantity < 5 && p.quantity > 0);
+      const lowStockItems = products.filter(p => p.quantity <= 2 && p.quantity > 0);
       const outOfStockItems = products.filter(p => p.quantity <= 0);
       const healthPct = Math.max(10, Math.round(((totalItems - outOfStockItems.length) / totalItems) * 100));
 
       if (outOfStockItems.length > 0) {
         intel.innerHTML = `<strong>${outOfStockItems.length} items depleted</strong> (including ${outOfStockItems[0].name}). Catalog health is at <strong>${healthPct}%</strong>. Supplier reorder advised.`;
       } else if (lowStockItems.length > 0) {
-        intel.innerHTML = `Overall catalog is healthy at <strong>${healthPct}%</strong>. <strong>${lowStockItems.length} items running low</strong>. Today's revenue: <strong>₹${sum.todaySales}</strong>.`;
+        intel.innerHTML = `Overall catalog is healthy at <strong>${healthPct}%</strong>. <strong>${lowStockItems.length} items getting empty soon</strong>. Today's revenue: <strong>₹${sum.todaySales}</strong>.`;
       } else {
         intel.innerHTML = `All inventory and fish tanks are operating at <strong>${healthPct}% peak capacity</strong>. Net balance profit: <strong>₹${sum.netProfit}</strong>.`;
       }
@@ -791,7 +804,7 @@
             <div>
               <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
               <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'}; font-weight: ${isOutOfStock ? '600' : 'normal'};">
-                ₹${p.price} | ${isOutOfStock ? 'Out of Stock' : `Stock: ${p.quantity}`}
+                ₹${p.price} | ${isOutOfStock ? 'Out of Stock' : `${p.quantity} in stock`}
               </div>
             </div>
             <div>
@@ -1104,19 +1117,100 @@
       }
     }
 
+    // Filter Stock by Status: All, Getting Empty Soon, Empty
+    function filterStockStatus(status, btn) {
+      stockStatusFilter = status;
+      btn.parentElement.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderInventory();
+    }
+
+    // Render Inventory with Initial vs Current Stock & Sold Units
     function renderInventory() {
       const el = document.getElementById('inventory-list');
-      el.innerHTML = products.map(p => `
-        <div class="pos-item">
-          <div>
-            <div style="font-weight: 600;">${p.name}</div>
-            <div style="font-size: 12px; color: var(--subtext);">${p.category} | ₹${p.price}</div>
+      const selectedMonth = document.getElementById('stock-month-filter')?.value || 'All';
+
+      let filtered = products;
+
+      // Filter by Month
+      if (selectedMonth !== 'All') {
+        filtered = filtered.filter(p => (p.month_tag || 'Sep 2026') === selectedMonth);
+      }
+
+      // Filter by Stock Status
+      if (stockStatusFilter === 'low') {
+        filtered = filtered.filter(p => p.quantity <= 2 && p.quantity > 0);
+      } else if (stockStatusFilter === 'empty') {
+        filtered = filtered.filter(p => p.quantity <= 0);
+      }
+
+      if (filtered.length === 0) {
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No items match this filter.</div>';
+        return;
+      }
+
+      el.innerHTML = filtered.map(p => {
+        const initial = p.initial_stock || p.quantity;
+        const remaining = p.quantity;
+        const sold = Math.max(0, initial - remaining);
+        const isDepleted = remaining <= 0;
+        const isLow = remaining <= 2 && !isDepleted;
+
+        return `
+          <div class="pos-item">
+            <div>
+              <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
+              <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">
+                Cost: ₹${p.purchase_price || 0} | Sell: ₹${p.price}
+              </div>
+              <div style="font-size: 11px; color: var(--subtext); margin-top: 2px;">
+                Bought: <strong>${initial}</strong> units | Sold: <strong style="color: var(--tint-blue);">${sold}</strong>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 700; font-size: 16px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
+                ${remaining} left
+              </div>
+              <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 6px; background: ${isDepleted ? 'rgba(255, 59, 48, 0.12)' : isLow ? 'rgba(255, 149, 0, 0.12)' : 'rgba(52, 199, 89, 0.12)'}; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
+                ${isDepleted ? 'Empty' : isLow ? 'Getting Empty Soon' : 'In Stock'}
+              </span>
+            </div>
           </div>
-          <div style="font-weight: 700; ${p.quantity < 5 ? 'color: var(--tint-red);' : ''}">
-            ${p.quantity} left
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+    }
+
+    async function addNewProductPrompt() {
+      const name = prompt('Product / Item Name:');
+      if (!name) return;
+      const category = prompt('Category (Top Filter, Fish, Biomedia, Toys):', 'Top Filter');
+      const purchase_price = prompt('Your Wholesale Purchase Price (₹):', '350');
+      const price = prompt('Selling Retail Price (₹):', '700');
+      const qty = prompt('Stock Quantity Bought (e.g. 10):', '10');
+      const month_tag = prompt('Batch / Month (e.g. Sep 2026, Oct 2026):', 'Sep 2026');
+
+      if (!qty || isNaN(qty)) return;
+
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          category,
+          purchase_price: parseFloat(purchase_price) || 0,
+          price: parseFloat(price) || 0,
+          quantity: parseInt(qty, 10),
+          initial_stock: parseInt(qty, 10),
+          month_tag: month_tag || 'Sep 2026'
+        })
+      });
+
+      if (res.ok) {
+        alert(`${name} added to stock successfully!`);
+        loadData();
+      } else {
+        alert('Failed to add product.');
+      }
     }
 
     async function saveExpense() {
@@ -1143,21 +1237,7 @@
       btn.classList.add('active');
       if (tab === 'customers') loadCustomerSales();
       if (tab === 'balancesheet') loadData();
-    }
-
-    async function addNewProductPrompt() {
-      const name = prompt('Product/Fish Name:');
-      if (!name) return;
-      const category = prompt('Category (Fish, Top Filter, Aquarium, Biomedia, Toys, Wood, Stones):', 'Top Filter');
-      const price = prompt('Selling Price (₹):', '100');
-      const qty = prompt('Stock Quantity:', '10');
-
-      await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, category, price, quantity: qty })
-      });
-      loadData();
+      if (tab === 'inventory') renderInventory();
     }
 
     setGreeting();
