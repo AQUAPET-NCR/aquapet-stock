@@ -3,12 +3,30 @@ export async function onRequestPost(context) {
   const db = context.env.DB;
 
   if (!question || question.trim().length === 0) {
-    return Response.json({ answer: "Please ask a question or enter a command." });
+    return Response.json({ answer: "Please ask a question or enter a shop command." });
   }
 
   const cleanQuery = question.trim().toLowerCase();
 
-  // 1. FAST-PATH: Stock lookups (Zero AI overhead, 100% accurate, no token limits)
+  // 1. FAST-PATH: Specific Category / Fish Inquiries (Live SQL execution)
+  if (cleanQuery.includes("fish") && (cleanQuery.includes("how many") || cleanQuery.includes("stock") || cleanQuery.includes("list") || cleanQuery.includes("available"))) {
+    const { results: fishes } = await db.prepare(
+      "SELECT name, quantity, price FROM products WHERE LOWER(category) = 'fish' AND quantity > 0"
+    ).all();
+
+    if (!fishes || fishes.length === 0) {
+      return Response.json({ answer: "No fish currently recorded in stock.", executedAction: "chat" });
+    }
+
+    const totalUnits = fishes.reduce((acc, f) => acc + (f.quantity || 0), 0);
+    const fishList = fishes.map(f => `${f.name}: ${f.quantity} pcs (₹${f.price})`).join(", ");
+    return Response.json({
+      answer: `You have ${totalUnits} fish in stock across ${fishes.length} varieties: ${fishList}.`,
+      executedAction: "chat"
+    });
+  }
+
+  // 2. FAST-PATH: General Overall Stock Lookups
   if (
     cleanQuery.includes("how much stock") || 
     cleanQuery.includes("stock left") || 
@@ -26,12 +44,12 @@ export async function onRequestPost(context) {
     `).first();
 
     return Response.json({
-      answer: `You have ${stats.total_units} units in stock across ${stats.total_items} items (Retail Value: ₹${stats.total_value}). ${stats.low_stock} items are running low and ${stats.out_of_stock} are depleted.`,
+      answer: `You have ${stats.total_units} total units in stock across ${stats.total_items} items (Retail Value: ₹${stats.total_value}). ${stats.low_stock} items are running low and ${stats.out_of_stock} are depleted.`,
       executedAction: "chat"
     });
   }
 
-  // 2. FAST-PATH: Direct Customer Lookups
+  // 3. FAST-PATH: Direct Customer Lookups
   if (cleanQuery.startsWith("who is") || cleanQuery.includes("customer")) {
     const words = cleanQuery.replace(/who is|customer|details|spend|spent|\?/gi, "").trim();
     if (words.length > 1) {
@@ -51,7 +69,7 @@ export async function onRequestPost(context) {
     }
   }
 
-  // 3. Hourly Rate Limit Check (20/hr)
+  // 4. Rate Limit Protection
   await db.prepare(`
     CREATE TABLE IF NOT EXISTS ai_rate_limits (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,13 +83,11 @@ export async function onRequestPost(context) {
   `).first();
 
   if (rateCheck && rateCheck.count >= 20) {
-    return Response.json({ 
-      answer: "Hourly AI query limit reached (20/hr). Direct lookups still work!" 
-    });
+    return Response.json({ answer: "Hourly AI query limit reached (20/hr). Direct lookups still work!" });
   }
   await db.prepare("INSERT INTO ai_rate_limits DEFAULT VALUES").run();
 
-  // 4. Compact Summary for AI Commands (Trimmed to avoid token overflow)
+  // 5. Financial Snapshot Context
   const finance = await db.prepare(`
     SELECT 
       (SELECT COALESCE(SUM(total_amount),0) FROM sales WHERE DATE(created_at, 'localtime') = DATE('now', 'localtime')) as today,
@@ -87,13 +103,13 @@ Store Metrics: Today Sales: ₹${finance.today}, Total Sales: ₹${finance.total
 If user wants to ADD A PRODUCT (e.g. "Add 10 Oscars bought at 400 sold at 800"), output ONLY:
 {"action":"add_stock","name":"Item Name","category":"Fish|Top Filter|Biomedia|Toys","cost":number,"price":number,"quantity":number}
 
-If user wants to RECORD MORTALITY/BROKEN ITEM, output ONLY:
+If user wants to RECORD MORTALITY/LOSS (e.g. "Mark 2 Oscars dead"), output ONLY:
 {"action":"record_loss","item_query":"name","quantity":number}
 
 If user wants to BILL/INVOICE, output ONLY:
 {"action":"create_bill","customer":"Name","phone":"Phone","discount":0,"item_name":"name","quantity":number}
 
-Otherwise, answer the question directly in 2 short sentences using ₹. Do not output JSON for standard queries.`;
+Otherwise, answer directly in 1-2 short sentences using ₹. Do not output JSON for standard queries.`;
 
   try {
     const aiResponse = await context.env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
@@ -105,7 +121,6 @@ Otherwise, answer the question directly in 2 short sentences using ₹. Do not o
 
     let raw = (aiResponse.response || '').trim();
 
-    // Check if AI issued an action command
     if (raw.includes('{"action"')) {
       const jsonStart = raw.indexOf('{');
       const jsonEnd = raw.lastIndexOf('}') + 1;
@@ -192,7 +207,7 @@ Otherwise, answer the question directly in 2 short sentences using ₹. Do not o
 
   } catch (err) {
     return Response.json({
-      answer: `Stock value sits at ₹${finance.inv_val}, lifetime revenue is ₹${finance.total_rev}, and net profit is ₹${finance.total_rev - finance.total_exp}.`
+      answer: `Total inventory value sits at ₹${finance.inv_val}, lifetime sales ₹${finance.total_rev}, and net profit ₹${finance.total_rev - finance.total_exp}.`
     });
   }
 }
