@@ -63,7 +63,7 @@
       color: var(--text);
       min-height: 100vh;
       padding-top: calc(env(safe-area-inset-top, 24px) + 14px);
-      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 110px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 115px);
       padding-left: max(16px, env(safe-area-inset-left));
       padding-right: max(16px, env(safe-area-inset-right));
       max-width: 680px;
@@ -158,7 +158,6 @@
       50% { opacity: 0.5; transform: scale(0.85); }
     }
 
-    /* Omnipotent Global AI Command Card */
     .global-copilot-card {
       background: var(--card-bg);
       border-radius: 22px;
@@ -330,7 +329,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
     .step-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
     .step-qty { font-weight: 700; font-size: 14px; min-width: 24px; text-align: center; }
 
     .coupon-row { display: flex; gap: 8px; margin: 12px 0; }
@@ -417,14 +415,14 @@
       border-radius: 36px;
       padding: 6px;
       display: flex;
-      gap: 5px;
+      gap: 4px;
       box-shadow: 0 16px 40px rgba(0,0,0,0.16);
     }
     .dock button {
       background: transparent;
       border: none;
-      padding: 10px 14px;
-      font-size: 13px;
+      padding: 9px 12px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--subtext);
       border-radius: 26px;
@@ -434,6 +432,47 @@
       background: var(--card-bg);
       color: var(--text);
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+
+    /* Calculator */
+    .calc-container { max-width: 340px; margin: 0 auto; }
+    .calc-screen {
+      text-align: right;
+      font-size: 46px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      padding: 16px 8px 10px;
+      overflow-x: auto;
+      white-space: nowrap;
+      min-height: 80px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .calc-btn {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: none;
+      font-size: 22px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.15s;
+    }
+    .calc-btn:active { opacity: 0.65; }
+    .calc-btn-gray { background: rgba(120, 120, 128, 0.25); color: var(--text); }
+    .calc-btn-dark { background: rgba(120, 120, 128, 0.15); color: var(--text); font-weight: 600; }
+    .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 600; }
+    .calc-btn-zero {
+      grid-column: span 2;
+      aspect-ratio: auto;
+      border-radius: 35px;
+      justify-content: flex-start;
+      padding-left: 28px;
     }
 
     /* iOS Bottom Sheets */
@@ -507,7 +546,6 @@
 </head>
 <body>
 
-  <!-- Dynamic Notification Pill -->
   <div class="toast-capsule" id="app-toast">
     <span id="toast-icon">✨</span>
     <span id="toast-msg">Stock added & Expense Ledger updated</span>
@@ -540,7 +578,7 @@
     </div>
   </section>
 
-  <!-- TAB 1: POS BILLING (MAIN SCREEN) -->
+  <!-- TAB 1: POS BILLING -->
   <section id="view-pos" class="view-tab active">
     <div class="card">
       <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
@@ -590,7 +628,43 @@
     </div>
   </section>
 
-  <!-- TAB 2: BALANCE SHEET -->
+  <!-- TAB 2: APPLE-STYLE CALCULATOR -->
+  <section id="view-calculator" class="view-tab">
+    <div class="card calc-container">
+      <div class="calc-screen" id="calc-display">0</div>
+      <div class="calc-grid">
+        <button class="calc-btn calc-btn-gray" onclick="calcClear()">AC</button>
+        <button class="calc-btn calc-btn-gray" onclick="calcToggleSign()">±</button>
+        <button class="calc-btn calc-btn-gray" onclick="calcPercent()">%</button>
+        <button class="calc-btn calc-btn-orange" onclick="calcOperator('/')">÷</button>
+
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('7')">7</button>
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('8')">8</button>
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('9')">9</button>
+        <button class="calc-btn calc-btn-orange" onclick="calcOperator('*')">×</button>
+
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('4')">4</button>
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('5')">5</button>
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('6')">6</button>
+        <button class="calc-btn calc-btn-orange" onclick="calcOperator('-')">−</button>
+
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('1')">1</button>
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('2')">2</button>
+        <button class="calc-btn calc-btn-dark" onclick="calcNumber('3')">3</button>
+        <button class="calc-btn calc-btn-orange" onclick="calcOperator('+')">+</button>
+
+        <button class="calc-btn calc-btn-dark calc-btn-zero" onclick="calcNumber('0')">0</button>
+        <button class="calc-btn calc-btn-dark" onclick="calcDecimal()">.</button>
+        <button class="calc-btn calc-btn-orange" onclick="calcEqual()">=</button>
+      </div>
+
+      <button class="btn btn-green" style="width: 100%; margin-top: 18px; padding: 14px; font-size: 16px;" onclick="openCalcBillingSheet()">
+        🧾 Bill This Total (Print Receipt)
+      </button>
+    </div>
+  </section>
+
+  <!-- TAB 3: BALANCE SHEET & EXPENSE MANAGEMENT -->
   <section id="view-balancesheet" class="view-tab">
     <div class="stats-grid">
       <div class="stat-box">
@@ -645,7 +719,7 @@
     </div>
   </section>
 
-  <!-- TAB 3: CUSTOMERS -->
+  <!-- TAB 4: CUSTOMERS -->
   <section id="view-customers" class="view-tab">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
@@ -656,12 +730,17 @@
     </div>
   </section>
 
-  <!-- TAB 4: ENHANCED STOCK MANAGEMENT -->
+  <!-- TAB 5: ENHANCED STOCK MANAGEMENT -->
   <section id="view-inventory" class="view-tab">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <h3 style="font-size: 18px;">Stock Inventory</h3>
         <button class="btn btn-sm" onclick="openAddStockSheet()">+ Add New Item</button>
+      </div>
+
+      <div class="search-box">
+        <span style="opacity: 0.5;">🔍</span>
+        <input type="text" id="stock-search" placeholder="Search stock by name or category..." oninput="renderInventory()">
       </div>
 
       <div class="category-scroll">
@@ -682,14 +761,41 @@
     </div>
   </section>
 
-  <!-- Floating Navigation Dock -->
+  <!-- 5-BUTTON DOCK -->
   <div class="dock-wrap">
     <nav class="dock">
       <button class="active" onclick="switchTab('pos', this)">Billing</button>
-      <button onclick="switchTab('balancesheet', this)">Balance Sheet</button>
-      <button onclick="switchTab('customers', this)">Customers</button>
+      <button onclick="switchTab('calculator', this)">Calc</button>
+      <button onclick="switchTab('balancesheet', this)">Ledger</button>
+      <button onclick="switchTab('customers', this)">Clients</button>
       <button onclick="switchTab('inventory', this)">Stock</button>
     </nav>
+  </div>
+
+  <!-- iOS BOTTOM SHEET: CALCULATOR CUSTOMER LINKING -->
+  <div class="sheet-overlay" id="calc-bill-sheet" onclick="closeCalcBillingSheet(event)">
+    <div class="sheet-content" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 20px; font-weight: 700;">Customer Bill Details</h3>
+        <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeCalcBillingSheet()">Cancel</button>
+      </div>
+
+      <div style="margin-bottom: 12px; background: var(--pill-bg); padding: 12px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--subtext);">CALCULATED TOTAL</span>
+        <span style="font-size: 24px; font-weight: 800; color: var(--tint-green);" id="calc-bill-amount-display">₹0</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+        <input type="text" id="calc-cust-name" class="app-input" placeholder="Customer Name (Optional, e.g. Rahul)">
+        <input type="tel" id="calc-cust-phone" class="app-input" placeholder="WhatsApp / Phone Number (Optional)">
+        <input type="text" id="calc-order-note" class="app-input" placeholder="Order Note / Description (e.g. 3ft Tank setup + Fish)">
+      </div>
+
+      <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="confirmCalculatedBill()">
+        Confirm & Generate Bill
+      </button>
+    </div>
   </div>
 
   <!-- iOS BOTTOM SHEET: ADD NEW STOCK ITEM -->
@@ -739,7 +845,7 @@
         </div>
 
         <div style="font-size: 12px; color: var(--subtext); padding: 4px 2px;">
-          ⚡ Total wholesale cost will automatically be recorded into your Balance Sheet under Expenses.
+          ⚡ Wholesale cost will automatically link to your Balance Sheet. Deleting this expense later will revert this stock.
         </div>
 
         <button class="btn btn-green" style="margin-top: 4px; padding: 14px; font-size: 16px;" onclick="submitNewStockItem()">
@@ -771,7 +877,7 @@
       </div>
 
       <div style="font-size: 12px; color: var(--subtext); margin-bottom: 14px;">
-        ⚡ Total restock cost will automatically be added to your Balance Sheet under Expenses.
+        ⚡ Restock cost will automatically link to your Balance Sheet.
       </div>
 
       <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="submitRestockItem()">
@@ -825,6 +931,12 @@
     let discountPercent = 0;
     let latestBillData = null;
     let stockStatusFilter = 'all';
+
+    // Calculator State
+    let calcCurrent = '0';
+    let calcPrevious = null;
+    let calcOp = null;
+    let calcResetOnNext = false;
 
     function showToast(msg, icon = '✨') {
       const toast = document.getElementById('app-toast');
@@ -894,9 +1006,158 @@
             <div style="font-weight: 600; font-size: 14px;">${item.category}</div>
             <div style="font-size: 12px; color: var(--subtext);">${item.description || 'No description'} • ${new Date(item.created_at).toLocaleDateString()}</div>
           </div>
-          <div style="font-weight: 700; color: var(--tint-red); font-size: 15px;">-₹${item.amount}</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-weight: 700; color: var(--tint-red); font-size: 15px;">-₹${item.amount}</span>
+            <button class="btn-trash" title="Delete Expense" onclick="deleteExpenseItem(${item.id})">🗑️</button>
+          </div>
         </div>
       `).join('');
+    }
+
+    async function deleteExpenseItem(id) {
+      if (!confirm("Are you sure? If this expense was linked to stock, that stock will also be reduced.")) return;
+      try {
+        const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          if (data.stockReverted > 0) {
+            showToast(`Expense removed & ${data.stockReverted} units reverted from stock`, '🔄');
+          } else {
+            showToast('Expense removed from Balance Sheet', '🗑️');
+          }
+          loadData();
+        }
+      } catch (err) {
+        showToast('Error removing expense', '❌');
+      }
+    }
+
+    // --- CALCULATOR ENGINE ---
+    function updateCalcScreen() {
+      const el = document.getElementById('calc-display');
+      let val = calcCurrent;
+      if (val.length > 9) val = parseFloat(val).toExponential(3);
+      el.innerText = val;
+    }
+
+    function calcNumber(num) {
+      if (calcResetOnNext) {
+        calcCurrent = num;
+        calcResetOnNext = false;
+      } else {
+        calcCurrent = (calcCurrent === '0') ? num : calcCurrent + num;
+      }
+      updateCalcScreen();
+    }
+
+    function calcDecimal() {
+      if (calcResetOnNext) {
+        calcCurrent = '0.';
+        calcResetOnNext = false;
+      } else if (!calcCurrent.includes('.')) {
+        calcCurrent += '.';
+      }
+      updateCalcScreen();
+    }
+
+    function calcClear() {
+      calcCurrent = '0';
+      calcPrevious = null;
+      calcOp = null;
+      calcResetOnNext = false;
+      updateCalcScreen();
+    }
+
+    function calcToggleSign() {
+      calcCurrent = (parseFloat(calcCurrent) * -1).toString();
+      updateCalcScreen();
+    }
+
+    function calcPercent() {
+      calcCurrent = (parseFloat(calcCurrent) / 100).toString();
+      updateCalcScreen();
+    }
+
+    function calcOperator(op) {
+      if (calcOp && !calcResetOnNext) calcEqual();
+      calcPrevious = parseFloat(calcCurrent);
+      calcOp = op;
+      calcResetOnNext = true;
+    }
+
+    function calcEqual() {
+      if (!calcOp || calcPrevious === null) return;
+      const current = parseFloat(calcCurrent);
+      let res = 0;
+      if (calcOp === '+') res = calcPrevious + current;
+      else if (calcOp === '-') res = calcPrevious - current;
+      else if (calcOp === '*') res = calcPrevious * current;
+      else if (calcOp === '/') res = current !== 0 ? calcPrevious / current : 0;
+
+      calcCurrent = (Math.round(res * 100) / 100).toString();
+      calcOp = null;
+      calcPrevious = null;
+      calcResetOnNext = true;
+      updateCalcScreen();
+    }
+
+    function openCalcBillingSheet() {
+      const amount = Math.round(parseFloat(calcCurrent));
+      if (isNaN(amount) || amount <= 0) {
+        return showToast('Calculate a valid amount greater than 0 first', '⚠️');
+      }
+      document.getElementById('calc-bill-amount-display').innerText = '₹' + amount;
+      document.getElementById('calc-cust-name').value = '';
+      document.getElementById('calc-cust-phone').value = '';
+      document.getElementById('calc-order-note').value = '';
+      document.getElementById('calc-bill-sheet').classList.add('active');
+    }
+
+    function closeCalcBillingSheet(e) {
+      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
+        document.getElementById('calc-bill-sheet').classList.remove('active');
+      }
+    }
+
+    async function confirmCalculatedBill() {
+      const amount = Math.round(parseFloat(calcCurrent));
+      const rawName = document.getElementById('calc-cust-name').value.trim();
+      const rawPhone = document.getElementById('calc-cust-phone').value.trim();
+      const rawNote = document.getElementById('calc-order-note').value.trim();
+
+      const custName = rawName ? rawName : 'Walk-in Counter';
+      const custPhone = rawPhone ? rawPhone : 'N/A';
+      const itemName = rawNote ? rawNote : 'Custom Counter Order';
+
+      const res = await fetch('/api/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: custName,
+          customer_phone: custPhone,
+          total_amount: amount,
+          is_direct_sale: 1,
+          items: [{ id: 0, name: itemName, quantity: 1, price: amount }]
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        closeCalcBillingSheet();
+        latestBillData = {
+          saleId: data.saleId,
+          date: new Date().toLocaleString('en-IN'),
+          customer: custName,
+          phone: custPhone,
+          items: [{ name: itemName, quantity: 1, price: amount }],
+          total: amount,
+          discount: 0
+        };
+
+        openGeneratedBill();
+        showToast(`Bill #${data.saleId} created for ${custName}!`, '🧾');
+        loadData();
+      }
     }
 
     // OMNIPOTENT GLOBAL AI DISPATCHER
@@ -923,7 +1184,6 @@
         respText.innerText = data.answer;
         input.value = '';
 
-        // If a bill was created, render the "View & Print Bill" button
         if (data.executedAction === 'bill_created' && data.billData) {
           latestBillData = data.billData;
           actionSlot.innerHTML = `
@@ -942,7 +1202,7 @@
           actionSlot.innerHTML = `
             <div style="display: flex; gap: 8px; margin-top: 4px;">
               <a href="tel:${data.customerPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
-              <a href="[https://wa.me/91$](https://wa.me/91$){data.customerPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
+              <a href="https://wa.me/91${data.customerPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
             </div>
           `;
         }
@@ -1214,8 +1474,8 @@
       const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n\n*Total Payable: ₹${latestBillData.total}*\n\nThank you for shopping with us!`;
 
       const url = cleanPhone.length >= 10 
-        ? `[https://wa.me/91$](https://wa.me/91$){cleanPhone}?text=${encodeURIComponent(msg)}`
-        : `[https://wa.me/?text=$](https://wa.me/?text=$){encodeURIComponent(msg)}`;
+        ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`
+        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
 
       window.open(url, '_blank');
     }
@@ -1276,7 +1536,7 @@
                 <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
                   ${hasPhone ? `
                     <a href="tel:${cleanPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
-                    <a href="[https://wa.me/91$](https://wa.me/91$){cleanPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
+                    <a href="https://wa.me/91${cleanPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
                   ` : ''}
                   <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete & Restock</button>
                 </div>
@@ -1301,11 +1561,19 @@
     function renderInventory() {
       const el = document.getElementById('inventory-list');
       const selectedMonth = document.getElementById('stock-month-filter')?.value || 'All';
+      const searchQuery = (document.getElementById('stock-search')?.value || '').toLowerCase().trim();
 
       let filtered = products;
 
       if (selectedMonth !== 'All') {
         filtered = filtered.filter(p => (p.month_tag || 'Sep 2026') === selectedMonth);
+      }
+
+      if (searchQuery) {
+        filtered = filtered.filter(p => 
+          p.name.toLowerCase().includes(searchQuery) || 
+          p.category.toLowerCase().includes(searchQuery)
+        );
       }
 
       if (stockStatusFilter === 'low') {
@@ -1315,7 +1583,7 @@
       }
 
       if (filtered.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No items match this filter.</div>';
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock found.</div>';
         return;
       }
 
@@ -1359,13 +1627,13 @@
     }
 
     async function deleteStockItem(id, name) {
-      if (!confirm(`Delete "${name}" from stock inventory completely?`)) return;
+      if (!confirm(`Delete "${name}" completely? This will also remove its wholesale expense from your ledger.`)) return;
 
       try {
         const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
-          showToast(`Deleted ${name} from stock`, '🗑️');
+          showToast(`Deleted ${name} & its ledger expense`, '🗑️');
           loadData();
         }
       } catch (err) {
