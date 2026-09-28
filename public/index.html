@@ -71,11 +71,34 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    .toast-capsule {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 20px) + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-150%);
+      background: var(--text);
+      color: var(--bg);
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
+      opacity: 0;
+      pointer-events: none;
+      max-width: 90%;
+    }
+    .toast-capsule.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
       padding: 0 4px;
     }
 
@@ -135,51 +158,51 @@
       50% { opacity: 0.5; transform: scale(0.85); }
     }
 
-    .view-tab { display: none; }
-    .view-tab.active { display: block; animation: fadeIn 0.25s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-    .intelligence-card {
-      position: relative;
+    /* Omnipotent Global AI Command Card */
+    .global-copilot-card {
       background: var(--card-bg);
-      border-radius: 24px;
-      padding: 18px 20px;
-      margin-bottom: 20px;
+      border-radius: 22px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
       backdrop-filter: blur(35px);
       -webkit-backdrop-filter: blur(35px);
       border: 1px solid var(--intel-border);
       box-shadow: var(--card-shadow);
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .intelligence-card::before {
-      content: "";
-      position: absolute;
-      top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle at center, rgba(175, 82, 222, 0.15), rgba(0, 113, 227, 0.1), transparent 70%);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    .intelligence-header {
+    .copilot-input-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
+      gap: 8px;
     }
 
-    .intelligence-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      background: linear-gradient(135deg, #ff2d55, #af52de, #0071e3);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .copilot-input-row input {
+      border: none;
+      background: transparent;
+      padding: 8px;
+      width: 100%;
+      color: var(--text);
+      font-size: 14.5px;
+      outline: none;
     }
+
+    .copilot-response-box {
+      display: none;
+      background: var(--pill-bg);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .copilot-response-box.show { display: block; }
+
+    .view-tab { display: none; }
+    .view-tab.active { display: block; animation: fadeIn 0.25s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
     .card {
       background: var(--card-bg);
@@ -280,10 +303,7 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .cat-pill.active {
-      background: var(--text);
-      color: var(--bg);
-    }
+    .cat-pill.active { background: var(--text); color: var(--bg); }
 
     .stepper {
       display: inline-flex;
@@ -311,19 +331,9 @@
     }
     .step-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .step-qty {
-      font-weight: 700;
-      font-size: 14px;
-      min-width: 24px;
-      text-align: center;
-    }
+    .step-qty { font-weight: 700; font-size: 14px; min-width: 24px; text-align: center; }
 
-    .coupon-row {
-      display: flex;
-      gap: 8px;
-      margin: 12px 0;
-    }
-
+    .coupon-row { display: flex; gap: 8px; margin: 12px 0; }
     .coupon-pill {
       flex: 1;
       border: 1px solid var(--card-border);
@@ -337,7 +347,6 @@
       font-weight: 600;
       color: var(--subtext);
     }
-
     .coupon-pill.active {
       border-color: var(--tint-blue);
       background: rgba(0, 113, 227, 0.12);
@@ -377,7 +386,6 @@
       align-items: center;
       gap: 3px;
     }
-    .btn-pill-action:active { background: rgba(0, 113, 227, 0.15); }
 
     .btn-trash {
       background: transparent;
@@ -428,7 +436,7 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
 
-    /* Apple-Style Bottom Sheet Modals */
+    /* iOS Bottom Sheets */
     .sheet-overlay {
       position: fixed;
       inset: 0;
@@ -443,10 +451,7 @@
       align-items: flex-end;
       justify-content: center;
     }
-    .sheet-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
+    .sheet-overlay.active { opacity: 1; visibility: visible; }
 
     .sheet-content {
       background: var(--modal-bg);
@@ -460,9 +465,7 @@
       transform: translateY(100%);
       transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .sheet-overlay.active .sheet-content {
-      transform: translateY(0);
-    }
+    .sheet-overlay.active .sheet-content { transform: translateY(0); }
 
     .sheet-handle {
       width: 36px;
@@ -504,6 +507,12 @@
 </head>
 <body>
 
+  <!-- Dynamic Notification Pill -->
+  <div class="toast-capsule" id="app-toast">
+    <span id="toast-icon">✨</span>
+    <span id="toast-msg">Stock added & Expense Ledger updated</span>
+  </div>
+
   <header>
     <div class="brand-wrap">
       <img src="/logo.png" alt="Aquapet Logo" class="brand-logo">
@@ -518,17 +527,21 @@
     </div>
   </header>
 
+  <!-- OMNIPOTENT GLOBAL AI COMMAND COPILOT -->
+  <section class="global-copilot-card">
+    <div class="copilot-input-row">
+      <span style="font-size: 14px; opacity: 0.8;">✦</span>
+      <input type="text" id="global-ai-input" placeholder="Bill items, ask customer spend, stock, or loss..." onkeydown="if(event.key==='Enter') dispatchGlobalAI()">
+      <button class="btn btn-sm" onclick="dispatchGlobalAI()">Send</button>
+    </div>
+    <div class="copilot-response-box" id="copilot-response-box">
+      <div id="copilot-response-text" style="font-weight: 500;"></div>
+      <div id="copilot-action-slot" style="margin-top: 8px;"></div>
+    </div>
+  </section>
+
   <!-- TAB 1: POS BILLING (MAIN SCREEN) -->
   <section id="view-pos" class="view-tab active">
-    <div class="intelligence-card">
-      <div class="intelligence-header">
-        <span class="intelligence-badge">✦ Store Intelligence</span>
-      </div>
-      <div id="homepage-intel-text" style="font-size: 14.5px; line-height: 1.45; font-weight: 500;">
-        Auditing live inventory and store balance sheet...
-      </div>
-    </div>
-
     <div class="card">
       <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
       
@@ -579,20 +592,6 @@
 
   <!-- TAB 2: BALANCE SHEET -->
   <section id="view-balancesheet" class="view-tab">
-    <div class="intelligence-card">
-      <div class="intelligence-header">
-        <span class="intelligence-badge">✦ Aquapet AI Advisor (Llama 3)</span>
-        <span style="font-size: 11px; color: var(--subtext); font-weight: 600;">20 Queries / Hour</span>
-      </div>
-      <div id="ai-chat-response" style="font-size: 14px; margin-bottom: 12px; line-height: 1.4;">
-        Ask me anything about your finances or inventory.
-      </div>
-      <div style="display: flex; gap: 8px;">
-        <input type="text" id="ai-chat-input" class="app-input" placeholder="Ask store AI..." style="padding: 10px 14px; font-size: 14px;">
-        <button class="btn btn-sm" onclick="askStoreAI()">Ask</button>
-      </div>
-    </div>
-
     <div class="stats-grid">
       <div class="stat-box">
         <div class="title">Today's Sales</div>
@@ -693,7 +692,7 @@
     </nav>
   </div>
 
-  <!-- iOS-STYLE BOTTOM SHEET MODAL: ADD NEW STOCK ITEM -->
+  <!-- iOS BOTTOM SHEET: ADD NEW STOCK ITEM -->
   <div class="sheet-overlay" id="add-stock-sheet" onclick="closeAddStockSheet(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="sheet-handle"></div>
@@ -750,7 +749,7 @@
     </div>
   </div>
 
-  <!-- iOS-STYLE BOTTOM SHEET MODAL: REPLENISH STOCK -->
+  <!-- iOS BOTTOM SHEET: REPLENISH STOCK -->
   <div class="sheet-overlay" id="restock-sheet" onclick="closeRestockSheet(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="sheet-handle"></div>
@@ -827,6 +826,14 @@
     let latestBillData = null;
     let stockStatusFilter = 'all';
 
+    function showToast(msg, icon = '✨') {
+      const toast = document.getElementById('app-toast');
+      document.getElementById('toast-msg').innerText = msg;
+      document.getElementById('toast-icon').innerText = icon;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
     function setGreeting() {
       const hr = new Date().getHours();
       const el = document.getElementById('greeting-time');
@@ -844,8 +851,6 @@
         products = await prodRes.json();
         const sum = await sumRes.json();
 
-        updateHomepageIntelligence(sum);
-
         document.getElementById('metric-today').innerText = '₹' + sum.todaySales;
         document.getElementById('metric-sales').innerText = '₹' + sum.totalSales;
         document.getElementById('metric-expenses').innerText = '₹' + sum.totalExpenses;
@@ -860,27 +865,6 @@
         loadCustomerSales();
       } catch (err) {
         console.warn("Connecting...", err);
-      }
-    }
-
-    function updateHomepageIntelligence(sum) {
-      const intel = document.getElementById('homepage-intel-text');
-      const totalItems = products.length;
-      if (totalItems === 0) {
-        intel.innerText = "No inventory recorded. Add stock items to begin audit.";
-        return;
-      }
-
-      const lowStockItems = products.filter(p => p.quantity <= 2 && p.quantity > 0);
-      const outOfStockItems = products.filter(p => p.quantity <= 0);
-      const healthPct = Math.max(10, Math.round(((totalItems - outOfStockItems.length) / totalItems) * 100));
-
-      if (outOfStockItems.length > 0) {
-        intel.innerHTML = `<strong>${outOfStockItems.length} items depleted</strong> (including ${outOfStockItems[0].name}). Catalog health is at <strong>${healthPct}%</strong>. Supplier reorder advised.`;
-      } else if (lowStockItems.length > 0) {
-        intel.innerHTML = `Overall catalog is healthy at <strong>${healthPct}%</strong>. <strong>${lowStockItems.length} items getting empty soon</strong>. Today's revenue: <strong>₹${sum.todaySales}</strong>.`;
-      } else {
-        intel.innerHTML = `All inventory and fish tanks are operating at <strong>${healthPct}% peak capacity</strong>. Net balance profit: <strong>₹${sum.netProfit}</strong>.`;
       }
     }
 
@@ -915,13 +899,19 @@
       `).join('');
     }
 
-    async function askStoreAI() {
-      const input = document.getElementById('ai-chat-input');
+    // OMNIPOTENT GLOBAL AI DISPATCHER
+    async function dispatchGlobalAI() {
+      const input = document.getElementById('global-ai-input');
       const question = input.value.trim();
       if (!question) return;
 
-      const respBox = document.getElementById('ai-chat-response');
-      respBox.innerHTML = '<span style="color: var(--tint-blue);">Aquapet AI is calculating metrics...</span>';
+      const respCard = document.getElementById('copilot-response-box');
+      const respText = document.getElementById('copilot-response-text');
+      const actionSlot = document.getElementById('copilot-action-slot');
+
+      respCard.classList.add('show');
+      respText.innerHTML = '<span style="color: var(--tint-blue);">✦ Aquapet AI is analyzing & executing...</span>';
+      actionSlot.innerHTML = '';
 
       try {
         const res = await fetch('/api/chat', {
@@ -930,11 +920,59 @@
           body: JSON.stringify({ question })
         });
         const data = await res.json();
-        respBox.innerText = data.answer;
+        respText.innerText = data.answer;
         input.value = '';
+
+        // If a bill was created, render the "View & Print Bill" button
+        if (data.executedAction === 'bill_created' && data.billData) {
+          latestBillData = data.billData;
+          actionSlot.innerHTML = `
+            <button class="btn btn-sm btn-green" onclick="openGeneratedBill()">
+              📄 View & Print Bill
+            </button>
+          `;
+          showToast(`Bill #${data.billData.saleId} generated!`, '🧾');
+          loadData();
+        } 
+        else if (data.executedAction === 'stock_updated') {
+          showToast('Inventory & ledger updated', '📦');
+          loadData();
+        }
+        else if (data.executedAction === 'customer_found' && data.customerPhone) {
+          actionSlot.innerHTML = `
+            <div style="display: flex; gap: 8px; margin-top: 4px;">
+              <a href="tel:${data.customerPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
+              <a href="[https://wa.me/91$](https://wa.me/91$){data.customerPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
+            </div>
+          `;
+        }
+
       } catch (e) {
-        respBox.innerText = "Error contacting AI. Check network connection.";
+        respText.innerText = "Error communicating with AI copilot.";
       }
+    }
+
+    function openGeneratedBill() {
+      if (!latestBillData) return;
+      document.getElementById('modal-date').innerText = latestBillData.date;
+      document.getElementById('modal-cust').innerText = latestBillData.customer;
+      document.getElementById('modal-phone').innerText = latestBillData.phone;
+      document.getElementById('modal-total').innerText = '₹' + latestBillData.total;
+      document.getElementById('modal-items').innerHTML = latestBillData.items.map(i => `
+        <div style="display:flex; justify-content:space-between; margin:2px 0;">
+          <span>${i.name} x${i.quantity}</span>
+          <span>₹${i.price * i.quantity}</span>
+        </div>
+      `).join('');
+
+      if (latestBillData.discount > 0) {
+        document.getElementById('modal-discount-row').style.display = 'flex';
+        document.getElementById('modal-discount-val').innerText = '-₹' + latestBillData.discount;
+      } else {
+        document.getElementById('modal-discount-row').style.display = 'none';
+      }
+
+      document.getElementById('receipt-modal').classList.add('show');
     }
 
     function renderPOSPicker() {
@@ -991,7 +1029,7 @@
       const next = current + delta;
 
       if (delta > 0 && next > p.quantity) {
-        alert(`Only ${p.quantity} units available in stock.`);
+        showToast(`Only ${p.quantity} units available in stock`, '⚠️');
         return;
       }
 
@@ -1061,7 +1099,7 @@
     function checkoutAndPrint() {
       const finalTotal = updateTotal();
       if (finalTotal <= 0 && Object.keys(cart).length === 0) {
-        alert('Please add at least one item to the bill.');
+        showToast('Please add at least one item to bill', '⚠️');
         return;
       }
 
@@ -1088,25 +1126,7 @@
         discount: discountDiff
       };
 
-      document.getElementById('modal-date').innerText = dateStr;
-      document.getElementById('modal-cust').innerText = custName;
-      document.getElementById('modal-phone').innerText = custPhone;
-      document.getElementById('modal-total').innerText = '₹' + finalTotal;
-      document.getElementById('modal-items').innerHTML = items.map(i => `
-        <div style="display:flex; justify-content:space-between; margin:2px 0;">
-          <span>${i.name} x${i.quantity}</span>
-          <span>₹${i.price * i.quantity}</span>
-        </div>
-      `).join('');
-
-      if (discountDiff > 0) {
-        document.getElementById('modal-discount-row').style.display = 'flex';
-        document.getElementById('modal-discount-val').innerText = '-₹' + discountDiff;
-      } else {
-        document.getElementById('modal-discount-row').style.display = 'none';
-      }
-
-      document.getElementById('receipt-modal').classList.add('show');
+      openGeneratedBill();
 
       fetch('/api/sales', {
         method: 'POST',
@@ -1194,8 +1214,8 @@
       const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n\n*Total Payable: ₹${latestBillData.total}*\n\nThank you for shopping with us!`;
 
       const url = cleanPhone.length >= 10 
-        ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`
-        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        ? `[https://wa.me/91$](https://wa.me/91$){cleanPhone}?text=${encodeURIComponent(msg)}`
+        : `[https://wa.me/?text=$](https://wa.me/?text=$){encodeURIComponent(msg)}`;
 
       window.open(url, '_blank');
     }
@@ -1206,7 +1226,7 @@
       const text = `AQUAPET\nPET SHOP & CARE\n--------------------------------\nDate: ${latestBillData.date}\nCust: ${latestBillData.customer}\nPhone: ${latestBillData.phone}\n--------------------------------\n${itemsText}\n--------------------------------\nTOTAL: ₹${latestBillData.total}\n--------------------------------\nThank you! Visit again.`;
       
       navigator.clipboard.writeText(text).then(() => {
-        alert('Receipt text copied! Ready to paste into your Bluetooth companion app.');
+        showToast('Receipt copied! Ready for Bluetooth App', '📋');
       });
     }
 
@@ -1220,18 +1240,14 @@
       }
 
       try {
-        const res = await fetch(`/api/sales?id=${saleId}`, {
-          method: 'DELETE'
-        });
+        const res = await fetch(`/api/sales?id=${saleId}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
-          alert(`Bill #${saleId} deleted successfully and stock has been restored.`);
+          showToast(`Bill #${saleId} deleted & stock restored`, '🔄');
           loadData();
-        } else {
-          alert('Failed to delete bill.');
         }
       } catch (err) {
-        alert('Error connecting to server.');
+        showToast('Error connecting to server', '❌');
       }
     }
 
@@ -1260,7 +1276,7 @@
                 <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
                   ${hasPhone ? `
                     <a href="tel:${cleanPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
-                    <a href="https://wa.me/91${cleanPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
+                    <a href="[https://wa.me/91$](https://wa.me/91$){cleanPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
                   ` : ''}
                   <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete & Restock</button>
                 </div>
@@ -1346,17 +1362,14 @@
       if (!confirm(`Delete "${name}" from stock inventory completely?`)) return;
 
       try {
-        const res = await fetch(`/api/products?id=${id}`, {
-          method: 'DELETE'
-        });
+        const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
+          showToast(`Deleted ${name} from stock`, '🗑️');
           loadData();
-        } else {
-          alert('Failed to delete product.');
         }
       } catch (err) {
-        alert('Error connecting to server.');
+        showToast('Error connecting to server', '❌');
       }
     }
 
@@ -1374,7 +1387,7 @@
     function openRestockSheet(id, name, cost, currentQty) {
       document.getElementById('restock-item-id').value = id;
       document.getElementById('restock-item-name').innerText = name;
-      document.getElementById('restock-item-info').innerText = `Wholesale Cost: ₹${cost} | Currently ${currentQty} in stock`;
+      document.getElementById('restock-item-info').innerText = `Cost: ₹${cost} | Currently ${currentQty} in stock`;
       document.getElementById('restock-item-qty').value = '';
       document.getElementById('restock-sheet').classList.add('active');
       setTimeout(() => document.getElementById('restock-item-qty').focus(), 150);
@@ -1391,7 +1404,7 @@
       const addQty = parseInt(document.getElementById('restock-item-qty').value, 10);
 
       if (!id || isNaN(addQty) || addQty <= 0) {
-        return alert('Please enter a valid quantity to replenish.');
+        return showToast('Please enter a valid quantity', '⚠️');
       }
 
       const res = await fetch('/api/products', {
@@ -1402,9 +1415,10 @@
 
       if (res.ok) {
         closeRestockSheet();
+        showToast('Added! Expense ledger updated.', '📦');
         loadData();
       } else {
-        alert('Failed to update stock.');
+        showToast('Failed to update stock', '❌');
       }
     }
 
@@ -1416,8 +1430,8 @@
       const price = parseFloat(document.getElementById('new-item-price').value) || 0;
       const qty = parseInt(document.getElementById('new-item-qty').value, 10);
 
-      if (!name) return alert('Please enter product name.');
-      if (isNaN(qty) || qty <= 0) return alert('Please enter valid quantity.');
+      if (!name) return showToast('Please enter product name', '⚠️');
+      if (isNaN(qty) || qty <= 0) return showToast('Please enter valid quantity', '⚠️');
 
       const res = await fetch('/api/products', {
         method: 'POST',
@@ -1439,9 +1453,10 @@
         document.getElementById('new-item-price').value = '';
         document.getElementById('new-item-qty').value = '';
         closeAddStockSheet();
+        showToast('Added! Expense ledger updated.', '📦');
         loadData();
       } else {
-        alert('Failed to save product.');
+        showToast('Failed to save product', '❌');
       }
     }
 
@@ -1449,7 +1464,7 @@
       const category = document.getElementById('exp-category').value;
       const amount = document.getElementById('exp-amount').value;
       const description = document.getElementById('exp-desc').value;
-      if (!amount) return;
+      if (!amount) return showToast('Enter amount', '⚠️');
 
       await fetch('/api/expenses', {
         method: 'POST',
@@ -1458,7 +1473,7 @@
       });
       document.getElementById('exp-amount').value = '';
       document.getElementById('exp-desc').value = '';
-      alert('Expense recorded into Balance Sheet.');
+      showToast('Expense recorded into Balance Sheet', '💸');
       loadData();
     }
 
