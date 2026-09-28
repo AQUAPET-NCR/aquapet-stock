@@ -434,7 +434,6 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
 
-    /* Calculator */
     .calc-container { max-width: 340px; margin: 0 auto; }
     .calc-screen {
       text-align: right;
@@ -475,7 +474,6 @@
       padding-left: 28px;
     }
 
-    /* iOS Bottom Sheets */
     .sheet-overlay {
       position: fixed;
       inset: 0;
@@ -1601,8 +1599,8 @@
               <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">
                 Cost: ₹${p.purchase_price || 0} | Sell: ₹${p.price}
               </div>
-              <div style="font-size: 11px; color: var(--subtext); margin-top: 2px;">
-                Bought: <strong>${initial}</strong> | Sold: <strong style="color: var(--tint-blue);">${sold}</strong>
+              <div style="font-size: 11px; color: var(--text); margin-top: 2px; font-weight: 700;">
+                Bought: ${initial} | Sold: <span style="color: var(--tint-blue);">${sold}</span>
               </div>
               <div style="margin-top: 6px;">
                 <button class="btn-pill-action" onclick="openRestockSheet(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.purchase_price || 0}, ${p.quantity})">
