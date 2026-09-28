@@ -26,3 +26,16 @@ export async function onRequestPost(context) {
 
   return Response.json({ success: true, id: res.meta.last_row_id });
 }
+
+export async function onRequestDelete(context) {
+  const db = context.env.DB;
+  const url = new URL(context.request.url);
+  const id = url.searchParams.get("id");
+
+  if (!id) {
+    return Response.json({ error: "Missing product ID" }, { status: 400 });
+  }
+
+  await db.prepare("DELETE FROM products WHERE id = ?").bind(id).run();
+  return Response.json({ success: true, deletedId: id });
+}
