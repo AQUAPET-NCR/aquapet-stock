@@ -6,21 +6,33 @@
   <title>Aquapet</title>
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
   <link rel="icon" type="image/png" href="/logo.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     :root {
-      --bg: #000000;
-      --card-bg: #1c1c1e;
-      --card-border: rgba(255, 255, 255, 0.12);
-      --text: #f5f5f7;
-      --subtext: #8e8e93;
-      --tint-blue: #2997ff;
-      --tint-green: #30d158;
-      --tint-orange: #ff9f0a;
-      --tint-red: #ff453a;
-      --pill-bg: #2c2c2e;
+      --bg: #f2f2f7;
+      --card-bg: #ffffff;
+      --card-border: rgba(0, 0, 0, 0.08);
+      --text: #1d1d1f;
+      --subtext: #86868b;
+      --tint-blue: #0071e3;
+      --tint-green: #34c759;
+      --tint-orange: #ff9500;
+      --tint-red: #ff3b30;
+      --pill-bg: rgba(118, 118, 128, 0.12);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --card-bg: #1c1c1e;
+        --card-border: rgba(255, 255, 255, 0.12);
+        --text: #f5f5f7;
+        --subtext: #8e8e93;
+        --pill-bg: #2c2c2e;
+      }
     }
 
     * {
@@ -28,7 +40,7 @@
       -webkit-tap-highlight-color: transparent;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     }
 
     body {
@@ -41,368 +53,161 @@
       padding-right: 16px;
       max-width: 650px;
       margin: 0 auto;
-      position: relative;
     }
 
-    /* Top Capsule Notification */
+    /* Core UI Elements */
     .toast-capsule {
       position: fixed;
       top: calc(env(safe-area-inset-top, 20px) + 10px);
       left: 50%;
       transform: translateX(-50%) translateY(-150%);
-      background: #ffffff;
-      color: #000000;
-      padding: 10px 18px;
-      border-radius: 25px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      background: var(--text);
+      color: var(--bg);
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       z-index: 9999;
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 13px;
+      gap: 10px;
+      font-size: 13.5px;
       font-weight: 600;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      transition: transform 0.4s ease, opacity 0.4s ease;
       opacity: 0;
       pointer-events: none;
     }
-    .toast-capsule.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
+    .toast-capsule.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .brand-wrap { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { width: 42px; height: 42px; border-radius: 10px; background: #fff; }
+    .greeting-sub { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--subtext); }
+    .greeting-title { font-size: 26px; font-weight: 700; margin-top: 2px; }
+    .status-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--pill-bg); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+    .dot-online { width: 8px; height: 8px; background-color: var(--tint-green); border-radius: 50%; }
 
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      object-fit: cover;
-      background: #fff;
-    }
-
-    .greeting-sub {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--subtext);
-    }
-
-    .greeting-title {
-      font-size: 26px;
-      font-weight: 700;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--pill-bg);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .dot-online {
-      width: 8px;
-      height: 8px;
-      background-color: var(--tint-green);
-      border-radius: 50%;
-    }
-
-    /* Copilot Card */
-    .copilot-card {
-      background: var(--card-bg);
-      border: 1px solid rgba(175, 82, 222, 0.4);
-      border-radius: 20px;
-      padding: 12px 14px;
-      margin-bottom: 16px;
-    }
-
-    .copilot-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .copilot-row input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .copilot-box {
-      display: none;
-      background: var(--pill-bg);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-top: 10px;
-      font-size: 13px;
-      line-height: 1.4;
-    }
+    .copilot-card { background: var(--card-bg); border: 1px solid rgba(41, 151, 255, 0.4); border-radius: 20px; padding: 12px 14px; margin-bottom: 16px; }
+    .copilot-row { display: flex; gap: 8px; align-items: center; }
+    .copilot-row input { flex: 1; background: transparent; border: none; color: var(--text); font-size: 14px; outline: none; }
+    .copilot-box { display: none; background: var(--pill-bg); border-radius: 12px; padding: 10px 12px; margin-top: 10px; font-size: 13px; line-height: 1.4; }
     .copilot-box.show { display: block; }
 
-    /* Card styling */
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .app-input {
-      background: var(--pill-bg);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 12px 14px;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-      width: 100%;
-    }
-
-    .btn {
-      background: var(--tint-blue);
-      color: #fff;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 14px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px; margin-bottom: 16px; }
+    .app-input { background: var(--pill-bg); border: none; padding: 12px 14px; border-radius: 12px; color: var(--text); font-size: 14px; outline: none; width: 100%; }
+    
+    .btn { background: var(--tint-blue); color: #fff; border: none; padding: 12px 18px; border-radius: 14px; font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
     .btn:active { opacity: 0.75; }
     .btn-green { background: var(--tint-green); }
     .btn-red { background: var(--tint-red); }
     .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
 
-    .category-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      margin: 10px 0;
-      scrollbar-width: none;
-    }
+    .category-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin: 10px 0; scrollbar-width: none; }
     .category-scroll::-webkit-scrollbar { display: none; }
+    .cat-pill { background: var(--pill-bg); border: none; padding: 7px 13px; border-radius: 16px; font-size: 13px; font-weight: 600; color: var(--subtext); white-space: nowrap; cursor: pointer; }
+    .cat-pill.active { background: var(--text); color: var(--bg); }
 
-    .cat-pill {
-      background: var(--pill-bg);
-      border: none;
-      padding: 7px 13px;
-      border-radius: 16px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--subtext);
-      white-space: nowrap;
-      cursor: pointer;
-    }
-    .cat-pill.active {
-      background: #ffffff;
-      color: #000000;
-    }
-
-    .pos-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
+    .pos-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--card-border); }
     .pos-item:last-child { border-bottom: none; }
+    
+    .stepper { display: inline-flex; align-items: center; background: var(--pill-bg); border-radius: 10px; padding: 2px; gap: 4px; }
+    .step-btn { background: var(--card-bg); border: none; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text); cursor: pointer; }
+    .step-qty { font-weight: 700; font-size: 13px; min-width: 22px; text-align: center; }
 
-    .stepper {
-      display: inline-flex;
-      align-items: center;
-      background: var(--pill-bg);
-      border-radius: 10px;
-      padding: 2px;
-      gap: 4px;
-    }
-
-    .step-btn {
-      background: #3a3a3c;
-      border: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .step-qty {
-      font-weight: 700;
-      font-size: 13px;
-      min-width: 22px;
-      text-align: center;
-    }
-
-    .bill-price-card {
-      background: var(--pill-bg);
-      border-radius: 16px;
-      padding: 14px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 14px 0;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .stat-box {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 14px;
-    }
+    .bill-price-card { background: var(--pill-bg); border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; margin: 14px 0; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .stat-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 14px; }
     .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; }
     .stat-box .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
 
     /* Calculator Styles */
     .calc-container { max-width: 330px; margin: 0 auto; }
-    .calc-screen {
-      text-align: right;
-      font-size: 44px;
-      font-weight: 300;
-      padding: 10px 4px;
-      min-height: 70px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-end;
-    }
+    .calc-screen { text-align: right; font-size: 44px; font-weight: 300; padding: 10px 4px; min-height: 70px; display: flex; align-items: flex-end; justify-content: flex-end; }
     .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .calc-btn {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .calc-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; border: none; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .calc-btn:active { opacity: 0.6; }
-    .calc-btn-gray { background: #505050; color: #fff; }
-    .calc-btn-dark { background: #333333; color: #fff; font-weight: 600; }
+    .calc-btn-gray { background: rgba(120,120,128,0.25); color: var(--text); }
+    .calc-btn-dark { background: rgba(120,120,128,0.15); color: var(--text); font-weight: 600; }
     .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 600; }
-    .calc-btn-zero {
-      grid-column: span 2;
-      aspect-ratio: auto;
-      border-radius: 35px;
-      justify-content: flex-start;
-      padding-left: 26px;
-    }
+    .calc-btn-zero { grid-column: span 2; aspect-ratio: auto; border-radius: 35px; justify-content: flex-start; padding-left: 26px; }
 
-    /* Fixed Navigation Dock */
-    .dock-wrap {
-      position: fixed;
-      bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      z-index: 50;
-      pointer-events: none; /* Crucial: allows clicks above and beside the bar */
-    }
-    .dock {
-      pointer-events: auto; /* Re-enables clicks only on the dock buttons */
-      background: #1c1c1e;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 32px;
-      padding: 5px;
-      display: flex;
-      gap: 4px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    }
-    .dock button {
-      background: transparent;
-      border: none;
-      padding: 9px 13px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--subtext);
-      border-radius: 24px;
-      cursor: pointer;
-    }
-    .dock button.active {
-      background: #ffffff;
-      color: #000000;
-    }
-
-    /* Tabs */
-    .view-tab { display: none; }
-    .view-tab.active { display: block; }
-
-    /* Modals with zero click blocking when closed */
+    /* Unified Strict Modals */
     .modal-overlay {
       position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
       z-index: 1000;
-      display: none;
+      display: none; /* Safest way to prevent invisible blocking */
       align-items: flex-end;
       justify-content: center;
     }
-    .modal-overlay.active {
-      display: flex;
-    }
-
+    .modal-overlay.active { display: flex; }
     .modal-sheet {
-      background: #1c1c1e;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 24px 24px 0 0;
-      padding: 20px 18px calc(env(safe-area-inset-bottom, 20px) + 20px);
+      padding: 20px 20px calc(env(safe-area-inset-bottom, 20px) + 20px);
       width: 100%;
       max-width: 600px;
       max-height: 85vh;
       overflow-y: auto;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-    .batch-header-card {
-      background: rgba(41, 151, 255, 0.08);
-      border: 1px solid rgba(41, 151, 255, 0.2);
-      border-radius: 14px;
-      padding: 10px 12px;
-      margin: 12px 0 6px;
-      display: flex;
-      justify-content: space-between;
+    /* Receipt Specific Overlay */
+    .receipt-modal-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
       align-items: center;
+      padding: 16px;
     }
+    .receipt-modal-bg.active { display: flex; }
+    .receipt-paper { background: #ffffff; color: #000000; width: 100%; max-width: 320px; border-radius: 18px; padding: 18px; font-family: monospace; font-size: 12px; line-height: 1.4; }
 
+    /* Dock */
+    .dock-wrap {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 50;
+      pointer-events: none;
+    }
+    .dock {
+      pointer-events: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      padding: 5px;
+      display: flex;
+      gap: 4px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .dock button { background: transparent; border: none; padding: 9px 13px; font-size: 12.5px; font-weight: 600; color: var(--subtext); border-radius: 24px; cursor: pointer; }
+    .dock button.active { background: var(--text); color: var(--bg); }
+
+    .view-tab { display: none; }
+    .view-tab.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .btn-pill-action { background: var(--pill-bg); border: none; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--tint-blue); cursor: pointer; }
+    .btn-trash { background: transparent; border: none; color: var(--subtext); padding: 6px; cursor: pointer; font-size: 15px; border-radius: 8px; }
+    .batch-header-card { background: rgba(41, 151, 255, 0.08); border-radius: 12px; padding: 10px 12px; margin: 12px 0 6px; display: flex; justify-content: space-between; align-items: center; }
     #print-iframe { display: none; width: 0; height: 0; }
   </style>
 </head>
 <body>
 
-  <!-- Dynamic Toast -->
   <div class="toast-capsule" id="app-toast">
     <span id="toast-icon">✨</span>
     <span id="toast-msg">Success</span>
@@ -426,27 +231,24 @@
   <section class="copilot-card">
     <div class="copilot-row">
       <span style="font-size: 14px; color: var(--tint-blue);">✦</span>
-      <input type="text" id="global-ai-input" placeholder="Ask AI: bill items, stock, or customer info..." onkeydown="if(event.key==='Enter') runGlobalAI()">
+      <input type="text" id="global-ai-input" placeholder="Ask AI: bill items, stock, or ledger..." onkeydown="if(event.key==='Enter') runGlobalAI()">
       <button class="btn btn-sm" onclick="runGlobalAI()">Send</button>
     </div>
     <div class="copilot-box" id="copilot-box">
-      <div id="copilot-text"></div>
+      <div id="copilot-text" style="font-weight: 500;"></div>
       <div id="copilot-actions" style="margin-top: 8px;"></div>
     </div>
   </section>
 
-  <!-- TAB 1: BILLING -->
+  <!-- TAB 1: POS BILLING -->
   <section id="view-pos" class="view-tab active">
     <div class="card">
       <h3 style="font-size: 18px; margin-bottom: 12px;">Create Customer Bill</h3>
-      
       <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-        <input type="text" id="cust-name" class="app-input" placeholder="Customer Name (e.g. Rahul Sharma)">
-        <input type="tel" id="cust-phone" class="app-input" placeholder="Phone Number (e.g. 9876543210)">
+        <input type="text" id="cust-name" class="app-input" placeholder="Customer Name (Optional)">
+        <input type="tel" id="cust-phone" class="app-input" placeholder="Phone Number (Optional)">
       </div>
-
-      <input type="text" id="pos-search" class="app-input" placeholder="🔍 Search fish, Sobo filter, heater, wave maker..." oninput="renderPOSPicker()">
-
+      <input type="text" id="pos-search" class="app-input" placeholder="🔍 Search inventory..." oninput="renderPOSPicker()">
       <div class="category-scroll" id="cat-filters">
         <button class="cat-pill active" onclick="filterPOS('All', this)">All</button>
         <button class="cat-pill" onclick="filterPOS('Fish', this)">Fishes</button>
@@ -457,29 +259,21 @@
         <button class="cat-pill" onclick="filterPOS('Fish Food', this)">Fish Food</button>
         <button class="cat-pill" onclick="filterPOS('Medicine', this)">Medicines</button>
       </div>
-
       <div id="pos-product-picker" style="max-height: 250px; overflow-y: auto; margin-bottom: 10px;"></div>
-
       <div style="font-size: 12px; font-weight: 700; color: var(--subtext); text-transform: uppercase; margin-top: 6px;">Discount:</div>
       <div style="display: flex; gap: 8px; margin: 8px 0 12px;">
         <button class="cat-pill active" style="flex:1;" onclick="applyCoupon(0, this)">None</button>
         <button class="cat-pill" style="flex:1;" onclick="applyCoupon(10, this)">10% OFF</button>
         <button class="cat-pill" style="flex:1;" onclick="applyCoupon(15, this)">15% OFF</button>
       </div>
-
       <div class="bill-price-card">
         <div>
-          <div style="font-size: 11px; font-weight: 600; color: var(--subtext); text-transform: uppercase;">
-            Total <span id="discount-note" style="color: var(--tint-blue);"></span>
-          </div>
+          <div style="font-size: 11px; font-weight: 600; color: var(--subtext); text-transform: uppercase;">Total <span id="discount-note" style="color: var(--tint-blue);"></span></div>
           <div style="font-size: 26px; font-weight: 700; color: var(--tint-green);" id="display-bill-total">₹0</div>
         </div>
-        <button class="btn btn-sm" style="background: #333;" onclick="editBillPrice()">✏️ Edit Price</button>
+        <button class="btn btn-sm" style="background: var(--pill-bg); color: var(--text);" onclick="editBillPrice()">✏️ Edit Price</button>
       </div>
-
-      <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="checkoutAndPrint()">
-        Print the Bill
-      </button>
+      <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="checkoutAndPrint()">Print the Bill</button>
     </div>
   </section>
 
@@ -512,10 +306,7 @@
         <button class="calc-btn calc-btn-dark" onclick="calcDecimal()">.</button>
         <button class="calc-btn calc-btn-orange" onclick="calcEqual()">=</button>
       </div>
-
-      <button class="btn btn-green" style="width: 100%; margin-top: 16px; padding: 14px; font-size: 15px;" onclick="openCalcSheet()">
-        🧾 Bill This Total (Print Receipt)
-      </button>
+      <button class="btn btn-green" style="width: 100%; margin-top: 16px; padding: 14px; font-size: 15px;" onclick="openCalcBillingSheet()">🧾 Bill This Total</button>
     </div>
   </section>
 
@@ -539,22 +330,33 @@
         <div class="val" id="metric-profit" style="color: var(--tint-blue);">₹0</div>
       </div>
     </div>
-
-    <div class="card">
+    <div class="card" style="background: rgba(41, 151, 255, 0.05);">
       <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Inventory Valuation</div>
       <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px;">
         <div style="font-size: 24px; font-weight: 800; color: var(--tint-blue);" id="metric-inv-valuation">₹0</div>
         <div style="font-size: 12px; color: var(--subtext);" id="metric-inv-units">0 units in stock</div>
       </div>
     </div>
-
+    <div class="card">
+      <h3 style="font-size: 16px; margin-bottom: 10px;">+ Record Other Expense</h3>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <select id="exp-category" class="app-input">
+          <option value="Electricity/Rent">Shop Rent / Electricity</option>
+          <option value="Mortality Loss">Dead Stock / Tank Loss</option>
+          <option value="Fish Food">Fish Food & Supplies</option>
+          <option value="Misc">Other Expenses</option>
+        </select>
+        <input type="number" id="exp-amount" class="app-input" placeholder="Amount (₹)">
+        <input type="text" id="exp-desc" class="app-input" placeholder="Notes (Optional)">
+        <button class="btn" style="background: var(--tint-red);" onclick="saveExpense()">Add to Balance Sheet</button>
+      </div>
+    </div>
     <div class="card">
       <h3 style="font-size: 16px; margin-bottom: 10px;">Expenses Breakdown</h3>
       <div id="expense-category-list"></div>
     </div>
-
     <div class="card">
-      <h3 style="font-size: 16px; margin-bottom: 10px;">Recent Expense Ledger</h3>
+      <h3 style="font-size: 16px; margin-bottom: 10px;">Recent Ledger</h3>
       <div id="recent-expenses-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
     </div>
   </section>
@@ -577,26 +379,30 @@
         <h3 style="font-size: 17px;">Stock Inventory</h3>
         <div style="display: flex; gap: 6px;">
           <input type="file" id="daybook-camera-input" accept="image/*" style="display:none;" onchange="handleDayBookImage(this)">
-          <button class="btn btn-sm" style="background: linear-gradient(135deg, #0071e3, #af52de);" onclick="document.getElementById('daybook-camera-input').click()">
+          <button class="btn btn-sm" style="background: linear-gradient(135deg, #0071e3, #af52de);" onclick="triggerImageCapture()">
             📷 Scan Day Book
           </button>
-          <button class="btn btn-sm" onclick="openAddStockModal()">+ Manual</button>
+          <button class="btn btn-sm" onclick="openModal('add-stock-modal')">+ Manual</button>
         </div>
       </div>
-
-      <input type="text" id="stock-search" class="app-input" placeholder="🔍 Search stock by name or category..." oninput="renderInventory()">
-
+      <input type="text" id="stock-search" class="app-input" placeholder="🔍 Search stock by name..." oninput="renderInventory()">
       <div class="category-scroll">
         <button class="cat-pill active" onclick="filterStockStatus('all', this)">All Stock</button>
         <button class="cat-pill" onclick="filterStockStatus('low', this)">⚠️ Getting Empty Soon (≤2)</button>
         <button class="cat-pill" onclick="filterStockStatus('empty', this)">🔴 Empty (0)</button>
       </div>
-
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 6px 10px; background: var(--pill-bg); border-radius: 12px; font-size: 13px;">
+        <span style="font-weight: 600;">Batch Filter:</span>
+        <select id="stock-month-filter" onchange="renderInventory()" style="background: transparent; border: none; font-weight: 700; color: var(--tint-blue); outline: none;">
+          <option value="All">All Batches</option>
+          <option value="2026-10-02" selected>02 Oct 2026</option>
+        </select>
+      </div>
       <div id="inventory-list"></div>
     </div>
   </section>
 
-  <!-- Bottom Navigation Dock -->
+  <!-- DOCK NAVIGATION -->
   <div class="dock-wrap">
     <nav class="dock">
       <button class="active" onclick="switchTab('pos', this)">Billing</button>
@@ -607,14 +413,15 @@
     </nav>
   </div>
 
-  <!-- MODAL: REVIEW SCANNED DAY BOOK -->
-  <div class="modal-overlay" id="ocr-modal">
+  <!-- SINGLE CENTRALIZED MODAL ENGINE -->
+  
+  <!-- 1. OCR Review Modal -->
+  <div class="modal-overlay" id="ocr-modal" onclick="closeOnOutsideClick(event, 'ocr-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <h3 style="font-size: 18px; font-weight: 700;">Review Scanned Batch</h3>
         <button class="btn btn-sm" style="background: transparent; color: var(--tint-blue);" onclick="closeModal('ocr-modal')">Cancel</button>
       </div>
-
       <div style="background: var(--pill-bg); padding: 12px; border-radius: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
         <div>
           <div style="font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700;">Batch Date</div>
@@ -625,20 +432,16 @@
           <div style="font-size: 18px; font-weight: 800; color: var(--tint-red);" id="ocr-total-investment">₹0</div>
         </div>
       </div>
-
       <div id="ocr-items-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
-
-      <button class="btn btn-green" style="width: 100%; padding: 14px;" onclick="confirmAndCommitBatch()">
-        Confirm & Save to Stock Ledger
-      </button>
+      <button class="btn btn-green" style="width: 100%; padding: 14px;" onclick="confirmAndCommitBatch()">Confirm & Save to Stock Ledger</button>
     </div>
   </div>
 
-  <!-- MODAL: ADD PRODUCT MANUALLY -->
-  <div class="modal-overlay" id="add-stock-modal">
+  <!-- 2. Manual Add Stock Modal -->
+  <div class="modal-overlay" id="add-stock-modal" onclick="closeOnOutsideClick(event, 'add-stock-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 18px;">Add Stock Item</h3>
+        <h3 style="font-size: 18px; font-weight: 700;">Add Stock Item</h3>
         <button class="btn btn-sm" style="background: transparent; color: var(--tint-blue);" onclick="closeModal('add-stock-modal')">Cancel</button>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -649,18 +452,16 @@
           <input type="number" id="new-item-price" class="app-input" placeholder="Retail ₹">
           <input type="number" id="new-item-qty" class="app-input" placeholder="Quantity">
         </div>
-        <button class="btn btn-green" style="margin-top: 6px; padding: 12px;" onclick="submitNewStockItem()">
-          Add to Inventory
-        </button>
+        <button class="btn btn-green" style="margin-top: 6px; padding: 12px;" onclick="submitNewStockItem()">Add to Inventory</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: REPLENISH STOCK -->
-  <div class="modal-overlay" id="restock-modal">
+  <!-- 3. Restock Modal -->
+  <div class="modal-overlay" id="restock-modal" onclick="closeOnOutsideClick(event, 'restock-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h3 style="font-size: 18px;">Replenish Stock</h3>
+        <h3 style="font-size: 18px; font-weight: 700;">Replenish Stock</h3>
         <button class="btn btn-sm" style="background: transparent; color: var(--tint-blue);" onclick="closeModal('restock-modal')">Cancel</button>
       </div>
       <div style="margin-bottom: 10px;">
@@ -669,17 +470,15 @@
       </div>
       <input type="hidden" id="restock-item-id">
       <input type="number" id="restock-item-qty" class="app-input" placeholder="Additional Units" style="margin-bottom: 12px;">
-      <button class="btn btn-green" style="width: 100%; padding: 12px;" onclick="submitRestockItem()">
-        Confirm Restock
-      </button>
+      <button class="btn btn-green" style="width: 100%; padding: 12px;" onclick="submitRestockItem()">Confirm Restock</button>
     </div>
   </div>
 
-  <!-- MODAL: CALCULATOR BILLING -->
-  <div class="modal-overlay" id="calc-bill-modal">
+  <!-- 4. Calculator Bill Details Modal -->
+  <div class="modal-overlay" id="calc-bill-modal" onclick="closeOnOutsideClick(event, 'calc-bill-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h3 style="font-size: 18px;">Customer Bill Details</h3>
+        <h3 style="font-size: 18px; font-weight: 700;">Customer Bill Details</h3>
         <button class="btn btn-sm" style="background: transparent; color: var(--tint-blue);" onclick="closeModal('calc-bill-modal')">Cancel</button>
       </div>
       <div style="background: var(--pill-bg); padding: 10px 14px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -691,15 +490,13 @@
         <input type="tel" id="calc-cust-phone" class="app-input" placeholder="WhatsApp Number (Optional)">
         <input type="text" id="calc-order-note" class="app-input" placeholder="Order Note (e.g. Tank setup + Fish)">
       </div>
-      <button class="btn btn-green" style="width: 100%; padding: 12px;" onclick="confirmCalculatedBill()">
-        Confirm & Generate Bill
-      </button>
+      <button class="btn btn-green" style="width: 100%; padding: 12px;" onclick="confirmCalculatedBill()">Confirm & Generate Bill</button>
     </div>
   </div>
 
-  <!-- MODAL: DIGITAL RECEIPT -->
-  <div class="modal-overlay" id="receipt-modal">
-    <div style="background:#fff; color:#000; width:100%; max-width:320px; border-radius:18px; padding:18px; font-family:monospace; font-size:12px; margin:auto;">
+  <!-- 5. Digital Receipt Preview Modal -->
+  <div class="receipt-modal-bg" id="receipt-modal" onclick="closeOnOutsideClick(event, 'receipt-modal')">
+    <div class="receipt-paper" onclick="event.stopPropagation()">
       <div style="text-align: center; margin-bottom: 8px;">
         <strong style="font-size: 15px;">AQUAPET</strong><br>
         <span>PET SHOP & CARE</span><br>
@@ -762,11 +559,17 @@
       else el.innerText = "Good Evening,";
     }
 
+    // Centralized Modal Management
     function openModal(id) {
       document.getElementById(id).classList.add('active');
     }
     function closeModal(id) {
       document.getElementById(id).classList.remove('active');
+    }
+    function closeOnOutsideClick(event, modalId) {
+      if (event.target.id === modalId) {
+        closeModal(modalId);
+      }
     }
 
     function switchTab(tab, btn) {
@@ -808,6 +611,10 @@
     }
 
     // --- DAY BOOK OCR SCANNING ---
+    function triggerImageCapture() {
+      document.getElementById('daybook-camera-input').click();
+    }
+
     function handleDayBookImage(input) {
       if (!input.files || !input.files[0]) return;
       const file = input.files[0];
@@ -913,8 +720,13 @@
     function renderInventory() {
       const el = document.getElementById('inventory-list');
       const searchQuery = (document.getElementById('stock-search')?.value || '').toLowerCase().trim();
+      const selectedMonth = document.getElementById('stock-month-filter')?.value || 'All';
 
       let filtered = products;
+
+      if (selectedMonth !== 'All') {
+        filtered = filtered.filter(p => (p.batch_date || p.month_tag) === selectedMonth);
+      }
 
       if (searchQuery) {
         filtered = filtered.filter(p => 
@@ -956,8 +768,8 @@
               </div>
             </div>
             <div style="text-align: right;">
-              <div style="font-size: 10px; font-weight: 700; color: var(--subtext);">Invested</div>
-              <div style="font-weight: 800; font-size: 13px; color: var(--tint-red);">₹${batchInvested}</div>
+              <div style="font-size: 10px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Invested</div>
+              <div style="font-weight: 800; font-size: 14px; color: var(--tint-red);">₹${batchInvested}</div>
             </div>
           </div>
 
@@ -978,7 +790,7 @@
                   <div style="font-size: 11px; color: var(--text); margin-top: 2px; font-weight: 700;">
                     Bought: ${initial} | Sold: <span style="color: var(--tint-blue);">${sold}</span>
                   </div>
-                  <div style="margin-top: 4px;">
+                  <div style="margin-top: 6px;">
                     <button class="btn-pill-action" onclick="openRestockModal(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.purchase_price || 0})">
                       + Add Stock
                     </button>
@@ -986,7 +798,7 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <div style="text-align: right;">
-                    <div style="font-weight: 700; font-size: 15px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
+                    <div style="font-weight: 700; font-size: 16px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
                       ${remaining} left
                     </div>
                   </div>
@@ -1016,16 +828,13 @@
       }
     }
 
-    function openAddStockModal() {
-      openModal('add-stock-modal');
-    }
-
     function openRestockModal(id, name, cost) {
       document.getElementById('restock-item-id').value = id;
       document.getElementById('restock-item-name').innerText = name;
       document.getElementById('restock-item-info').innerText = `Cost: ₹${cost}`;
       document.getElementById('restock-item-qty').value = '';
       openModal('restock-modal');
+      setTimeout(() => document.getElementById('restock-item-qty').focus(), 100);
     }
 
     async function submitRestockItem() {
@@ -1064,6 +873,10 @@
       });
 
       if (res.ok) {
+        document.getElementById('new-item-name').value = '';
+        document.getElementById('new-item-cost').value = '';
+        document.getElementById('new-item-price').value = '';
+        document.getElementById('new-item-qty').value = '';
         closeModal('add-stock-modal');
         showToast('Item saved to inventory', '📦');
         loadData();
@@ -1092,7 +905,7 @@
         const reachedMax = qtyInCart >= p.quantity;
 
         return `
-          <div class="pos-item">
+          <div class="pos-item" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
             <div>
               <div style="font-weight: 600; font-size: 14px;">${p.name}</div>
               <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'};">
@@ -1187,7 +1000,7 @@
 
     function checkoutAndPrint() {
       const finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) return alert('Add at least one item');
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) return showToast('Add at least one item', '⚠️');
 
       const rawCust = document.getElementById('cust-name').value.trim();
       const rawPhone = document.getElementById('cust-phone').value.trim();
@@ -1232,6 +1045,7 @@
         document.getElementById('cust-name').value = '';
         document.getElementById('cust-phone').value = '';
         document.getElementById('pos-search').value = '';
+        document.querySelectorAll('.coupon-pill').forEach((b, idx) => b.classList.toggle('active', idx === 0));
         updateTotal();
         loadData();
       });
@@ -1313,6 +1127,13 @@
       window.open(url, '_blank');
     }
 
+    function copyThermalText() {
+      if (!latestBillData) return;
+      const itemsText = latestBillData.items.map(i => `${i.name} x${i.quantity}  ₹${i.price * i.quantity}`).join('\n');
+      const text = `AQUAPET\nPET SHOP & CARE\n--------------------------------\nDate: ${latestBillData.date}\nCust: ${latestBillData.customer}\nPhone: ${latestBillData.phone}\n--------------------------------\n${itemsText}\n--------------------------------\nTOTAL: ₹${latestBillData.total}\n--------------------------------\nThank you! Visit again.`;
+      navigator.clipboard.writeText(text).then(() => showToast('Receipt copied!', '📋'));
+    }
+
     // --- CALCULATOR ENGINE ---
     function updateCalcScreen() {
       document.getElementById('calc-display').innerText = calcCurrent;
@@ -1343,9 +1164,9 @@
       calcOp = null; calcPrevious = null; calcResetOnNext = true; updateCalcScreen();
     }
 
-    function openCalcSheet() {
+    function openCalcBillingSheet() {
       const amount = Math.round(parseFloat(calcCurrent));
-      if (isNaN(amount) || amount <= 0) return alert('Calculate a valid total first');
+      if (isNaN(amount) || amount <= 0) return showToast('Calculate a valid total first', '⚠️');
       document.getElementById('calc-bill-amount-display').innerText = '₹' + amount;
       openModal('calc-bill-modal');
     }
@@ -1390,7 +1211,7 @@
       const actionSlot = document.getElementById('copilot-actions');
 
       respCard.classList.add('show');
-      respText.innerHTML = '<span style="color: var(--tint-blue);">Analyzing...</span>';
+      respText.innerHTML = '<span style="color: var(--tint-blue);">Analyzing command...</span>';
       actionSlot.innerHTML = '';
 
       try {
@@ -1421,7 +1242,7 @@
       const el = document.getElementById('expense-category-list');
       if (!list || list.length === 0) return el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No expenses logged.</div>';
       el.innerHTML = list.map(i => `
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
           <span style="font-weight:600;font-size:14px;">${i.category}</span>
           <span style="font-weight:700;color:var(--tint-red);font-size:14px;">₹${i.total}</span>
         </div>
@@ -1434,11 +1255,11 @@
       el.innerHTML = list.map(i => `
         <div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 12px;border-radius:12px;">
           <div>
-            <div style="font-weight:600;font-size:13px;">${i.category}</div>
-            <div style="font-size:11px;color:var(--subtext);">${i.description || 'No note'} • ${new Date(i.created_at).toLocaleDateString()}</div>
+            <div style="font-weight:600;font-size:14px;">${i.category}</div>
+            <div style="font-size:12px;color:var(--subtext);">${i.description || 'No note'} • ${new Date(i.created_at).toLocaleDateString()}</div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-weight:700;color:var(--tint-red);font-size:14px;">-₹${i.amount}</span>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${i.amount}</span>
             <button class="btn-trash" onclick="deleteExpenseItem(${i.id})">🗑️</button>
           </div>
         </div>
@@ -1464,12 +1285,12 @@
         const hasPhone = s.customer_phone && s.customer_phone !== 'N/A' && s.customer_phone.length >= 8;
         const clean = hasPhone ? s.customer_phone.replace(/[^0-9]/g, '') : '';
         return `
-          <div style="background:var(--pill-bg);padding:12px;border-radius:16px;">
+          <div style="background:var(--pill-bg);padding:14px;border-radius:16px;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <div><div style="font-weight:700;font-size:15px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div>
               <div style="font-weight:700;color:var(--tint-green);font-size:15px;">₹${s.total_amount}</div>
             </div>
-            <div style="display:flex;gap:6px;margin-top:8px;">
+            <div style="display:flex;gap:6px;margin-top:10px;">
               ${hasPhone ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;">Call</a><a href="https://wa.me/91${clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}
               <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete</button>
             </div>
@@ -1483,6 +1304,23 @@
       const res = await fetch(`/api/sales?id=${saleId}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) { showToast('Bill deleted and stock restocked', '🔄'); loadData(); }
+    }
+
+    async function saveExpense() {
+      const category = document.getElementById('exp-category').value;
+      const amount = document.getElementById('exp-amount').value;
+      const description = document.getElementById('exp-desc').value;
+      if (!amount) return showToast('Enter amount', '⚠️');
+
+      await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, amount, description })
+      });
+      document.getElementById('exp-amount').value = '';
+      document.getElementById('exp-desc').value = '';
+      showToast('Expense recorded', '💸');
+      loadData();
     }
 
     // App Init
