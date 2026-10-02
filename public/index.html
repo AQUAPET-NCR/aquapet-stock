@@ -23,48 +23,21 @@
       --pill-bg: #2c2c2e;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-    }
-
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
     button, input, select, .cat-pill, .btn, .calc-btn, .step-btn { touch-action: manipulation; }
 
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
+      background-color: var(--bg); color: var(--text); min-height: 100vh;
       padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
       padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 100px);
-      padding-left: 16px;
-      padding-right: 16px;
-      max-width: 650px;
-      margin: 0 auto;
-      -webkit-font-smoothing: antialiased;
+      padding-left: 16px; padding-right: 16px; max-width: 650px; margin: 0 auto; -webkit-font-smoothing: antialiased;
     }
 
     .toast-capsule {
-      position: fixed;
-      top: calc(env(safe-area-inset-top, 20px) + 10px);
-      left: 50%;
-      transform: translateX(-50%) translateY(-150%);
-      background: #ffffff;
-      color: #000000;
-      padding: 12px 20px;
-      border-radius: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13.5px;
-      font-weight: 700;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
-      opacity: 0;
-      pointer-events: none;
+      position: fixed; top: calc(env(safe-area-inset-top, 20px) + 10px); left: 50%; transform: translateX(-50%) translateY(-150%);
+      background: #ffffff; color: #000000; padding: 12px 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      z-index: 9999; display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 700;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; opacity: 0; pointer-events: none;
     }
     .toast-capsule.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -73,7 +46,6 @@
     .brand-logo { width: 42px; height: 42px; border-radius: 10px; background: #fff; object-fit: cover; }
     .greeting-sub { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--subtext); }
     .greeting-title { font-size: 26px; font-weight: 700; margin-top: 2px; }
-    
     .status-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--pill-bg); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
     .dot-online { width: 8px; height: 8px; background-color: var(--tint-green); border-radius: 50%; }
 
@@ -100,7 +72,6 @@
 
     .pos-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--card-border); }
     .pos-item:last-child { border-bottom: none; }
-    
     .stepper { display: inline-flex; align-items: center; background: var(--pill-bg); border-radius: 10px; padding: 2px; gap: 4px; }
     .step-btn { background: #3a3a3c; border: none; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; cursor: pointer; transition: 0.1s; }
     .step-btn:active { transform: scale(0.9); opacity: 0.7; }
@@ -112,51 +83,27 @@
     .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; }
     .stat-box .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
 
-    /* Apple-Style Calculator */
+    /* --- iOS CALCULATOR STYLES --- */
     .calc-container { max-width: 330px; margin: 0 auto; }
-    .calc-screen { text-align: right; font-size: 44px; font-weight: 300; padding: 10px 4px; min-height: 70px; display: flex; align-items: flex-end; justify-content: flex-end; transition: opacity 0.1s; }
-    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .calc-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
-    .calc-btn:active { transform: scale(0.92); opacity: 0.7; }
-    .calc-btn-gray { background: #505050; color: #fff; }
-    .calc-btn-dark { background: #333333; color: #fff; font-weight: 600; }
-    .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 600; transition: background 0.2s, color 0.2s; }
-    .calc-btn-orange.active-op { background: #ffffff; color: #ff9f0a; } /* iOS Visual Feedback */
+    .calc-screen { text-align: right; font-size: 54px; font-weight: 300; padding: 10px 4px; min-height: 80px; display: flex; align-items: flex-end; justify-content: flex-end; transition: opacity 0.1s; letter-spacing: -0.03em; }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .calc-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; border: none; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, opacity 0.1s, color 0.2s; }
+    .calc-btn:active { opacity: 0.6; }
+    .calc-btn-gray { background: #a5a5a5; color: #000; font-weight: 500; }
+    .calc-btn-dark { background: #333333; color: #fff; font-weight: 400; }
+    .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 500; }
+    .calc-btn-orange.active-op { background: #ffffff; color: #ff9f0a; } /* The Apple Inverted Highlight */
     .calc-btn-zero { grid-column: span 2; aspect-ratio: auto; border-radius: 35px; justify-content: flex-start; padding-left: 28px; }
 
-    /* Modals */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-      z-index: 1000; display: none; align-items: flex-end; justify-content: center;
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
     .modal-overlay.active { display: flex; }
-    
-    .modal-sheet {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 24px 24px 0 0;
-      padding: 20px 20px calc(env(safe-area-inset-bottom, 20px) + 20px);
-      width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto;
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
-      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    .modal-sheet { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px 24px 0 0; padding: 20px 20px calc(env(safe-area-inset-bottom, 20px) + 20px); width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
     .receipt-paper { background: #ffffff; color: #000000; width: 100%; max-width: 320px; border-radius: 18px; padding: 18px; font-family: monospace; font-size: 12px; line-height: 1.4; margin: auto; }
 
-    .dock-wrap {
-      position: fixed; bottom: calc(env(safe-area-inset-bottom, 20px) + 12px); left: 0; right: 0;
-      display: flex; justify-content: center; z-index: 50; pointer-events: none;
-    }
-    .dock {
-      pointer-events: auto;
-      background: rgba(28, 28, 30, 0.85);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15); border-radius: 32px; padding: 6px; display: flex; gap: 4px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
+    .dock-wrap { position: fixed; bottom: calc(env(safe-area-inset-bottom, 20px) + 12px); left: 0; right: 0; display: flex; justify-content: center; z-index: 50; pointer-events: none; }
+    .dock { pointer-events: auto; background: rgba(28, 28, 30, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.15); border-radius: 32px; padding: 6px; display: flex; gap: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .dock button { background: transparent; border: none; padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--subtext); border-radius: 24px; cursor: pointer; transition: 0.2s; }
     .dock button:active { transform: scale(0.9); }
     .dock button.active { background: #ffffff; color: #000000; }
@@ -246,7 +193,7 @@
     </div>
   </section>
 
-  <!-- TAB 2: APPLE CALCULATOR -->
+  <!-- TAB 2: CALCULATOR -->
   <section id="view-calculator" class="view-tab">
     <div class="card calc-container">
       <div class="calc-screen" id="calc-display">0</div>
@@ -255,27 +202,31 @@
         <button class="calc-btn calc-btn-gray" onclick="calcToggleSign()">±</button>
         <button class="calc-btn calc-btn-gray" onclick="calcPercent()">%</button>
         <button id="calc-op-div" class="calc-btn calc-btn-orange" onclick="calcOperator('/', 'calc-op-div')">÷</button>
+        
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('7')">7</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('8')">8</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('9')">9</button>
         <button id="calc-op-mul" class="calc-btn calc-btn-orange" onclick="calcOperator('*', 'calc-op-mul')">×</button>
+        
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('4')">4</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('5')">5</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('6')">6</button>
         <button id="calc-op-sub" class="calc-btn calc-btn-orange" onclick="calcOperator('-', 'calc-op-sub')">−</button>
+        
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('1')">1</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('2')">2</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('3')">3</button>
         <button id="calc-op-add" class="calc-btn calc-btn-orange" onclick="calcOperator('+', 'calc-op-add')">+</button>
+        
         <button class="calc-btn calc-btn-dark calc-btn-zero" onclick="calcNumber('0')">0</button>
         <button class="calc-btn calc-btn-dark" onclick="calcDecimal()">.</button>
-        <button class="calc-btn calc-btn-orange" onclick="calcEqual(false)">=</button>
+        <button class="calc-btn calc-btn-orange" onclick="calcEqual()">=</button>
       </div>
       <button class="btn btn-green" style="width: 100%; margin-top: 16px;" onclick="openCalcBillingSheet()">🧾 Bill This Total</button>
     </div>
   </section>
 
-  <!-- TAB 3: BALANCE SHEET & EXPENSE LEDGER -->
+  <!-- TAB 3: BALANCE SHEET -->
   <section id="view-balancesheet" class="view-tab">
     <div class="stats-grid">
       <div class="stat-box"><div class="title">Today's Sales</div><div class="val" id="metric-today" style="color: var(--tint-green);">₹0</div></div>
@@ -467,7 +418,7 @@
 
   <iframe id="print-iframe"></iframe>
 
-  <!-- ==================== LOGIC ==================== -->
+  <!-- ==================== JAVASCRIPT ENGINE ==================== -->
   <script>
     let products = [];
     let cart = {};
@@ -477,6 +428,12 @@
     let latestBillData = null;
     let stockStatusFilter = 'all';
     let scannedBatchItems = [];
+
+    // --- Calculator State ---
+    let calcCurrent = '0';
+    let calcPrevious = null;
+    let calcOp = null;
+    let calcResetOnNext = false;
 
     function showToast(msg, icon) {
       const toast = document.getElementById('app-toast');
@@ -510,29 +467,21 @@
       if (tab === 'inventory') renderInventory();
     }
 
-    // --- DATA LOADING & BATCH FILTER CONFIG ---
-    function populateBatchFilter() {
-      const filterSelect = document.getElementById('stock-month-filter');
-      if (!filterSelect) return;
-      const uniqueDates = new Set();
-      products.forEach(p => {
-        if (p.batch_date) uniqueDates.add(p.batch_date);
-        else if (p.month_tag) uniqueDates.add(p.month_tag);
-      });
-      let html = `<option value="All" selected>All Batches</option>`;
-      Array.from(uniqueDates).sort().reverse().forEach(date => {
-        html += `<option value="${date}">${date}</option>`;
-      });
-      filterSelect.innerHTML = html;
-    }
-
+    // --- DATA LOADING ---
     async function loadData() {
       try {
         const prodRes = await fetch('/api/products');
         if (prodRes.ok) {
           products = await prodRes.json();
           if (!Array.isArray(products)) products = [];
-          populateBatchFilter();
+          
+          // Populate Batch Filter
+          const filterSelect = document.getElementById('stock-month-filter');
+          const uniqueDates = new Set();
+          products.forEach(p => { if (p.batch_date) uniqueDates.add(p.batch_date); else if (p.month_tag) uniqueDates.add(p.month_tag); });
+          let batchHtml = `<option value="All">All Batches</option>`;
+          Array.from(uniqueDates).sort().reverse().forEach(date => { batchHtml += `<option value="${date}">${date}</option>`; });
+          if(filterSelect) filterSelect.innerHTML = batchHtml;
         }
         
         const sumRes = await fetch('/api/summary');
@@ -560,29 +509,128 @@
       }
     }
 
-    // --- DAY BOOK OCR ---
+    // --- APPLE-STYLE CALCULATOR ---
+    function formatNumberWithCommas(numStr) {
+      if (numStr === '0') return '0';
+      if (numStr === '-0') return '-0';
+      let parts = numStr.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return parts.join('.');
+    }
+
+    function updateCalcScreen() { 
+      const display = document.getElementById('calc-display');
+      display.innerText = formatNumberWithCommas(calcCurrent);
+      display.style.opacity = '0.4';
+      setTimeout(() => display.style.opacity = '1', 50);
+    }
+    
+    function clearActiveOp() { document.querySelectorAll('.calc-btn-orange').forEach(b => b.classList.remove('active-op')); }
+
+    function calcNumber(num) {
+      if (calcResetOnNext) { calcCurrent = num; calcResetOnNext = false; clearActiveOp(); }
+      else { calcCurrent = (calcCurrent === '0') ? num : calcCurrent + num; }
+      updateCalcScreen();
+    }
+    function calcDecimal() {
+      if (calcResetOnNext) { calcCurrent = '0.'; calcResetOnNext = false; clearActiveOp(); }
+      else if (!calcCurrent.includes('.')) calcCurrent += '.';
+      updateCalcScreen();
+    }
+    function calcClear() { calcCurrent = '0'; calcPrevious = null; calcOp = null; calcResetOnNext = false; clearActiveOp(); updateCalcScreen(); }
+    function calcToggleSign() { calcCurrent = (parseFloat(calcCurrent.replace(/,/g, '')) * -1).toString(); updateCalcScreen(); }
+    function calcPercent() { calcCurrent = (parseFloat(calcCurrent.replace(/,/g, '')) / 100).toString(); updateCalcScreen(); }
+    
+    function calcOperator(op, btnId) { 
+      if (calcOp && !calcResetOnNext) calcEqual(); 
+      calcPrevious = parseFloat(calcCurrent.replace(/,/g, '')); 
+      calcOp = op; 
+      calcResetOnNext = true; 
+      clearActiveOp();
+      if(btnId) document.getElementById(btnId).classList.add('active-op');
+    }
+    
+    function calcEqual() {
+      if (!calcOp || calcPrevious === null) return;
+      let cur = parseFloat(calcCurrent.replace(/,/g, '')); 
+      let res = 0;
+      if (calcOp === '+') res = calcPrevious + cur;
+      if (calcOp === '-') res = calcPrevious - cur;
+      if (calcOp === '*') res = calcPrevious * cur;
+      if (calcOp === '/') res = cur !== 0 ? calcPrevious / cur : 0;
+      
+      calcCurrent = (Math.round(res * 100) / 100).toString();
+      calcOp = null; calcPrevious = null; calcResetOnNext = true; clearActiveOp();
+      updateCalcScreen();
+    }
+
+    function openCalcBillingSheet() {
+      let amt = Math.round(parseFloat(calcCurrent.replace(/,/g, '')));
+      if (isNaN(amt) || amt <= 0) return showToast('Calculate total first', '⚠️');
+      document.getElementById('calc-bill-amount-display').innerText = '₹' + amt;
+      openModal('calc-bill-modal');
+    }
+
+    async function confirmCalculatedBill() {
+      let amt = Math.round(parseFloat(calcCurrent.replace(/,/g, '')));
+      let rawName = document.getElementById('calc-cust-name').value.trim();
+      let rawPhone = document.getElementById('calc-cust-phone').value.trim();
+      let rawNote = document.getElementById('calc-order-note').value.trim();
+      let custName = rawName ? rawName : 'Walk-in Customer';
+      let custPhone = rawPhone ? rawPhone : 'N/A';
+      let itemName = rawNote ? rawNote : 'Custom Order';
+
+      const res = await fetch('/api/sales', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customer_name: custName, customer_phone: custPhone, total_amount: amt, is_direct_sale: 1, items: [{ id: 0, name: itemName, quantity: 1, price: amt }] })
+      });
+      const data = await res.json();
+      if (data.success) {
+        closeModal('calc-bill-modal');
+        latestBillData = { saleId: data.saleId, date: new Date().toLocaleString('en-IN'), customer: custName, phone: custPhone, items: [{ name: itemName, quantity: 1, price: amt }], total: amt, discount: 0 };
+        openGeneratedBill(); loadData();
+      }
+    }
+
+    // --- DAY BOOK OCR SCANNING ---
     function triggerImageCapture() { document.getElementById('daybook-camera-input').click(); }
     function handleDayBookImage(input) {
       if (!input.files || input.files.length === 0) return;
-      showToast('Scanning via AI Vision...', '📷');
+      showToast('Processing Image...', '📷');
+      const file = input.files[0];
+      const img = new Image();
       const reader = new FileReader();
-      reader.onload = async function(e) {
-        try {
-          const res = await fetch('/api/ocr-stock', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64: e.target.result })
-          });
-          const data = await res.json();
-          if (data.items && data.items.length > 0) {
-            scannedBatchItems = data.items;
-            document.getElementById('ocr-batch-date').value = new Date().toISOString().split('T')[0];
-            renderOcrReviewList();
-            openModal('ocr-modal');
-          } else { alert('Could not extract ledger. Please retake photo.'); }
-        } catch (err) { alert('Network timeout. Try again.'); } 
-        finally { input.value = ''; }
+      
+      reader.onload = function(e) {
+        img.onload = async function() {
+          // Downscale the image so it doesn't break Cloudflare's payload limits
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const maxW = 1000; const maxH = 1000;
+          let w = img.width; let h = img.height;
+          if (w > h) { if (w > maxW) { h *= maxW / w; w = maxW; } } else { if (h > maxH) { w *= maxH / h; h = maxH; } }
+          canvas.width = w; canvas.height = h;
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+
+          showToast('Scanning Day Book via AI...', '🤖');
+          try {
+            const res = await fetch('/api/ocr-stock', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageBase64: compressedBase64 })
+            });
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+              scannedBatchItems = data.items;
+              document.getElementById('ocr-batch-date').value = new Date().toISOString().split('T')[0];
+              renderOcrReviewList(); openModal('ocr-modal');
+            } else { alert('AI could not extract rows. Try a closer photo.'); }
+          } catch (err) { alert('Network timeout. Try again.'); } 
+          finally { input.value = ''; }
+        };
+        img.src = e.target.result;
       };
-      reader.readAsDataURL(input.files[0]);
+      reader.readAsDataURL(file);
     }
 
     function renderOcrReviewList() {
@@ -731,12 +779,10 @@
     function updateTotal() {
       let sub = calculateRawSubtotal();
       let finalAmt = sub;
-
       if (discountPercent > 0) {
         finalAmt = Math.max(0, sub - ((sub * discountPercent) / 100));
         document.getElementById('discount-note').innerText = '(' + discountPercent + '% OFF)';
       } else { document.getElementById('discount-note').innerText = ''; }
-
       if (customOverrideTotal !== null) {
         finalAmt = customOverrideTotal;
         document.getElementById('discount-note').innerText = '(Edited)';
@@ -757,7 +803,7 @@
 
     function checkoutAndPrint() {
       let finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) return showToast('Add items to bill', '⚠️');
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) return showToast('Add items to bill', '⚠️️');
 
       let rawName = document.getElementById('cust-name').value.trim();
       let rawPhone = document.getElementById('cust-phone').value.trim();
@@ -828,7 +874,7 @@
       let itemsText = '';
       for(let i=0; i<latestBillData.items.length; i++) itemsText += `• ${latestBillData.items[i].name} x${latestBillData.items[i].quantity} = ₹${latestBillData.items[i].price * latestBillData.items[i].quantity}\n`;
       const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n*Total Payable: ₹${latestBillData.total}*\n\nThank you!`;
-      const url = cleanPhone.length >= 10 ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      const url = cleanPhone.length >= 10 ? `[https://wa.me/91$](https://wa.me/91$){cleanPhone}?text=${encodeURIComponent(msg)}` : `[https://wa.me/?text=$](https://wa.me/?text=$){encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
 
@@ -840,90 +886,7 @@
       navigator.clipboard.writeText(text).then(() => showToast('Copied to Clipboard!', '📋'));
     }
 
-    // --- CALCULATOR ENGINE (IOS STYLE) ---
-    function updateCalcScreen() { 
-      let display = document.getElementById('calc-display');
-      let parts = calcCurrent.split('.');
-      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      display.innerText = parts.join('.');
-    }
-    
-    function clearActiveOp() {
-      document.querySelectorAll('.calc-btn-orange').forEach(b => b.classList.remove('active-op'));
-    }
-
-    function calcNumber(num) {
-      if (calcResetOnNext) { calcCurrent = num; calcResetOnNext = false; clearActiveOp(); }
-      else { calcCurrent = (calcCurrent === '0') ? num : calcCurrent + num; }
-      updateCalcScreen();
-    }
-    function calcDecimal() {
-      if (calcResetOnNext) { calcCurrent = '0.'; calcResetOnNext = false; clearActiveOp(); }
-      else if (!calcCurrent.includes('.')) calcCurrent += '.';
-      updateCalcScreen();
-    }
-    function calcClear() { calcCurrent = '0'; calcPrevious = null; calcOp = null; calcResetOnNext = false; clearActiveOp(); updateCalcScreen(); }
-    function calcToggleSign() { calcCurrent = (parseFloat(calcCurrent.replace(/,/g, '')) * -1).toString(); updateCalcScreen(); }
-    function calcPercent() { calcCurrent = (parseFloat(calcCurrent.replace(/,/g, '')) / 100).toString(); updateCalcScreen(); }
-    
-    function calcOperator(op, btnId) { 
-      if (calcOp && !calcResetOnNext) calcEqual(true); 
-      calcPrevious = parseFloat(calcCurrent.replace(/,/g, '')); 
-      calcOp = op; 
-      calcResetOnNext = true; 
-      
-      const screen = document.getElementById('calc-display');
-      screen.style.opacity = '0.3';
-      setTimeout(() => screen.style.opacity = '1', 80);
-      
-      clearActiveOp();
-      if(btnId) document.getElementById(btnId).classList.add('active-op');
-    }
-    
-    function calcEqual(isInternal = false) {
-      if (!calcOp || calcPrevious === null) return;
-      let cur = parseFloat(calcCurrent.replace(/,/g, '')); 
-      let res = 0;
-      if (calcOp === '+') res = calcPrevious + cur;
-      if (calcOp === '-') res = calcPrevious - cur;
-      if (calcOp === '*') res = calcPrevious * cur;
-      if (calcOp === '/') res = cur !== 0 ? calcPrevious / cur : 0;
-      
-      calcCurrent = (Math.round(res * 100) / 100).toString();
-      if(!isInternal) { calcOp = null; calcPrevious = null; clearActiveOp(); }
-      calcResetOnNext = true; 
-      updateCalcScreen();
-    }
-
-    function openCalcBillingSheet() {
-      let amt = Math.round(parseFloat(calcCurrent.replace(/,/g, '')));
-      if (isNaN(amt) || amt <= 0) return showToast('Calculate total first', '⚠️');
-      document.getElementById('calc-bill-amount-display').innerText = '₹' + amt;
-      openModal('calc-bill-modal');
-    }
-
-    async function confirmCalculatedBill() {
-      let amt = Math.round(parseFloat(calcCurrent.replace(/,/g, '')));
-      let rawName = document.getElementById('calc-cust-name').value.trim();
-      let rawPhone = document.getElementById('calc-cust-phone').value.trim();
-      let rawNote = document.getElementById('calc-order-note').value.trim();
-      let custName = rawName ? rawName : 'Walk-in Customer';
-      let custPhone = rawPhone ? rawPhone : 'N/A';
-      let itemName = rawNote ? rawNote : 'Custom Order';
-
-      const res = await fetch('/api/sales', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_name: custName, customer_phone: custPhone, total_amount: amt, is_direct_sale: 1, items: [{ id: 0, name: itemName, quantity: 1, price: amt }] })
-      });
-      const data = await res.json();
-      if (data.success) {
-        closeModal('calc-bill-modal');
-        latestBillData = { saleId: data.saleId, date: new Date().toLocaleString('en-IN'), customer: custName, phone: custPhone, items: [{ name: itemName, quantity: 1, price: amt }], total: amt, discount: 0 };
-        openGeneratedBill(); loadData();
-      }
-    }
-
-    // --- AI COPILOT ---
+    // --- GLOBAL AI COPILOT ---
     async function runGlobalAI() {
       let input = document.getElementById('global-ai-input');
       let question = input.value.trim();
@@ -949,65 +912,7 @@
       } catch (e) { document.getElementById('copilot-text').innerText = "Network Error."; }
     }
 
-    // --- EXPENSES & CUSTOMERS ---
-    function renderExpenseBreakdown(list) {
-      const el = document.getElementById('expense-category-list');
-      if (!el) return;
-      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No data</div>'; return; }
-      let html = '';
-      for(let i=0; i<list.length; i++) { html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-weight:600;font-size:14px;">${list[i].category}</span><span style="font-weight:700;color:var(--tint-red);font-size:14px;">₹${list[i].total}</span></div>`; }
-      el.innerHTML = html;
-    }
-
-    function renderRecentExpenses(list) {
-      const el = document.getElementById('recent-expenses-list');
-      if (!el) return;
-      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No records.</div>'; return; }
-      let html = '';
-      for(let i=0; i<list.length; i++) {
-        html += `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 12px;border-radius:12px;"><div><div style="font-weight:600;font-size:14px;">${list[i].category}</div><div style="font-size:12px;color:var(--subtext);">${list[i].description || ''}</div></div><div style="display:flex;align-items:center;gap:12px;"><span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${list[i].amount}</span><button class="btn-trash" onclick="deleteExpenseItem(${list[i].id})">🗑️</button></div></div>`;
-      }
-      el.innerHTML = html;
-    }
-
-    async function deleteExpenseItem(id) {
-      if (!confirm("Delete this expense?")) return;
-      const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
-      if (res.ok) { showToast('Removed', '🗑'); loadData(); }
-    }
-
-    async function loadCustomerSales() {
-      const el = document.getElementById('customer-list');
-      if (!el) return;
-      const res = await fetch('/api/sales');
-      const sales = await res.json();
-      if (!sales || sales.length === 0) { el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">No sales</div>'; return; }
-      let html = '';
-      for(let i=0; i<sales.length; i++) {
-        let s = sales[i];
-        let clean = (s.customer_phone && s.customer_phone !== 'N/A') ? s.customer_phone.replace(/[^0-9]/g, '') : '';
-        html += `<div style="background:var(--pill-bg);padding:12px;border-radius:16px;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:700;font-size:15px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div><div style="font-weight:700;color:var(--tint-green);font-size:15px;">₹${s.total_amount}</div></div><div style="display:flex;gap:6px;margin-top:8px;">${clean.length >= 8 ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;">Call</a><a href="https://wa.me/91${clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}<button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete</button></div></div>`;
-      }
-      el.innerHTML = html;
-    }
-
-    async function deleteBill(saleId) {
-      if (!confirm(`Delete bill #${saleId}?`)) return;
-      const res = await fetch(`/api/sales?id=${saleId}`, { method: 'DELETE' });
-      if (res.ok) { showToast('Deleted', '🔄'); loadData(); }
-    }
-
-    async function saveExpense() {
-      let cat = document.getElementById('exp-category').value;
-      let amt = document.getElementById('exp-amount').value;
-      let desc = document.getElementById('exp-desc').value;
-      if (!amt) return showToast('Enter amount', '⚠️');
-      await fetch('/api/expenses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: cat, amount: amt, description: desc }) });
-      document.getElementById('exp-amount').value = ''; document.getElementById('exp-desc').value = '';
-      showToast('Saved to ledger', '💸'); loadData();
-    }
-
-    // --- INVENTORY RENDERING (SAFE) ---
+    // --- INVENTORY SAFE RENDERING ---
     function renderInventory() {
       const el = document.getElementById('inventory-list');
       const searchInput = document.getElementById('stock-search');
@@ -1071,7 +976,7 @@
               </div>
               <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="text-align: right;"><div style="font-weight: 700; font-size: 17px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">${p.quantity} left</div></div>
-                <button class="btn-trash" onclick="deleteStockItem(${p.id}, '${cleanName}')">🗑️</button>
+                <button class="btn-trash" onclick="deleteStockItem(${p.id}, '${cleanName}')">🗑️️</button>
               </div>
             </div>`;
         });
