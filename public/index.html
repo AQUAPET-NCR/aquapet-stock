@@ -6,47 +6,21 @@
   <title>Aquapet</title>
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/logo.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
   <link rel="icon" type="image/png" href="/logo.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     :root {
-      --bg: #f2f2f7;
-      --card-bg: rgba(255, 255, 255, 0.82);
-      --card-border: rgba(255, 255, 255, 0.85);
-      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-      --text: #1d1d1f;
-      --subtext: #86868b;
-      --tint-blue: #0071e3;
-      --tint-green: #34c759;
-      --tint-orange: #ff9500;
-      --tint-red: #ff3b30;
-      --dock-bg: rgba(255, 255, 255, 0.85);
-      --dock-border: rgba(0, 0, 0, 0.08);
-      --pill-bg: rgba(118, 118, 128, 0.12);
-      --intel-border: rgba(175, 82, 222, 0.35);
-      --modal-bg: rgba(255, 255, 255, 0.95);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #000000;
-        --card-bg: rgba(28, 28, 30, 0.78);
-        --card-border: rgba(255, 255, 255, 0.1);
-        --card-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
-        --text: #f5f5f7;
-        --subtext: #a1a1a6;
-        --tint-blue: #2997ff;
-        --tint-green: #30d158;
-        --tint-orange: #ff9f0a;
-        --tint-red: #ff453a;
-        --dock-bg: rgba(30, 30, 32, 0.85);
-        --dock-border: rgba(255, 255, 255, 0.15);
-        --pill-bg: rgba(118, 118, 128, 0.24);
-        --intel-border: rgba(218, 143, 255, 0.4);
-        --modal-bg: rgba(30, 30, 32, 0.96);
-      }
+      --bg: #000000;
+      --card-bg: #1c1c1e;
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text: #f5f5f7;
+      --subtext: #8e8e93;
+      --tint-blue: #2997ff;
+      --tint-green: #30d158;
+      --tint-orange: #ff9f0a;
+      --tint-red: #ff453a;
+      --pill-bg: #2c2c2e;
     }
 
     * {
@@ -55,51 +29,52 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
-      letter-spacing: -0.015em;
     }
 
     body {
       background-color: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding-top: calc(env(safe-area-inset-top, 24px) + 14px);
-      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 115px);
-      padding-left: max(16px, env(safe-area-inset-left));
-      padding-right: max(16px, env(safe-area-inset-right));
-      max-width: 680px;
+      padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 100px);
+      padding-left: 16px;
+      padding-right: 16px;
+      max-width: 650px;
       margin: 0 auto;
-      -webkit-font-smoothing: antialiased;
+      position: relative;
     }
 
+    /* Top Capsule Notification */
     .toast-capsule {
       position: fixed;
       top: calc(env(safe-area-inset-top, 20px) + 10px);
       left: 50%;
       transform: translateX(-50%) translateY(-150%);
-      background: var(--text);
-      color: var(--bg);
-      padding: 12px 20px;
-      border-radius: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-      z-index: 500;
+      background: #ffffff;
+      color: #000000;
+      padding: 10px 18px;
+      border-radius: 25px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      z-index: 9999;
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 13.5px;
+      gap: 8px;
+      font-size: 13px;
       font-weight: 600;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
+      transition: transform 0.3s ease, opacity 0.3s ease;
       opacity: 0;
       pointer-events: none;
-      max-width: 90%;
     }
-    .toast-capsule.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast-capsule.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
 
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
-      padding: 0 4px;
+      margin-bottom: 16px;
     }
 
     .brand-wrap {
@@ -109,173 +84,113 @@
     }
 
     .brand-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
       object-fit: cover;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       background: #fff;
     }
 
     .greeting-sub {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       color: var(--subtext);
     }
 
     .greeting-title {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-top: 2px;
     }
 
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       background: var(--pill-bg);
-      padding: 7px 14px;
+      padding: 6px 12px;
       border-radius: 20px;
       font-size: 13px;
       font-weight: 600;
-      backdrop-filter: blur(15px);
     }
 
     .dot-online {
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       background-color: var(--tint-green);
       border-radius: 50%;
-      box-shadow: 0 0 10px var(--tint-green);
-      animation: pulseGreen 2.2s infinite ease-in-out;
     }
 
-    @keyframes pulseGreen {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.85); }
-    }
-
-    .global-copilot-card {
+    /* Copilot Card */
+    .copilot-card {
       background: var(--card-bg);
-      border-radius: 22px;
+      border: 1px solid rgba(175, 82, 222, 0.4);
+      border-radius: 20px;
       padding: 12px 14px;
       margin-bottom: 16px;
-      backdrop-filter: blur(35px);
-      -webkit-backdrop-filter: blur(35px);
-      border: 1px solid var(--intel-border);
-      box-shadow: var(--card-shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
     }
 
-    .copilot-input-row {
+    .copilot-row {
       display: flex;
+      gap: 8px;
       align-items: center;
-      gap: 8px;
     }
 
-    .copilot-input-row input {
-      border: none;
+    .copilot-row input {
+      flex: 1;
       background: transparent;
-      padding: 8px;
-      width: 100%;
-      color: var(--text);
-      font-size: 14.5px;
+      border: none;
+      color: #fff;
+      font-size: 14px;
       outline: none;
     }
 
-    .copilot-response-box {
+    .copilot-box {
       display: none;
       background: var(--pill-bg);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 10px 12px;
+      margin-top: 10px;
       font-size: 13px;
-      line-height: 1.45;
-      animation: fadeIn 0.25s ease-out;
+      line-height: 1.4;
     }
-    .copilot-response-box.show { display: block; }
+    .copilot-box.show { display: block; }
 
-    .view-tab { display: none; }
-    .view-tab.active { display: block; animation: fadeIn 0.25s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
+    /* Card styling */
     .card {
       background: var(--card-bg);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 20px;
-      margin-bottom: 18px;
-      box-shadow: var(--card-shadow);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .stat-box {
-      background: var(--card-bg);
       border-radius: 20px;
-      padding: 16px;
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(25px);
+      padding: 18px;
+      margin-bottom: 16px;
     }
-    .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
-    .stat-box .val { font-size: 24px; font-weight: 700; margin-top: 4px; }
 
     .app-input {
       background: var(--pill-bg);
-      border: none;
-      padding: 13px 16px;
-      border-radius: 14px;
-      color: var(--text);
-      font-size: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
       outline: none;
       width: 100%;
-    }
-
-    .search-box {
-      display: flex;
-      align-items: center;
-      background: var(--pill-bg);
-      border-radius: 14px;
-      padding: 0 12px;
-      margin-bottom: 12px;
-    }
-
-    .search-box input {
-      border: none;
-      background: transparent;
-      padding: 12px 8px;
-      width: 100%;
-      color: var(--text);
-      font-size: 15px;
-      outline: none;
     }
 
     .btn {
       background: var(--tint-blue);
       color: #fff;
       border: none;
-      padding: 12px 20px;
-      border-radius: 16px;
+      padding: 12px 18px;
+      border-radius: 14px;
       font-weight: 600;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .btn:active { transform: scale(0.96); opacity: 0.9; }
+    .btn:active { opacity: 0.75; }
     .btn-green { background: var(--tint-green); }
     .btn-red { background: var(--tint-red); }
     .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
@@ -285,7 +200,7 @@
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 6px;
-      margin-bottom: 12px;
+      margin: 10px 0;
       scrollbar-width: none;
     }
     .category-scroll::-webkit-scrollbar { display: none; }
@@ -293,158 +208,91 @@
     .cat-pill {
       background: var(--pill-bg);
       border: none;
-      padding: 8px 14px;
+      padding: 7px 13px;
       border-radius: 16px;
       font-size: 13px;
       font-weight: 600;
       color: var(--subtext);
       white-space: nowrap;
       cursor: pointer;
-      transition: all 0.2s;
     }
-    .cat-pill.active { background: var(--text); color: var(--bg); }
-
-    .stepper {
-      display: inline-flex;
-      align-items: center;
-      background: var(--pill-bg);
-      border-radius: 12px;
-      padding: 2px;
-      gap: 4px;
-    }
-
-    .step-btn {
-      background: var(--card-bg);
-      border: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 15px;
-      color: var(--text);
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
-    .step-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .step-qty { font-weight: 700; font-size: 14px; min-width: 24px; text-align: center; }
-
-    .coupon-row { display: flex; gap: 8px; margin: 12px 0; }
-    .coupon-pill {
-      flex: 1;
-      border: 1px solid var(--card-border);
-      background: var(--pill-bg);
-      padding: 10px;
-      border-radius: 14px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--subtext);
-    }
-    .coupon-pill.active {
-      border-color: var(--tint-blue);
-      background: rgba(0, 113, 227, 0.12);
-      color: var(--tint-blue);
-      box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
-    }
-
-    .bill-price-card {
-      background: var(--pill-bg);
-      border-radius: 18px;
-      padding: 14px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 14px 0;
+    .cat-pill.active {
+      background: #ffffff;
+      color: #000000;
     }
 
     .pos-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 2px;
-      border-bottom: 0.5px solid var(--pill-bg);
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
     .pos-item:last-child { border-bottom: none; }
 
-    .btn-pill-action {
-      background: var(--pill-bg);
-      border: none;
-      padding: 5px 9px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--tint-blue);
-      cursor: pointer;
+    .stepper {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-    }
-
-    .btn-trash {
-      background: transparent;
-      border: none;
-      color: var(--subtext);
-      padding: 6px 8px;
-      cursor: pointer;
-      font-size: 15px;
-      border-radius: 8px;
-      transition: 0.2s;
-    }
-    .btn-trash:active { background: rgba(255, 59, 48, 0.15); color: var(--tint-red); }
-
-    .dock-wrap {
-      position: fixed;
-      bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
-      left: 0; right: 0;
-      display: flex;
-      justify-content: center;
-      z-index: 100;
-      pointer-events: none;
-    }
-    .dock {
-      pointer-events: auto;
-      background: var(--dock-bg);
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-      border: 1px solid var(--dock-border);
-      border-radius: 36px;
-      padding: 6px;
-      display: flex;
+      background: var(--pill-bg);
+      border-radius: 10px;
+      padding: 2px;
       gap: 4px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
-    }
-    .dock button {
-      background: transparent;
-      border: none;
-      padding: 9px 12px;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--subtext);
-      border-radius: 26px;
-      cursor: pointer;
-    }
-    .dock button.active {
-      background: var(--card-bg);
-      color: var(--text);
-      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
 
-    /* Calculator */
-    .calc-container { max-width: 340px; margin: 0 auto; }
+    .step-btn {
+      background: #3a3a3c;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .step-qty {
+      font-weight: 700;
+      font-size: 13px;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    .bill-price-card {
+      background: var(--pill-bg);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 14px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stat-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; }
+    .stat-box .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
+
+    /* Calculator Styles */
+    .calc-container { max-width: 330px; margin: 0 auto; }
     .calc-screen {
       text-align: right;
-      font-size: 46px;
+      font-size: 44px;
       font-weight: 300;
-      letter-spacing: -0.02em;
-      padding: 16px 8px 10px;
-      overflow-x: auto;
-      white-space: nowrap;
-      min-height: 80px;
+      padding: 10px 4px;
+      min-height: 70px;
       display: flex;
       align-items: flex-end;
       justify-content: flex-end;
@@ -456,124 +304,113 @@
       border-radius: 50%;
       border: none;
       font-size: 22px;
-      font-weight: 500;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.15s;
     }
-    .calc-btn:active { opacity: 0.65; }
-    .calc-btn-gray { background: rgba(120, 120, 128, 0.25); color: var(--text); }
-    .calc-btn-dark { background: rgba(120, 120, 128, 0.15); color: var(--text); font-weight: 600; }
+    .calc-btn:active { opacity: 0.6; }
+    .calc-btn-gray { background: #505050; color: #fff; }
+    .calc-btn-dark { background: #333333; color: #fff; font-weight: 600; }
     .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 600; }
     .calc-btn-zero {
       grid-column: span 2;
       aspect-ratio: auto;
       border-radius: 35px;
       justify-content: flex-start;
-      padding-left: 28px;
+      padding-left: 26px;
     }
 
-    /* Fixed Modals: Strict pointer-event & display management */
-    .sheet-overlay {
+    /* Fixed Navigation Dock */
+    .dock-wrap {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 50;
+      pointer-events: none; /* Crucial: allows clicks above and beside the bar */
+    }
+    .dock {
+      pointer-events: auto; /* Re-enables clicks only on the dock buttons */
+      background: #1c1c1e;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 32px;
+      padding: 5px;
+      display: flex;
+      gap: 4px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .dock button {
+      background: transparent;
+      border: none;
+      padding: 9px 13px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--subtext);
+      border-radius: 24px;
+      cursor: pointer;
+    }
+    .dock button.active {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    /* Tabs */
+    .view-tab { display: none; }
+    .view-tab.active { display: block; }
+
+    /* Modals with zero click blocking when closed */
+    .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      z-index: 300;
-      opacity: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
       display: none;
-      pointer-events: none;
       align-items: flex-end;
       justify-content: center;
-      transition: opacity 0.25s ease;
     }
-    .sheet-overlay.active {
-      display: flex !important;
-      opacity: 1 !important;
-      pointer-events: auto !important;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+    .modal-overlay.active {
+      display: flex;
     }
 
-    .sheet-content {
-      background: var(--modal-bg);
-      backdrop-filter: blur(35px);
-      -webkit-backdrop-filter: blur(35px);
-      border-radius: 28px 28px 0 0;
-      padding: 24px 20px calc(env(safe-area-inset-bottom, 20px) + 24px);
+    .modal-sheet {
+      background: #1c1c1e;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 18px calc(env(safe-area-inset-bottom, 20px) + 20px);
       width: 100%;
       max-width: 600px;
       max-height: 85vh;
       overflow-y: auto;
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.25);
-    }
-
-    .sheet-handle {
-      width: 36px;
-      height: 5px;
-      border-radius: 3px;
-      background: var(--subtext);
-      opacity: 0.3;
-      margin: -10px auto 16px;
-    }
-
-    .receipt-modal-bg {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 400;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-      pointer-events: none;
-    }
-    .receipt-modal-bg.show {
-      display: flex !important;
-      pointer-events: auto !important;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .receipt-paper {
-      background: #ffffff;
-      color: #000000;
-      width: 100%;
-      max-width: 320px;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      font-family: monospace;
-      font-size: 12px;
-      line-height: 1.4;
     }
 
     .batch-header-card {
-      background: linear-gradient(135deg, rgba(0, 113, 227, 0.08), rgba(52, 199, 89, 0.08));
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 12px 14px;
-      margin-top: 14px;
-      margin-bottom: 8px;
+      background: rgba(41, 151, 255, 0.08);
+      border: 1px solid rgba(41, 151, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin: 12px 0 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    #print-iframe { display: none; width: 0; height: 0; position: absolute; border: none; }
+    #print-iframe { display: none; width: 0; height: 0; }
   </style>
 </head>
 <body>
 
+  <!-- Dynamic Toast -->
   <div class="toast-capsule" id="app-toast">
     <span id="toast-icon">✨</span>
-    <span id="toast-msg">Updated</span>
+    <span id="toast-msg">Success</span>
   </div>
 
   <header>
     <div class="brand-wrap">
-      <img src="/logo.png" alt="Aquapet Logo" class="brand-logo">
+      <img src="/logo.png" alt="Aquapet" class="brand-logo">
       <div>
         <div class="greeting-sub" id="greeting-time">Good Afternoon,</div>
         <div class="greeting-title">Mittar</div>
@@ -585,33 +422,30 @@
     </div>
   </header>
 
-  <!-- OMNIPOTENT GLOBAL AI COMMAND COPILOT -->
-  <section class="global-copilot-card">
-    <div class="copilot-input-row">
-      <span style="font-size: 14px; opacity: 0.8;">✦</span>
-      <input type="text" id="global-ai-input" placeholder="Bill items, ask customer spend, stock, or loss..." onkeydown="if(event.key==='Enter') dispatchGlobalAI()">
-      <button class="btn btn-sm" onclick="dispatchGlobalAI()">Send</button>
+  <!-- Global Command Copilot -->
+  <section class="copilot-card">
+    <div class="copilot-row">
+      <span style="font-size: 14px; color: var(--tint-blue);">✦</span>
+      <input type="text" id="global-ai-input" placeholder="Ask AI: bill items, stock, or customer info..." onkeydown="if(event.key==='Enter') runGlobalAI()">
+      <button class="btn btn-sm" onclick="runGlobalAI()">Send</button>
     </div>
-    <div class="copilot-response-box" id="copilot-response-box">
-      <div id="copilot-response-text" style="font-weight: 500;"></div>
-      <div id="copilot-action-slot" style="margin-top: 8px;"></div>
+    <div class="copilot-box" id="copilot-box">
+      <div id="copilot-text"></div>
+      <div id="copilot-actions" style="margin-top: 8px;"></div>
     </div>
   </section>
 
-  <!-- TAB 1: POS BILLING -->
+  <!-- TAB 1: BILLING -->
   <section id="view-pos" class="view-tab active">
     <div class="card">
-      <h3 style="font-size: 18px; margin-bottom: 14px;">Create Customer Bill</h3>
+      <h3 style="font-size: 18px; margin-bottom: 12px;">Create Customer Bill</h3>
       
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
         <input type="text" id="cust-name" class="app-input" placeholder="Customer Name (e.g. Rahul Sharma)">
         <input type="tel" id="cust-phone" class="app-input" placeholder="Phone Number (e.g. 9876543210)">
       </div>
 
-      <div class="search-box">
-        <span style="opacity: 0.5;">🔍</span>
-        <input type="text" id="pos-search" placeholder="Search fish, Sobo filter, heater, wave maker..." oninput="renderPOSPicker()">
-      </div>
+      <input type="text" id="pos-search" class="app-input" placeholder="🔍 Search fish, Sobo filter, heater, wave maker..." oninput="renderPOSPicker()">
 
       <div class="category-scroll" id="cat-filters">
         <button class="cat-pill active" onclick="filterPOS('All', this)">All</button>
@@ -626,32 +460,30 @@
 
       <div id="pos-product-picker" style="max-height: 250px; overflow-y: auto; margin-bottom: 10px;"></div>
 
-      <div style="font-size: 12px; font-weight: 700; color: var(--subtext); text-transform: uppercase; margin-top: 10px;">Apply Coupon Discount:</div>
-      <div class="coupon-row">
-        <button class="coupon-pill active" onclick="applyCoupon(0, this)">None</button>
-        <button class="coupon-pill" onclick="applyCoupon(10, this)">10% OFF</button>
-        <button class="coupon-pill" onclick="applyCoupon(15, this)">15% OFF</button>
+      <div style="font-size: 12px; font-weight: 700; color: var(--subtext); text-transform: uppercase; margin-top: 6px;">Discount:</div>
+      <div style="display: flex; gap: 8px; margin: 8px 0 12px;">
+        <button class="cat-pill active" style="flex:1;" onclick="applyCoupon(0, this)">None</button>
+        <button class="cat-pill" style="flex:1;" onclick="applyCoupon(10, this)">10% OFF</button>
+        <button class="cat-pill" style="flex:1;" onclick="applyCoupon(15, this)">15% OFF</button>
       </div>
 
       <div class="bill-price-card">
         <div>
-          <div style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase;">
-            Total Bill <span id="discount-note" style="color: var(--tint-blue); font-weight: 700;"></span>
+          <div style="font-size: 11px; font-weight: 600; color: var(--subtext); text-transform: uppercase;">
+            Total <span id="discount-note" style="color: var(--tint-blue);"></span>
           </div>
           <div style="font-size: 26px; font-weight: 700; color: var(--tint-green);" id="display-bill-total">₹0</div>
         </div>
-        <button class="btn btn-sm" style="background: var(--card-bg); color: var(--text); border: 1px solid var(--card-border);" onclick="editBillPrice()">
-          ✏️ Edit Price
-        </button>
+        <button class="btn btn-sm" style="background: #333;" onclick="editBillPrice()">✏️ Edit Price</button>
       </div>
 
-      <button class="btn btn-green" id="btn-print-bill" style="width: 100%; padding: 15px; font-size: 16px;" onclick="checkoutAndPrint()">
+      <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="checkoutAndPrint()">
         Print the Bill
       </button>
     </div>
   </section>
 
-  <!-- TAB 2: APPLE CALCULATOR -->
+  <!-- TAB 2: CALCULATOR -->
   <section id="view-calculator" class="view-tab">
     <div class="card calc-container">
       <div class="calc-screen" id="calc-display">0</div>
@@ -681,7 +513,7 @@
         <button class="calc-btn calc-btn-orange" onclick="calcEqual()">=</button>
       </div>
 
-      <button class="btn btn-green" style="width: 100%; margin-top: 18px; padding: 14px; font-size: 16px;" onclick="openCalcBillingSheet()">
+      <button class="btn btn-green" style="width: 100%; margin-top: 16px; padding: 14px; font-size: 15px;" onclick="openCalcSheet()">
         🧾 Bill This Total (Print Receipt)
       </button>
     </div>
@@ -708,54 +540,51 @@
       </div>
     </div>
 
-    <div class="card" style="background: linear-gradient(135deg, rgba(0,113,227,0.06), rgba(52,199,89,0.06));">
-      <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Current Inventory Valuation</div>
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px;">
-        <div style="font-size: 28px; font-weight: 800; color: var(--tint-blue);" id="metric-inv-valuation">₹0</div>
-        <div style="font-size: 13px; font-weight: 600; color: var(--subtext);" id="metric-inv-units">0 total units in stock</div>
+    <div class="card">
+      <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Inventory Valuation</div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px;">
+        <div style="font-size: 24px; font-weight: 800; color: var(--tint-blue);" id="metric-inv-valuation">₹0</div>
+        <div style="font-size: 12px; color: var(--subtext);" id="metric-inv-units">0 units in stock</div>
       </div>
     </div>
 
     <div class="card">
-      <h3 style="font-size: 17px; margin-bottom: 12px;">Expenses Breakdown</h3>
-      <div id="expense-category-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      <h3 style="font-size: 16px; margin-bottom: 10px;">Expenses Breakdown</h3>
+      <div id="expense-category-list"></div>
     </div>
 
     <div class="card">
-      <h3 style="font-size: 17px; margin-bottom: 12px;">Recent Expense Ledger</h3>
-      <div id="recent-expenses-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      <h3 style="font-size: 16px; margin-bottom: 10px;">Recent Expense Ledger</h3>
+      <div id="recent-expenses-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
     </div>
   </section>
 
   <!-- TAB 4: CUSTOMERS -->
   <section id="view-customers" class="view-tab">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 18px;">Customer Bills & Sales</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 17px;">Customer Bills & Sales</h3>
         <button class="btn btn-sm" onclick="loadCustomerSales()">🔄 Refresh</button>
       </div>
-      <div id="customer-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+      <div id="customer-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
   </section>
 
-  <!-- TAB 5: STOCK WITH DAY BOOK SCANNER -->
+  <!-- TAB 5: STOCK WITH SCANNER -->
   <section id="view-inventory" class="view-tab">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-        <h3 style="font-size: 18px;">Stock Inventory</h3>
+        <h3 style="font-size: 17px;">Stock Inventory</h3>
         <div style="display: flex; gap: 6px;">
           <input type="file" id="daybook-camera-input" accept="image/*" style="display:none;" onchange="handleDayBookImage(this)">
-          <button class="btn btn-sm" style="background: linear-gradient(135deg, #0071e3, #af52de);" onclick="triggerImageCapture()">
+          <button class="btn btn-sm" style="background: linear-gradient(135deg, #0071e3, #af52de);" onclick="document.getElementById('daybook-camera-input').click()">
             📷 Scan Day Book
           </button>
-          <button class="btn btn-sm" onclick="openAddStockSheet()">+ Manual</button>
+          <button class="btn btn-sm" onclick="openAddStockModal()">+ Manual</button>
         </div>
       </div>
 
-      <div class="search-box">
-        <span style="opacity: 0.5;">🔍</span>
-        <input type="text" id="stock-search" placeholder="Search stock by name or category..." oninput="renderInventory()">
-      </div>
+      <input type="text" id="stock-search" class="app-input" placeholder="🔍 Search stock by name or category..." oninput="renderInventory()">
 
       <div class="category-scroll">
         <button class="cat-pill active" onclick="filterStockStatus('all', this)">All Stock</button>
@@ -767,7 +596,7 @@
     </div>
   </section>
 
-  <!-- 5-BUTTON DOCK -->
+  <!-- Bottom Navigation Dock -->
   <div class="dock-wrap">
     <nav class="dock">
       <button class="active" onclick="switchTab('pos', this)">Billing</button>
@@ -778,107 +607,102 @@
     </nav>
   </div>
 
-  <!-- iOS BOTTOM SHEET: SCANNED DAY BOOK BATCH REVIEW -->
-  <div class="sheet-overlay" id="ocr-review-sheet" onclick="closeOcrReviewSheet(event)">
-    <div class="sheet-content" onclick="event.stopPropagation()">
-      <div class="sheet-handle"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <h3 style="font-size: 20px; font-weight: 700;">Review Scanned Batch</h3>
-        <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeOcrReviewSheet()">Cancel</button>
+  <!-- MODAL: REVIEW SCANNED DAY BOOK -->
+  <div class="modal-overlay" id="ocr-modal">
+    <div class="modal-sheet">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 18px; font-weight: 700;">Review Scanned Batch</h3>
+        <button class="btn btn-sm" style="background: transparent; color: var(--tint-blue);" onclick="closeModal('ocr-modal')">Cancel</button>
       </div>
 
-      <div style="margin-bottom: 14px; background: var(--pill-bg); padding: 12px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="background: var(--pill-bg); padding: 12px; border-radius: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Batch Date</div>
+          <div style="font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700;">Batch Date</div>
           <input type="date" id="ocr-batch-date" class="app-input" style="padding: 4px 8px; font-weight: 700; width: auto; margin-top: 4px;">
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Total Wholesale</div>
-          <div style="font-size: 20px; font-weight: 800; color: var(--tint-red);" id="ocr-total-investment">₹0</div>
+          <div style="font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700;">Total Wholesale</div>
+          <div style="font-size: 18px; font-weight: 800; color: var(--tint-red);" id="ocr-total-investment">₹0</div>
         </div>
       </div>
 
-      <div id="ocr-items-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;"></div>
+      <div id="ocr-items-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
 
-      <button class="btn btn-green" style="width: 100%; padding: 15px; font-size: 16px;" onclick="confirmAndCommitBatch()">
+      <button class="btn btn-green" style="width: 100%; padding: 14px;" onclick="confirmAndCommitBatch()">
         Confirm & Save to Stock Ledger
       </button>
     </div>
   </div>
 
-  <!-- iOS BOTTOM SHEET: MANUAL STOCK -->
-  <div class="sheet-overlay" id="add-stock-sheet" onclick="closeAddStockSheet(event)">
-    <div class="sheet-content" onclick="event.stopPropagation()">
-      <div class="sheet-handle"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-        <h3 style="font-size: 20px; font-weight: 700;">Add Stock Item</h3>
-        <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeAddStockSheet()">Cancel</button>
+  <!-- MODAL: ADD PRODUCT MANUALLY -->
+  <div class="modal-overlay" id="add-stock-modal">
+    <div class="modal-sheet">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 18px;">Add Stock Item</h3>
+        <button class="btn btn-sm" style="background: transparent; color: var(--tint-blue);" onclick="closeModal('add-stock-modal')">Cancel</button>
       </div>
-
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <input type="text" id="new-item-name" class="app-input" placeholder="Item Name">
-        <input type="text" id="new-item-category" class="app-input" placeholder="Category (Heater, Light, Aquarium, Fish, etc.)">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <input type="text" id="new-item-name" class="app-input" placeholder="Product Name">
+        <input type="text" id="new-item-category" class="app-input" placeholder="Category (Fish, Top Filter, Heater, etc.)">
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
           <input type="number" id="new-item-cost" class="app-input" placeholder="Cost ₹">
           <input type="number" id="new-item-price" class="app-input" placeholder="Retail ₹">
-          <input type="number" id="new-item-qty" class="app-input" placeholder="Qty">
+          <input type="number" id="new-item-qty" class="app-input" placeholder="Quantity">
         </div>
-        <button class="btn btn-green" style="margin-top: 4px; padding: 14px; font-size: 16px;" onclick="submitNewStockItem()">
+        <button class="btn btn-green" style="margin-top: 6px; padding: 12px;" onclick="submitNewStockItem()">
           Add to Inventory
         </button>
       </div>
     </div>
   </div>
 
-  <!-- iOS BOTTOM SHEET: REPLENISH STOCK -->
-  <div class="sheet-overlay" id="restock-sheet" onclick="closeRestockSheet(event)">
-    <div class="sheet-content" onclick="event.stopPropagation()">
-      <div class="sheet-handle"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 20px; font-weight: 700;">Replenish Stock</h3>
-        <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeRestockSheet()">Cancel</button>
+  <!-- MODAL: REPLENISH STOCK -->
+  <div class="modal-overlay" id="restock-modal">
+    <div class="modal-sheet">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 18px;">Replenish Stock</h3>
+        <button class="btn btn-sm" style="background: transparent; color: var(--tint-blue);" onclick="closeModal('restock-modal')">Cancel</button>
       </div>
-      <div style="margin-bottom: 14px;">
-        <div style="font-weight: 700; font-size: 17px;" id="restock-item-name">Product Name</div>
-        <div style="font-size: 13px; color: var(--subtext); margin-top: 2px;" id="restock-item-info">Cost: ₹0</div>
+      <div style="margin-bottom: 10px;">
+        <div style="font-weight: 700; font-size: 16px;" id="restock-item-name">Product</div>
+        <div style="font-size: 12px; color: var(--subtext);" id="restock-item-info">Cost: ₹0</div>
       </div>
       <input type="hidden" id="restock-item-id">
-      <input type="number" id="restock-item-qty" class="app-input" placeholder="Additional Units" style="font-size: 17px; padding: 14px; margin-bottom: 14px;">
-      <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="submitRestockItem()">
+      <input type="number" id="restock-item-qty" class="app-input" placeholder="Additional Units" style="margin-bottom: 12px;">
+      <button class="btn btn-green" style="width: 100%; padding: 12px;" onclick="submitRestockItem()">
         Confirm Restock
       </button>
     </div>
   </div>
 
-  <!-- iOS BOTTOM SHEET: CALCULATOR CUSTOMER LINKING -->
-  <div class="sheet-overlay" id="calc-bill-sheet" onclick="closeCalcBillingSheet(event)">
-    <div class="sheet-content" onclick="event.stopPropagation()">
-      <div class="sheet-handle"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 20px; font-weight: 700;">Customer Bill Details</h3>
-        <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeCalcBillingSheet()">Cancel</button>
+  <!-- MODAL: CALCULATOR BILLING -->
+  <div class="modal-overlay" id="calc-bill-modal">
+    <div class="modal-sheet">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 18px;">Customer Bill Details</h3>
+        <button class="btn btn-sm" style="background: transparent; color: var(--tint-blue);" onclick="closeModal('calc-bill-modal')">Cancel</button>
       </div>
-      <div style="margin-bottom: 12px; background: var(--pill-bg); padding: 12px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-size: 13px; font-weight: 600; color: var(--subtext);">CALCULATED TOTAL</span>
-        <span style="font-size: 24px; font-weight: 800; color: var(--tint-green);" id="calc-bill-amount-display">₹0</span>
+      <div style="background: var(--pill-bg); padding: 10px 14px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-size: 12px; font-weight: 700; color: var(--subtext);">CALCULATED TOTAL</span>
+        <span style="font-size: 22px; font-weight: 800; color: var(--tint-green);" id="calc-bill-amount-display">₹0</span>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
         <input type="text" id="calc-cust-name" class="app-input" placeholder="Customer Name (Optional)">
-        <input type="tel" id="calc-cust-phone" class="app-input" placeholder="WhatsApp Phone (Optional)">
-        <input type="text" id="calc-order-note" class="app-input" placeholder="Order Note (e.g. 3ft Tank setup + Fish)">
+        <input type="tel" id="calc-cust-phone" class="app-input" placeholder="WhatsApp Number (Optional)">
+        <input type="text" id="calc-order-note" class="app-input" placeholder="Order Note (e.g. Tank setup + Fish)">
       </div>
-      <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="confirmCalculatedBill()">
+      <button class="btn btn-green" style="width: 100%; padding: 12px;" onclick="confirmCalculatedBill()">
         Confirm & Generate Bill
       </button>
     </div>
   </div>
 
-  <!-- On-Screen Digital Thermal Receipt Popup -->
-  <div class="receipt-modal-bg" id="receipt-modal" onclick="closeReceiptModal(event)">
-    <div class="receipt-paper" onclick="event.stopPropagation()">
+  <!-- MODAL: DIGITAL RECEIPT -->
+  <div class="modal-overlay" id="receipt-modal">
+    <div style="background:#fff; color:#000; width:100%; max-width:320px; border-radius:18px; padding:18px; font-family:monospace; font-size:12px; margin:auto;">
       <div style="text-align: center; margin-bottom: 8px;">
         <strong style="font-size: 15px;">AQUAPET</strong><br>
-        <span style="font-size: 11px;">PET SHOP & CARE</span><br>
+        <span>PET SHOP & CARE</span><br>
         <span id="modal-date" style="font-size: 10px; color:#666;"></span>
       </div>
       <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
@@ -894,17 +718,13 @@
         <span>TOTAL:</span><span id="modal-total"></span>
       </div>
       <div style="text-align: center; margin-top: 10px; font-size: 10px; color: #444;">
-        Thank you! Visit again.<br>Live Fish & Pets Care
+        Thank you! Visit again.
       </div>
-      
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
-        <div style="display: flex; gap: 6px;">
-          <button class="btn btn-sm" style="flex: 1; background: var(--tint-green);" onclick="shareBillWhatsApp()">📲 WhatsApp</button>
-          <button class="btn btn-sm" style="flex: 1; background: #000;" onclick="triggerIframePrint()">🖨️ AirPrint</button>
-        </div>
-        <button class="btn btn-sm" style="background: var(--pill-bg); color: var(--text);" onclick="copyThermalText()">📋 Copy Text for Bluetooth</button>
-        <button class="btn btn-sm" style="background: transparent; color: var(--subtext);" onclick="closeReceiptModal()">Close</button>
+      <div style="display: flex; gap: 6px; margin-top: 14px;">
+        <button class="btn btn-sm" style="flex: 1; background: var(--tint-green);" onclick="shareBillWhatsApp()">📲 WhatsApp</button>
+        <button class="btn btn-sm" style="flex: 1; background: #000;" onclick="triggerIframePrint()">🖨️ AirPrint</button>
       </div>
+      <button class="btn btn-sm" style="width: 100%; background: #eee; color: #000; margin-top: 6px;" onclick="closeModal('receipt-modal')">Close</button>
     </div>
   </div>
 
@@ -931,7 +751,7 @@
       document.getElementById('toast-msg').innerText = msg;
       document.getElementById('toast-icon').innerText = icon;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3500);
+      setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
     function setGreeting() {
@@ -940,6 +760,25 @@
       if (hr < 12) el.innerText = "Good Morning,";
       else if (hr < 17) el.innerText = "Good Afternoon,";
       else el.innerText = "Good Evening,";
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.dock button').forEach(b => b.classList.remove('active'));
+      const target = document.getElementById('view-' + tab);
+      if (target) target.classList.add('active');
+      if (btn) btn.classList.add('active');
+
+      if (tab === 'customers') loadCustomerSales();
+      if (tab === 'balancesheet') loadData();
+      if (tab === 'inventory') renderInventory();
     }
 
     async function loadData() {
@@ -956,7 +795,7 @@
         document.getElementById('metric-expenses').innerText = '₹' + sum.totalExpenses;
         document.getElementById('metric-profit').innerText = '₹' + sum.netProfit;
         document.getElementById('metric-inv-valuation').innerText = '₹' + sum.inventoryValuation;
-        document.getElementById('metric-inv-units').innerText = `${sum.totalInventoryUnits || 0} total units in stock`;
+        document.getElementById('metric-inv-units').innerText = `${sum.totalInventoryUnits || 0} units in stock`;
 
         renderExpenseBreakdown(sum.expenseBreakdown || []);
         renderRecentExpenses(sum.recentExpenses || []);
@@ -964,15 +803,11 @@
         renderInventory();
         loadCustomerSales();
       } catch (err) {
-        console.warn("Connecting...", err);
+        console.warn("Loading error:", err);
       }
     }
 
-    // --- DAY BOOK IMAGE SCANNING & PARSING ---
-    function triggerImageCapture() {
-      document.getElementById('daybook-camera-input').click();
-    }
-
+    // --- DAY BOOK OCR SCANNING ---
     function handleDayBookImage(input) {
       if (!input.files || !input.files[0]) return;
       const file = input.files[0];
@@ -992,30 +827,19 @@
 
           if (data.items && data.items.length > 0) {
             scannedBatchItems = data.items;
-            openOcrReviewSheet();
+            document.getElementById('ocr-batch-date').value = new Date().toISOString().split('T')[0];
+            renderOcrReviewList();
+            openModal('ocr-modal');
           } else {
-            alert('Could not detect readable ledger rows. Please ensure good lighting and clear handwriting.');
+            alert('Could not detect readable ledger rows. Check lighting.');
           }
         } catch (err) {
-          alert('Network or OCR timeout. Try capturing a closer photo.');
+          alert('Network or OCR timeout. Try a closer photo.');
         } finally {
           input.value = '';
         }
       };
       reader.readAsDataURL(file);
-    }
-
-    function openOcrReviewSheet() {
-      const todayISO = new Date().toISOString().split('T')[0];
-      document.getElementById('ocr-batch-date').value = todayISO;
-      renderOcrReviewList();
-      document.getElementById('ocr-review-sheet').classList.add('active');
-    }
-
-    function closeOcrReviewSheet(e) {
-      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
-        document.getElementById('ocr-review-sheet').classList.remove('active');
-      }
     }
 
     function renderOcrReviewList() {
@@ -1027,18 +851,18 @@
         totalInvestment += rowCost;
 
         return `
-          <div style="background: var(--pill-bg); padding: 10px 12px; border-radius: 14px; display: flex; flex-direction: column; gap: 6px;">
-            <div style="display: flex; gap: 8px;">
-              <input type="text" value="${item.name}" onchange="updateOcrItem(${idx}, 'name', this.value)" class="app-input" style="padding: 6px 10px; font-weight: 600; flex: 2;" placeholder="Name">
-              <input type="text" value="${item.category}" onchange="updateOcrItem(${idx}, 'category', this.value)" class="app-input" style="padding: 6px 10px; font-weight: 600; flex: 1;" placeholder="Category">
+          <div style="background: var(--pill-bg); padding: 8px 10px; border-radius: 12px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; gap: 6px;">
+              <input type="text" value="${item.name}" onchange="updateOcrItem(${idx}, 'name', this.value)" class="app-input" style="padding: 4px 8px; font-weight: 600; flex: 2;">
+              <input type="text" value="${item.category}" onchange="updateOcrItem(${idx}, 'category', this.value)" class="app-input" style="padding: 4px 8px; font-weight: 600; flex: 1;">
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <span style="font-size: 11px; font-weight: 600; color: var(--subtext);">Qty:</span>
-              <input type="number" value="${item.quantity}" onchange="updateOcrItem(${idx}, 'quantity', this.value)" class="app-input" style="padding: 6px 8px; width: 60px;">
-              <span style="font-size: 11px; font-weight: 600; color: var(--subtext);">Cost ₹:</span>
-              <input type="number" value="${item.purchase_price}" onchange="updateOcrItem(${idx}, 'purchase_price', this.value)" class="app-input" style="padding: 6px 8px; width: 75px;">
-              <span style="font-size: 11px; font-weight: 600; color: var(--subtext);">Sell ₹:</span>
-              <input type="number" value="${item.price}" onchange="updateOcrItem(${idx}, 'price', this.value)" class="app-input" style="padding: 6px 8px; width: 75px;">
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span style="font-size: 11px; color: var(--subtext);">Qty:</span>
+              <input type="number" value="${item.quantity}" onchange="updateOcrItem(${idx}, 'quantity', this.value)" class="app-input" style="padding: 4px; width: 55px;">
+              <span style="font-size: 11px; color: var(--subtext);">Cost:</span>
+              <input type="number" value="${item.purchase_price}" onchange="updateOcrItem(${idx}, 'purchase_price', this.value)" class="app-input" style="padding: 4px; width: 65px;">
+              <span style="font-size: 11px; color: var(--subtext);">Sell:</span>
+              <input type="number" value="${item.price}" onchange="updateOcrItem(${idx}, 'price', this.value)" class="app-input" style="padding: 4px; width: 65px;">
               <button class="btn-trash" onclick="removeOcrItem(${idx})">🗑️</button>
             </div>
           </div>
@@ -1066,7 +890,7 @@
       if (scannedBatchItems.length === 0) return alert('No items to save.');
       const batchDate = document.getElementById('ocr-batch-date').value;
 
-      showToast('Saving batch to stock ledger...', '⏳');
+      showToast('Saving batch to ledger...', '⏳');
 
       const res = await fetch('/api/batch-stock', {
         method: 'POST',
@@ -1079,15 +903,13 @@
 
       const data = await res.json();
       if (data.success) {
-        closeOcrReviewSheet();
-        showToast(`Saved ${data.totalItems} items! ₹${data.totalWholesaleInvested} logged to ledger`, '📦');
+        closeModal('ocr-modal');
+        showToast(`Saved ${data.totalItems} items to ledger!`, '📦');
         loadData();
-      } else {
-        alert('Failed to save batch.');
       }
     }
 
-    // --- INVENTORY RENDERING (GROUPED BY BATCH DATE) ---
+    // --- INVENTORY RENDERING ---
     function renderInventory() {
       const el = document.getElementById('inventory-list');
       const searchQuery = (document.getElementById('stock-search')?.value || '').toLowerCase().trim();
@@ -1108,7 +930,7 @@
       }
 
       if (filtered.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock found.</div>';
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock.</div>';
         return;
       }
 
@@ -1128,14 +950,14 @@
         return `
           <div class="batch-header-card">
             <div>
-              <div style="font-weight: 800; font-size: 14px; color: var(--tint-blue);">📅 Batch: ${batchDate}</div>
+              <div style="font-weight: 800; font-size: 13px; color: var(--tint-blue);">📅 Batch: ${batchDate}</div>
               <div style="font-size: 11px; color: var(--subtext); margin-top: 2px;">
                 ${items.length} items | Bought: ${totalUnitsBought} | Sold: <strong style="color:var(--tint-green);">${totalUnitsSold}</strong>
               </div>
             </div>
             <div style="text-align: right;">
-              <div style="font-size: 10px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Invested</div>
-              <div style="font-weight: 800; font-size: 14px; color: var(--tint-red);">₹${batchInvested}</div>
+              <div style="font-size: 10px; font-weight: 700; color: var(--subtext);">Invested</div>
+              <div style="font-weight: 800; font-size: 13px; color: var(--tint-red);">₹${batchInvested}</div>
             </div>
           </div>
 
@@ -1148,30 +970,27 @@
 
             return `
               <div class="pos-item">
-                <div style="flex: 1; padding-right: 10px;">
-                  <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
+                <div style="flex: 1; padding-right: 8px;">
+                  <div style="font-weight: 600; font-size: 14px;">${p.name}</div>
                   <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">
                     ${p.category} | Cost: ₹${p.purchase_price \vert{}\vert{} 0} \vert{} Sell: ₹${p.price}
                   </div>
                   <div style="font-size: 11px; color: var(--text); margin-top: 2px; font-weight: 700;">
                     Bought: ${initial} | Sold: <span style="color: var(--tint-blue);">${sold}</span>
                   </div>
-                  <div style="margin-top: 6px;">
-                    <button class="btn-pill-action" onclick="openRestockSheet(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.purchase_price || 0})">
-                      + Add More Stock
+                  <div style="margin-top: 4px;">
+                    <button class="btn-pill-action" onclick="openRestockModal(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.purchase_price || 0})">
+                      + Add Stock
                     </button>
                   </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <div style="text-align: right;">
-                    <div style="font-weight: 700; font-size: 16px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
+                    <div style="font-weight: 700; font-size: 15px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
                       ${remaining} left
                     </div>
-                    <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 6px; background: ${isDepleted ? 'rgba(255, 59, 48, 0.12)' : isLow ? 'rgba(255, 149, 0, 0.12)' : 'rgba(52, 199, 89, 0.12)'}; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
-                      ${isDepleted ? 'Empty' : isLow ? 'Getting Empty Soon' : 'In Stock'}
-                    </span>
                   </div>
-                  <button class="btn-trash" title="Delete Product" onclick="deleteStockItem(${p.id}, '${p.name.replace(/'/g, "\\'")}')">🗑️</button>
+                  <button class="btn-trash" onclick="deleteStockItem(${p.id}, '${p.name.replace(/'/g, "\\'")}')">🗑️</button>
                 </div>
               </div>
             `;
@@ -1188,61 +1007,40 @@
     }
 
     async function deleteStockItem(id, name) {
-      if (!confirm(`Delete "${name}" completely? This will also remove its wholesale expense from your ledger.`)) return;
-
-      try {
-        const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.success) {
-          showToast(`Deleted ${name} & its ledger expense`, '🗑️');
-          loadData();
-        }
-      } catch (err) {
-        showToast('Error connecting to server', '❌');
+      if (!confirm(`Delete "${name}"? Linked wholesale expense will also be removed.`)) return;
+      const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Deleted ${name}`, '🗑️');
+        loadData();
       }
     }
 
-    function openAddStockSheet() {
-      document.getElementById('add-stock-sheet').classList.add('active');
-      document.getElementById('new-item-name').focus();
+    function openAddStockModal() {
+      openModal('add-stock-modal');
     }
 
-    function closeAddStockSheet(e) {
-      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
-        document.getElementById('add-stock-sheet').classList.remove('active');
-      }
-    }
-
-    function openRestockSheet(id, name, cost) {
+    function openRestockModal(id, name, cost) {
       document.getElementById('restock-item-id').value = id;
       document.getElementById('restock-item-name').innerText = name;
       document.getElementById('restock-item-info').innerText = `Cost: ₹${cost}`;
       document.getElementById('restock-item-qty').value = '';
-      document.getElementById('restock-sheet').classList.add('active');
-      setTimeout(() => document.getElementById('restock-item-qty').focus(), 150);
-    }
-
-    function closeRestockSheet(e) {
-      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
-        document.getElementById('restock-sheet').classList.remove('active');
-      }
+      openModal('restock-modal');
     }
 
     async function submitRestockItem() {
       const id = document.getElementById('restock-item-id').value;
       const addQty = parseInt(document.getElementById('restock-item-qty').value, 10);
-
-      if (!id || isNaN(addQty) || addQty <= 0) return showToast('Enter valid quantity', '⚠️');
+      if (!id || isNaN(addQty) || addQty <= 0) return alert('Enter valid quantity');
 
       const res = await fetch('/api/products', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, add_quantity: addQty })
       });
-
       if (res.ok) {
-        closeRestockSheet();
-        showToast('Added! Expense ledger updated.', '📦');
+        closeModal('restock-modal');
+        showToast('Restocked successfully!', '📦');
         loadData();
       }
     }
@@ -1255,24 +1053,24 @@
       const qty = parseInt(document.getElementById('new-item-qty').value, 10);
       const today = new Date().toISOString().split('T')[0];
 
-      if (!name || isNaN(qty) || qty <= 0) return showToast('Enter valid item details', '⚠️');
+      if (!name || isNaN(qty) || qty <= 0) return alert('Enter valid name and quantity');
 
       const res = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name, category, purchase_price: cost, price, quantity: qty, initial_stock: qty, month_tag: today
+          name, category, purchase_price: cost, price, quantity: qty, initial_stock: qty, month_tag: today, batch_date: today
         })
       });
 
       if (res.ok) {
-        closeAddStockSheet();
-        showToast('Added! Expense ledger updated.', '📦');
+        closeModal('add-stock-modal');
+        showToast('Item saved to inventory', '📦');
         loadData();
       }
     }
 
-    // --- POS BILLING ENGINE ---
+    // --- POS BILLING ---
     function renderPOSPicker() {
       const el = document.getElementById('pos-product-picker');
       const searchQuery = (document.getElementById('pos-search')?.value || '').toLowerCase().trim();
@@ -1284,7 +1082,7 @@
       });
 
       if (filtered.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching items found.</div>';
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching items.</div>';
         return;
       }
 
@@ -1294,16 +1092,16 @@
         const reachedMax = qtyInCart >= p.quantity;
 
         return `
-          <div class="pos-item" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
+          <div class="pos-item">
             <div>
-              <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
-              <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'}; font-weight: ${isOutOfStock ? '600' : 'normal'};">
-                ₹${p.price} | ${isOutOfStock ? 'Out of Stock' : `${p.quantity} in stock`}
+              <div style="font-weight: 600; font-size: 14px;">${p.name}</div>
+              <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'};">
+                ₹${p.price} | ${isOutOfStock ? 'Depleted' : `${p.quantity} in stock`}
               </div>
             </div>
             <div>
               ${isOutOfStock ? `
-                <span style="font-size: 12px; font-weight: 700; color: var(--tint-red); padding: 4px 8px; background: rgba(255, 59, 48, 0.1); border-radius: 8px;">Depleted</span>
+                <span style="font-size: 12px; color: var(--tint-red); font-weight: 700;">Out</span>
               ` : qtyInCart > 0 ? `
                 <div class="stepper">
                   <button class="step-btn" onclick="modifyCart(${p.id}, -1)">−</button>
@@ -1323,7 +1121,7 @@
       const p = products.find(item => item.id == id);
       if (!p) return;
       const next = (cart[id] || 0) + delta;
-      if (delta > 0 && next > p.quantity) return showToast(`Only ${p.quantity} units available`, '⚠️');
+      if (delta > 0 && next > p.quantity) return showToast(`Only ${p.quantity} available`, '⚠️');
       if (next <= 0) delete cart[id];
       else cart[id] = next;
 
@@ -1341,7 +1139,7 @@
 
     function applyCoupon(percent, btn) {
       discountPercent = percent;
-      document.querySelectorAll('.coupon-pill').forEach(b => b.classList.remove('active'));
+      btn.parentElement.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       customOverrideTotal = null;
       updateTotal();
@@ -1363,14 +1161,14 @@
       if (discountPercent > 0) {
         const discountVal = (subtotal * discountPercent) / 100;
         finalAmount = Math.max(0, subtotal - discountVal);
-        document.getElementById('discount-note').innerText = `(${discountPercent}% Coupon Applied)`;
+        document.getElementById('discount-note').innerText = `(${discountPercent}% OFF)`;
       } else {
         document.getElementById('discount-note').innerText = '';
       }
 
       if (customOverrideTotal !== null) {
         finalAmount = customOverrideTotal;
-        document.getElementById('discount-note').innerText = `(Price Manually Edited)`;
+        document.getElementById('discount-note').innerText = `(Edited)`;
       }
 
       finalAmount = Math.round(finalAmount);
@@ -1380,7 +1178,7 @@
 
     function editBillPrice() {
       const current = updateTotal();
-      const newPrice = prompt("Enter revised total bill amount (₹):", current);
+      const newPrice = prompt("Enter revised bill amount (₹):", current);
       if (newPrice !== null && !isNaN(newPrice) && newPrice.trim() !== '') {
         customOverrideTotal = parseFloat(newPrice);
         updateTotal();
@@ -1389,7 +1187,7 @@
 
     function checkoutAndPrint() {
       const finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) return showToast('Add at least one item', '⚠️');
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) return alert('Add at least one item');
 
       const rawCust = document.getElementById('cust-name').value.trim();
       const rawPhone = document.getElementById('cust-phone').value.trim();
@@ -1459,7 +1257,7 @@
         document.getElementById('modal-discount-row').style.display = 'none';
       }
 
-      document.getElementById('receipt-modal').classList.add('show');
+      openModal('receipt-modal');
     }
 
     function triggerIframePrint() {
@@ -1515,17 +1313,6 @@
       window.open(url, '_blank');
     }
 
-    function copyThermalText() {
-      if (!latestBillData) return;
-      const itemsText = latestBillData.items.map(i => `${i.name} x${i.quantity}  ₹${i.price * i.quantity}`).join('\n');
-      const text = `AQUAPET\nPET SHOP & CARE\n--------------------------------\nDate: ${latestBillData.date}\nCust: ${latestBillData.customer}\nPhone: ${latestBillData.phone}\n--------------------------------\n${itemsText}\n--------------------------------\nTOTAL: ₹${latestBillData.total}\n--------------------------------\nThank you! Visit again.`;
-      navigator.clipboard.writeText(text).then(() => showToast('Receipt copied!', '📋'));
-    }
-
-    function closeReceiptModal() {
-      document.getElementById('receipt-modal').classList.remove('show');
-    }
-
     // --- CALCULATOR ENGINE ---
     function updateCalcScreen() {
       document.getElementById('calc-display').innerText = calcCurrent;
@@ -1556,17 +1343,13 @@
       calcOp = null; calcPrevious = null; calcResetOnNext = true; updateCalcScreen();
     }
 
-    function openCalcBillingSheet() {
+    function openCalcSheet() {
       const amount = Math.round(parseFloat(calcCurrent));
-      if (isNaN(amount) || amount <= 0) return showToast('Calculate a valid total first', '⚠️');
+      if (isNaN(amount) || amount <= 0) return alert('Calculate a valid total first');
       document.getElementById('calc-bill-amount-display').innerText = '₹' + amount;
-      document.getElementById('calc-bill-sheet').classList.add('active');
+      openModal('calc-bill-modal');
     }
-    function closeCalcBillingSheet(e) {
-      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
-        document.getElementById('calc-bill-sheet').classList.remove('active');
-      }
-    }
+
     async function confirmCalculatedBill() {
       const amount = Math.round(parseFloat(calcCurrent));
       const rawName = document.getElementById('calc-cust-name').value.trim();
@@ -1586,7 +1369,7 @@
       });
       const data = await res.json();
       if (data.success) {
-        closeCalcBillingSheet();
+        closeModal('calc-bill-modal');
         latestBillData = {
           saleId: data.saleId, date: new Date().toLocaleString('en-IN'), customer: custName, phone: custPhone,
           items: [{ name: itemName, quantity: 1, price: amount }], total: amount, discount: 0
@@ -1596,18 +1379,18 @@
       }
     }
 
-    // --- GLOBAL AI COPILOT DISPATCHER ---
-    async function dispatchGlobalAI() {
+    // --- GLOBAL AI COPILOT ---
+    async function runGlobalAI() {
       const input = document.getElementById('global-ai-input');
       const question = input.value.trim();
       if (!question) return;
 
-      const respCard = document.getElementById('copilot-response-box');
-      const respText = document.getElementById('copilot-response-text');
-      const actionSlot = document.getElementById('copilot-action-slot');
+      const respCard = document.getElementById('copilot-box');
+      const respText = document.getElementById('copilot-text');
+      const actionSlot = document.getElementById('copilot-actions');
 
       respCard.classList.add('show');
-      respText.innerHTML = '<span style="color: var(--tint-blue);">✦ Aquapet AI is analyzing & executing...</span>';
+      respText.innerHTML = '<span style="color: var(--tint-blue);">Analyzing...</span>';
       actionSlot.innerHTML = '';
 
       try {
@@ -1622,29 +1405,14 @@
 
         if (data.executedAction === 'bill_created' && data.billData) {
           latestBillData = data.billData;
-          actionSlot.innerHTML = `
-            <button class="btn btn-sm btn-green" onclick="openGeneratedBill()">
-              📄 View & Print Bill
-            </button>
-          `;
-          showToast(`Bill #${data.billData.saleId} generated!`, '🧾');
+          actionSlot.innerHTML = `<button class="btn btn-sm btn-green" onclick="openGeneratedBill()">📄 View & Print Bill</button>`;
           loadData();
-        } 
-        else if (data.executedAction === 'stock_updated') {
-          showToast('Inventory & ledger updated', '📦');
+        } else if (data.executedAction === 'stock_updated') {
+          showToast('Stock & ledger updated', '📦');
           loadData();
         }
-        else if (data.executedAction === 'customer_found' && data.customerPhone) {
-          actionSlot.innerHTML = `
-            <div style="display: flex; gap: 8px; margin-top: 4px;">
-              <a href="tel:${data.customerPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
-              <a href="https://wa.me/91${data.customerPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
-            </div>
-          `;
-        }
-
       } catch (e) {
-        respText.innerText = "Error communicating with AI copilot.";
+        respText.innerText = "Error communicating with AI.";
       }
     }
 
@@ -1653,7 +1421,7 @@
       const el = document.getElementById('expense-category-list');
       if (!list || list.length === 0) return el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No expenses logged.</div>';
       el.innerHTML = list.map(i => `
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--pill-bg);">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
           <span style="font-weight:600;font-size:14px;">${i.category}</span>
           <span style="font-weight:700;color:var(--tint-red);font-size:14px;">₹${i.total}</span>
         </div>
@@ -1664,13 +1432,13 @@
       const el = document.getElementById('recent-expenses-list');
       if (!list || list.length === 0) return el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No recent records.</div>';
       el.innerHTML = list.map(i => `
-        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 14px;border-radius:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 12px;border-radius:12px;">
           <div>
-            <div style="font-weight:600;font-size:14px;">${i.category}</div>
-            <div style="font-size:12px;color:var(--subtext);">${i.description || 'No note'} • ${new Date(i.created_at).toLocaleDateString()}</div>
+            <div style="font-weight:600;font-size:13px;">${i.category}</div>
+            <div style="font-size:11px;color:var(--subtext);">${i.description || 'No note'} • ${new Date(i.created_at).toLocaleDateString()}</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${i.amount}</span>
+            <span style="font-weight:700;color:var(--tint-red);font-size:14px;">-₹${i.amount}</span>
             <button class="btn-trash" onclick="deleteExpenseItem(${i.id})">🗑️</button>
           </div>
         </div>
@@ -1682,7 +1450,7 @@
       const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
-        showToast(data.stockReverted > 0 ? `Expense removed & ${data.stockReverted} units reverted` : 'Expense removed', '🗑️');
+        showToast('Expense removed', '🗑️');
         loadData();
       }
     }
@@ -1696,14 +1464,14 @@
         const hasPhone = s.customer_phone && s.customer_phone !== 'N/A' && s.customer_phone.length >= 8;
         const clean = hasPhone ? s.customer_phone.replace(/[^0-9]/g, '') : '';
         return `
-          <div style="background:var(--pill-bg);padding:14px;border-radius:18px;">
+          <div style="background:var(--pill-bg);padding:12px;border-radius:16px;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div><div style="font-weight:700;font-size:16px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div>
-              <div style="font-weight:700;color:var(--tint-green);font-size:16px;">₹${s.total_amount}</div>
+              <div><div style="font-weight:700;font-size:15px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div>
+              <div style="font-weight:700;color:var(--tint-green);font-size:15px;">₹${s.total_amount}</div>
             </div>
-            <div style="display:flex;gap:8px;margin-top:10px;">
-              ${hasPhone ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;background:var(--tint-blue);">Call</a><a href="https://wa.me/91${clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}
-              <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete & Restock</button>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              ${hasPhone ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;">Call</a><a href="https://wa.me/91${clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}
+              <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete</button>
             </div>
           </div>
         `;
@@ -1717,16 +1485,7 @@
       if (data.success) { showToast('Bill deleted and stock restocked', '🔄'); loadData(); }
     }
 
-    function switchTab(tab, btn) {
-      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.dock button').forEach(b => b.classList.remove('active'));
-      document.getElementById('view-' + tab).classList.add('active');
-      btn.classList.add('active');
-      if (tab === 'customers') loadCustomerSales();
-      if (tab === 'balancesheet') loadData();
-      if (tab === 'inventory') renderInventory();
-    }
-
+    // App Init
     setGreeting();
     loadData();
   </script>
