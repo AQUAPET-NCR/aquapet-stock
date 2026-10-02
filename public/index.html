@@ -158,47 +158,6 @@
       50% { opacity: 0.5; transform: scale(0.85); }
     }
 
-    .global-copilot-card {
-      background: var(--card-bg);
-      border-radius: 22px;
-      padding: 12px 14px;
-      margin-bottom: 16px;
-      backdrop-filter: blur(35px);
-      -webkit-backdrop-filter: blur(35px);
-      border: 1px solid var(--intel-border);
-      box-shadow: var(--card-shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .copilot-input-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .copilot-input-row input {
-      border: none;
-      background: transparent;
-      padding: 8px;
-      width: 100%;
-      color: var(--text);
-      font-size: 14.5px;
-      outline: none;
-    }
-
-    .copilot-response-box {
-      display: none;
-      background: var(--pill-bg);
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 13px;
-      line-height: 1.45;
-      animation: fadeIn 0.25s ease-out;
-    }
-    .copilot-response-box.show { display: block; }
-
     .view-tab { display: none; }
     .view-tab.active { display: block; animation: fadeIn 0.25s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -434,6 +393,7 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
 
+    /* Calculator */
     .calc-container { max-width: 340px; margin: 0 auto; }
     .calc-screen {
       text-align: right;
@@ -474,6 +434,7 @@
       padding-left: 28px;
     }
 
+    /* iOS Bottom Sheets */
     .sheet-overlay {
       position: fixed;
       inset: 0;
@@ -498,6 +459,8 @@
       padding: 24px 20px calc(env(safe-area-inset-bottom, 20px) + 24px);
       width: 100%;
       max-width: 600px;
+      max-height: 85vh;
+      overflow-y: auto;
       box-shadow: 0 -10px 40px rgba(0,0,0,0.25);
       transform: translateY(100%);
       transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
@@ -539,6 +502,18 @@
       line-height: 1.4;
     }
 
+    .batch-header-card {
+      background: linear-gradient(135deg, rgba(0, 113, 227, 0.08), rgba(52, 199, 89, 0.08));
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-top: 14px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     #print-iframe { display: none; width: 0; height: 0; position: absolute; border: none; }
   </style>
 </head>
@@ -553,7 +528,7 @@
     <div class="brand-wrap">
       <img src="/logo.png" alt="Aquapet Logo" class="brand-logo">
       <div>
-        <div class="greeting-sub" id="greeting-time">Good Morning,</div>
+        <div class="greeting-sub" id="greeting-time">Good Afternoon,</div>
         <div class="greeting-title">Mittar</div>
       </div>
     </div>
@@ -562,19 +537,6 @@
       <span>Online</span>
     </div>
   </header>
-
-  <!-- OMNIPOTENT GLOBAL AI COMMAND COPILOT -->
-  <section class="global-copilot-card">
-    <div class="copilot-input-row">
-      <span style="font-size: 14px; opacity: 0.8;">✦</span>
-      <input type="text" id="global-ai-input" placeholder="Bill items, ask customer spend, stock, or loss..." onkeydown="if(event.key==='Enter') dispatchGlobalAI()">
-      <button class="btn btn-sm" onclick="dispatchGlobalAI()">Send</button>
-    </div>
-    <div class="copilot-response-box" id="copilot-response-box">
-      <div id="copilot-response-text" style="font-weight: 500;"></div>
-      <div id="copilot-action-slot" style="margin-top: 8px;"></div>
-    </div>
-  </section>
 
   <!-- TAB 1: POS BILLING -->
   <section id="view-pos" class="view-tab active">
@@ -595,8 +557,11 @@
         <button class="cat-pill active" onclick="filterPOS('All', this)">All</button>
         <button class="cat-pill" onclick="filterPOS('Fish', this)">Fishes</button>
         <button class="cat-pill" onclick="filterPOS('Top Filter', this)">Sobo Filters</button>
-        <button class="cat-pill" onclick="filterPOS('Biomedia', this)">Sponge / Media</button>
-        <button class="cat-pill" onclick="filterPOS('Toys', this)">Accessories</button>
+        <button class="cat-pill" onclick="filterPOS('Heater', this)">Heaters</button>
+        <button class="cat-pill" onclick="filterPOS('Light', this)">LED Lights</button>
+        <button class="cat-pill" onclick="filterPOS('Aquarium', this)">Aquariums</button>
+        <button class="cat-pill" onclick="filterPOS('Fish Food', this)">Fish Food</button>
+        <button class="cat-pill" onclick="filterPOS('Medicine', this)">Medicines</button>
       </div>
 
       <div id="pos-product-picker" style="max-height: 250px; overflow-y: auto; margin-bottom: 10px;"></div>
@@ -626,7 +591,7 @@
     </div>
   </section>
 
-  <!-- TAB 2: APPLE-STYLE CALCULATOR -->
+  <!-- TAB 2: APPLE CALCULATOR -->
   <section id="view-calculator" class="view-tab">
     <div class="card calc-container">
       <div class="calc-screen" id="calc-display">0</div>
@@ -662,7 +627,7 @@
     </div>
   </section>
 
-  <!-- TAB 3: BALANCE SHEET & EXPENSE MANAGEMENT -->
+  <!-- TAB 3: BALANCE SHEET -->
   <section id="view-balancesheet" class="view-tab">
     <div class="stats-grid">
       <div class="stat-box">
@@ -692,21 +657,6 @@
     </div>
 
     <div class="card">
-      <h3 style="font-size: 17px; margin-bottom: 12px;">+ Record Other Shop Expense</h3>
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <select id="exp-category" class="app-input">
-          <option value="Electricity/Rent">Shop Rent / Electricity</option>
-          <option value="Mortality Loss">Dead Stock / Tank Loss</option>
-          <option value="Fish Food">Fish Food & Supplies</option>
-          <option value="Misc">Other Expenses</option>
-        </select>
-        <input type="number" id="exp-amount" class="app-input" placeholder="Amount (₹)">
-        <input type="text" id="exp-desc" class="app-input" placeholder="Notes (Optional)">
-        <button class="btn" style="background: var(--tint-red);" onclick="saveExpense()">Add to Balance Sheet</button>
-      </div>
-    </div>
-
-    <div class="card">
       <h3 style="font-size: 17px; margin-bottom: 12px;">Expenses Breakdown</h3>
       <div id="expense-category-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
@@ -728,12 +678,19 @@
     </div>
   </section>
 
-  <!-- TAB 5: ENHANCED STOCK MANAGEMENT -->
+  <!-- TAB 5: STOCK WITH DAY BOOK SCANNER & DATE GROUPING -->
   <section id="view-inventory" class="view-tab">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
         <h3 style="font-size: 18px;">Stock Inventory</h3>
-        <button class="btn btn-sm" onclick="openAddStockSheet()">+ Add New Item</button>
+        <div style="display: flex; gap: 6px;">
+          <!-- Hidden native image upload input accepting camera and gallery -->
+          <input type="file" id="daybook-camera-input" accept="image/*" style="display:none;" onchange="handleDayBookImage(this)">
+          <button class="btn btn-sm" style="background: linear-gradient(135deg, #0071e3, #af52de);" onclick="triggerImageCapture()">
+            📷 Scan Day Book
+          </button>
+          <button class="btn btn-sm" onclick="openAddStockSheet()">+ Manual</button>
+        </div>
       </div>
 
       <div class="search-box">
@@ -747,19 +704,11 @@
         <button class="cat-pill" onclick="filterStockStatus('empty', this)">🔴 Empty (0)</button>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 6px 10px; background: var(--pill-bg); border-radius: 12px; font-size: 13px;">
-        <span style="font-weight: 600;">Stock Batch / Month:</span>
-        <select id="stock-month-filter" onchange="renderInventory()" style="background: transparent; border: none; font-weight: 700; color: var(--tint-blue); outline: none;">
-          <option value="All">All Batches</option>
-          <option value="Sep 2026" selected>Sep 2026 Batch</option>
-        </select>
-      </div>
-
       <div id="inventory-list"></div>
     </div>
   </section>
 
-  <!-- 5-BUTTON DOCK -->
+  <!-- DOCK NAVIGATION -->
   <div class="dock-wrap">
     <nav class="dock">
       <button class="active" onclick="switchTab('pos', this)">Billing</button>
@@ -770,33 +719,35 @@
     </nav>
   </div>
 
-  <!-- iOS BOTTOM SHEET: CALCULATOR CUSTOMER LINKING -->
-  <div class="sheet-overlay" id="calc-bill-sheet" onclick="closeCalcBillingSheet(event)">
+  <!-- iOS BOTTOM SHEET: SCANNED DAY BOOK BATCH REVIEW -->
+  <div class="sheet-overlay" id="ocr-review-sheet" onclick="closeOcrReviewSheet(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="sheet-handle"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 20px; font-weight: 700;">Customer Bill Details</h3>
-        <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeCalcBillingSheet()">Cancel</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3 style="font-size: 20px; font-weight: 700;">Review Scanned Batch</h3>
+        <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeOcrReviewSheet()">Cancel</button>
       </div>
 
-      <div style="margin-bottom: 12px; background: var(--pill-bg); padding: 12px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-size: 13px; font-weight: 600; color: var(--subtext);">CALCULATED TOTAL</span>
-        <span style="font-size: 24px; font-weight: 800; color: var(--tint-green);" id="calc-bill-amount-display">₹0</span>
+      <div style="margin-bottom: 14px; background: var(--pill-bg); padding: 12px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Batch Date</div>
+          <input type="date" id="ocr-batch-date" class="app-input" style="padding: 4px 8px; font-weight: 700; width: auto; margin-top: 4px;">
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Total Wholesale Investment</div>
+          <div style="font-size: 20px; font-weight: 800; color: var(--tint-red);" id="ocr-total-investment">₹0</div>
+        </div>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
-        <input type="text" id="calc-cust-name" class="app-input" placeholder="Customer Name (Optional, e.g. Rahul)">
-        <input type="tel" id="calc-cust-phone" class="app-input" placeholder="WhatsApp / Phone Number (Optional)">
-        <input type="text" id="calc-order-note" class="app-input" placeholder="Order Note / Description (e.g. 3ft Tank setup + Fish)">
-      </div>
+      <div id="ocr-items-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;"></div>
 
-      <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="confirmCalculatedBill()">
-        Confirm & Generate Bill
+      <button class="btn btn-green" style="width: 100%; padding: 15px; font-size: 16px;" onclick="confirmAndCommitBatch()">
+        Confirm & Save to Stock Ledger
       </button>
     </div>
   </div>
 
-  <!-- iOS BOTTOM SHEET: ADD NEW STOCK ITEM -->
+  <!-- iOS BOTTOM SHEET: MANUAL STOCK -->
   <div class="sheet-overlay" id="add-stock-sheet" onclick="closeAddStockSheet(event)">
     <div class="sheet-content" onclick="event.stopPropagation()">
       <div class="sheet-handle"></div>
@@ -806,46 +757,13 @@
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 12px;">
-        <div>
-          <label style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; display: block;">Item Name</label>
-          <input type="text" id="new-item-name" class="app-input" placeholder="e.g. Oscar Albino / WP-3990">
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; display: block;">Category</label>
-            <select id="new-item-category" class="app-input">
-              <option value="Fish">Fish</option>
-              <option value="Top Filter" selected>Top Filter</option>
-              <option value="Biomedia">Biomedia / Sponge</option>
-              <option value="Toys">Accessories / Toys</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; display: block;">Batch Month</label>
-            <input type="text" id="new-item-month" class="app-input" value="Sep 2026">
-          </div>
-        </div>
-
+        <input type="text" id="new-item-name" class="app-input" placeholder="Item Name">
+        <input type="text" id="new-item-category" class="app-input" placeholder="Category (Heater, Light, Aquarium, Fish, etc.)">
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; display: block;">Cost ₹</label>
-            <input type="number" id="new-item-cost" class="app-input" placeholder="350">
-          </div>
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; display: block;">Retail ₹</label>
-            <input type="number" id="new-item-price" class="app-input" placeholder="700">
-          </div>
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; margin-bottom: 4px; display: block;">Quantity</label>
-            <input type="number" id="new-item-qty" class="app-input" placeholder="10">
-          </div>
+          <input type="number" id="new-item-cost" class="app-input" placeholder="Cost ₹">
+          <input type="number" id="new-item-price" class="app-input" placeholder="Retail ₹">
+          <input type="number" id="new-item-qty" class="app-input" placeholder="Qty">
         </div>
-
-        <div style="font-size: 12px; color: var(--subtext); padding: 4px 2px;">
-          ⚡ Wholesale cost will automatically link to your Balance Sheet. Deleting this expense later will revert this stock.
-        </div>
-
         <button class="btn btn-green" style="margin-top: 4px; padding: 14px; font-size: 16px;" onclick="submitNewStockItem()">
           Add to Inventory
         </button>
@@ -861,25 +779,37 @@
         <h3 style="font-size: 20px; font-weight: 700;">Replenish Stock</h3>
         <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeRestockSheet()">Cancel</button>
       </div>
-
       <div style="margin-bottom: 14px;">
         <div style="font-weight: 700; font-size: 17px;" id="restock-item-name">Product Name</div>
-        <div style="font-size: 13px; color: var(--subtext); margin-top: 2px;" id="restock-item-info">Cost: ₹0 | Currently 0 left</div>
+        <div style="font-size: 13px; color: var(--subtext); margin-top: 2px;" id="restock-item-info">Cost: ₹0</div>
       </div>
-
       <input type="hidden" id="restock-item-id">
-
-      <div style="margin-bottom: 16px;">
-        <label style="font-size: 12px; font-weight: 600; color: var(--subtext); text-transform: uppercase; margin-bottom: 6px; display: block;">Additional Quantity Received</label>
-        <input type="number" id="restock-item-qty" class="app-input" placeholder="Enter number of units (e.g. 5)" style="font-size: 17px; padding: 14px;">
-      </div>
-
-      <div style="font-size: 12px; color: var(--subtext); margin-bottom: 14px;">
-        ⚡ Restock cost will automatically link to your Balance Sheet.
-      </div>
-
+      <input type="number" id="restock-item-qty" class="app-input" placeholder="Additional Units" style="font-size: 17px; padding: 14px; margin-bottom: 14px;">
       <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="submitRestockItem()">
         Confirm Restock
+      </button>
+    </div>
+  </div>
+
+  <!-- iOS BOTTOM SHEET: CALCULATOR CUSTOMER LINKING -->
+  <div class="sheet-overlay" id="calc-bill-sheet" onclick="closeCalcBillingSheet(event)">
+    <div class="sheet-content" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 20px; font-weight: 700;">Customer Bill Details</h3>
+        <button style="background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--tint-blue); cursor: pointer;" onclick="closeCalcBillingSheet()">Cancel</button>
+      </div>
+      <div style="margin-bottom: 12px; background: var(--pill-bg); padding: 12px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--subtext);">CALCULATED TOTAL</span>
+        <span style="font-size: 24px; font-weight: 800; color: var(--tint-green);" id="calc-bill-amount-display">₹0</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+        <input type="text" id="calc-cust-name" class="app-input" placeholder="Customer Name (Optional)">
+        <input type="tel" id="calc-cust-phone" class="app-input" placeholder="WhatsApp Phone (Optional)">
+        <input type="text" id="calc-order-note" class="app-input" placeholder="Order Note (e.g. 3ft Tank setup + Fish)">
+      </div>
+      <button class="btn btn-green" style="width: 100%; padding: 14px; font-size: 16px;" onclick="confirmCalculatedBill()">
+        Confirm & Generate Bill
       </button>
     </div>
   </div>
@@ -929,6 +859,7 @@
     let discountPercent = 0;
     let latestBillData = null;
     let stockStatusFilter = 'all';
+    let scannedBatchItems = [];
 
     // Calculator State
     let calcCurrent = '0';
@@ -978,261 +909,312 @@
       }
     }
 
-    function renderExpenseBreakdown(list) {
-      const el = document.getElementById('expense-category-list');
-      if (!list || list.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); font-size: 13px;">No expenses recorded yet.</div>';
-        return;
-      }
-      el.innerHTML = list.map(item => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 0.5px solid var(--pill-bg);">
-          <span style="font-weight: 600; font-size: 14px;">${item.category}</span>
-          <span style="font-weight: 700; color: var(--tint-red); font-size: 14px;">₹${item.total}</span>
-        </div>
-      `).join('');
+    // --- DAY BOOK IMAGE SCANNING & PARSING ---
+    function triggerImageCapture() {
+      document.getElementById('daybook-camera-input').click();
     }
 
-    function renderRecentExpenses(list) {
-      const el = document.getElementById('recent-expenses-list');
-      if (!list || list.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); font-size: 13px;">No recent records.</div>';
-        return;
-      }
-      el.innerHTML = list.map(item => `
-        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--pill-bg); padding: 10px 14px; border-radius: 14px;">
-          <div>
-            <div style="font-weight: 600; font-size: 14px;">${item.category}</div>
-            <div style="font-size: 12px; color: var(--subtext);">${item.description || 'No description'} • ${new Date(item.created_at).toLocaleDateString()}</div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-weight: 700; color: var(--tint-red); font-size: 15px;">-₹${item.amount}</span>
-            <button class="btn-trash" title="Delete Expense" onclick="deleteExpenseItem(${item.id})">🗑️</button>
-          </div>
-        </div>
-      `).join('');
-    }
+    function handleDayBookImage(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      showToast('Scanning Day Book via AI Vision...', '📷');
 
-    async function deleteExpenseItem(id) {
-      if (!confirm("Are you sure? If this expense was linked to stock, that stock will also be reduced.")) return;
-      try {
-        const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.success) {
-          if (data.stockReverted > 0) {
-            showToast(`Expense removed & ${data.stockReverted} units reverted from stock`, '🔄');
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const imageBase64 = e.target.result;
+
+        try {
+          const res = await fetch('/api/ocr-stock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64 })
+          });
+          const data = await res.json();
+
+          if (data.items && data.items.length > 0) {
+            scannedBatchItems = data.items;
+            openOcrReviewSheet();
           } else {
-            showToast('Expense removed from Balance Sheet', '🗑️');
+            alert('Could not detect readable ledger rows. Please ensure good lighting and clear handwriting.');
           }
-          loadData();
+        } catch (err) {
+          alert('Network or OCR timeout. Try capturing a closer photo.');
+        } finally {
+          input.value = '';
         }
-      } catch (err) {
-        showToast('Error removing expense', '❌');
-      }
+      };
+      reader.readAsDataURL(file);
     }
 
-    // --- CALCULATOR ENGINE ---
-    function updateCalcScreen() {
-      const el = document.getElementById('calc-display');
-      let val = calcCurrent;
-      if (val.length > 9) val = parseFloat(val).toExponential(3);
-      el.innerText = val;
+    function openOcrReviewSheet() {
+      const todayISO = new Date().toISOString().split('T')[0];
+      document.getElementById('ocr-batch-date').value = todayISO;
+      renderOcrReviewList();
+      document.getElementById('ocr-review-sheet').classList.add('active');
     }
 
-    function calcNumber(num) {
-      if (calcResetOnNext) {
-        calcCurrent = num;
-        calcResetOnNext = false;
-      } else {
-        calcCurrent = (calcCurrent === '0') ? num : calcCurrent + num;
-      }
-      updateCalcScreen();
-    }
-
-    function calcDecimal() {
-      if (calcResetOnNext) {
-        calcCurrent = '0.';
-        calcResetOnNext = false;
-      } else if (!calcCurrent.includes('.')) {
-        calcCurrent += '.';
-      }
-      updateCalcScreen();
-    }
-
-    function calcClear() {
-      calcCurrent = '0';
-      calcPrevious = null;
-      calcOp = null;
-      calcResetOnNext = false;
-      updateCalcScreen();
-    }
-
-    function calcToggleSign() {
-      calcCurrent = (parseFloat(calcCurrent) * -1).toString();
-      updateCalcScreen();
-    }
-
-    function calcPercent() {
-      calcCurrent = (parseFloat(calcCurrent) / 100).toString();
-      updateCalcScreen();
-    }
-
-    function calcOperator(op) {
-      if (calcOp && !calcResetOnNext) calcEqual();
-      calcPrevious = parseFloat(calcCurrent);
-      calcOp = op;
-      calcResetOnNext = true;
-    }
-
-    function calcEqual() {
-      if (!calcOp || calcPrevious === null) return;
-      const current = parseFloat(calcCurrent);
-      let res = 0;
-      if (calcOp === '+') res = calcPrevious + current;
-      else if (calcOp === '-') res = calcPrevious - current;
-      else if (calcOp === '*') res = calcPrevious * current;
-      else if (calcOp === '/') res = current !== 0 ? calcPrevious / current : 0;
-
-      calcCurrent = (Math.round(res * 100) / 100).toString();
-      calcOp = null;
-      calcPrevious = null;
-      calcResetOnNext = true;
-      updateCalcScreen();
-    }
-
-    function openCalcBillingSheet() {
-      const amount = Math.round(parseFloat(calcCurrent));
-      if (isNaN(amount) || amount <= 0) {
-        return showToast('Calculate a valid amount greater than 0 first', '⚠️');
-      }
-      document.getElementById('calc-bill-amount-display').innerText = '₹' + amount;
-      document.getElementById('calc-cust-name').value = '';
-      document.getElementById('calc-cust-phone').value = '';
-      document.getElementById('calc-order-note').value = '';
-      document.getElementById('calc-bill-sheet').classList.add('active');
-    }
-
-    function closeCalcBillingSheet(e) {
+    function closeOcrReviewSheet(e) {
       if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
-        document.getElementById('calc-bill-sheet').classList.remove('active');
+        document.getElementById('ocr-review-sheet').classList.remove('active');
       }
     }
 
-    async function confirmCalculatedBill() {
-      const amount = Math.round(parseFloat(calcCurrent));
-      const rawName = document.getElementById('calc-cust-name').value.trim();
-      const rawPhone = document.getElementById('calc-cust-phone').value.trim();
-      const rawNote = document.getElementById('calc-order-note').value.trim();
+    function renderOcrReviewList() {
+      const container = document.getElementById('ocr-items-container');
+      let totalInvestment = 0;
 
-      const custName = rawName ? rawName : 'Walk-in Counter';
-      const custPhone = rawPhone ? rawPhone : 'N/A';
-      const itemName = rawNote ? rawNote : 'Custom Counter Order';
+      container.innerHTML = scannedBatchItems.map((item, idx) => {
+        const rowCost = (item.purchase_price || 0) * (item.quantity || 0);
+        totalInvestment += rowCost;
 
-      const res = await fetch('/api/sales', {
+        return `
+          <div style="background: var(--pill-bg); padding: 10px 12px; border-radius: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" value="${item.name}" onchange="updateOcrItem(${idx}, 'name', this.value)" class="app-input" style="padding: 6px 10px; font-weight: 600; flex: 2;" placeholder="Name">
+              <input type="text" value="${item.category}" onchange="updateOcrItem(${idx}, 'category', this.value)" class="app-input" style="padding: 6px 10px; font-weight: 600; flex: 1;" placeholder="Category">
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span style="font-size: 11px; font-weight: 600; color: var(--subtext);">Qty:</span>
+              <input type="number" value="${item.quantity}" onchange="updateOcrItem(${idx}, 'quantity', this.value)" class="app-input" style="padding: 6px 8px; width: 60px;">
+              <span style="font-size: 11px; font-weight: 600; color: var(--subtext);">Cost ₹:</span>
+              <input type="number" value="${item.purchase_price}" onchange="updateOcrItem(${idx}, 'purchase_price', this.value)" class="app-input" style="padding: 6px 8px; width: 75px;">
+              <span style="font-size: 11px; font-weight: 600; color: var(--subtext);">Sell ₹:</span>
+              <input type="number" value="${item.price}" onchange="updateOcrItem(${idx}, 'price', this.value)" class="app-input" style="padding: 6px 8px; width: 75px;">
+              <button class="btn-trash" onclick="removeOcrItem(${idx})">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('ocr-total-investment').innerText = '₹' + totalInvestment;
+    }
+
+    function updateOcrItem(index, key, val) {
+      if (key === 'quantity' || key === 'purchase_price' || key === 'price') {
+        scannedBatchItems[index][key] = parseFloat(val) || 0;
+      } else {
+        scannedBatchItems[index][key] = val;
+      }
+      renderOcrReviewList();
+    }
+
+    function removeOcrItem(index) {
+      scannedBatchItems.splice(index, 1);
+      renderOcrReviewList();
+    }
+
+    async function confirmAndCommitBatch() {
+      if (scannedBatchItems.length === 0) return alert('No items to save.');
+      const batchDate = document.getElementById('ocr-batch-date').value;
+
+      showToast('Saving batch to stock ledger...', '⏳');
+
+      const res = await fetch('/api/batch-stock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customer_name: custName,
-          customer_phone: custPhone,
-          total_amount: amount,
-          is_direct_sale: 1,
-          items: [{ id: 0, name: itemName, quantity: 1, price: amount }]
+          batch_date: batchDate,
+          items: scannedBatchItems
         })
       });
 
       const data = await res.json();
       if (data.success) {
-        closeCalcBillingSheet();
-        latestBillData = {
-          saleId: data.saleId,
-          date: new Date().toLocaleString('en-IN'),
-          customer: custName,
-          phone: custPhone,
-          items: [{ name: itemName, quantity: 1, price: amount }],
-          total: amount,
-          discount: 0
-        };
+        closeOcrReviewSheet();
+        showToast(`Saved ${data.totalItems} items! ₹${data.totalWholesaleInvested} logged to ledger`, '📦');
+        loadData();
+      } else {
+        alert('Failed to save batch.');
+      }
+    }
 
-        openGeneratedBill();
-        showToast(`Bill #${data.saleId} created for ${custName}!`, '🧾');
+    // --- INVENTORY RENDERING (GROUPED BY BATCH DATE) ---
+    function renderInventory() {
+      const el = document.getElementById('inventory-list');
+      const searchQuery = (document.getElementById('stock-search')?.value || '').toLowerCase().trim();
+
+      let filtered = products;
+
+      if (searchQuery) {
+        filtered = filtered.filter(p => 
+          p.name.toLowerCase().includes(searchQuery) || 
+          p.category.toLowerCase().includes(searchQuery)
+        );
+      }
+
+      if (stockStatusFilter === 'low') {
+        filtered = filtered.filter(p => p.quantity <= 2 && p.quantity > 0);
+      } else if (stockStatusFilter === 'empty') {
+        filtered = filtered.filter(p => p.quantity <= 0);
+      }
+
+      if (filtered.length === 0) {
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock found.</div>';
+        return;
+      }
+
+      // Group products by batch_date
+      const batches = {};
+      filtered.forEach(p => {
+        const dateKey = p.batch_date || p.month_tag || 'Historical Stock';
+        if (!batches[dateKey]) batches[dateKey] = [];
+        batches[dateKey].push(p);
+      });
+
+      el.innerHTML = Object.entries(batches).map(([batchDate, items]) => {
+        const totalUnitsBought = items.reduce((a, b) => a + (b.initial_stock || b.quantity), 0);
+        const totalUnitsRemaining = items.reduce((a, b) => a + b.quantity, 0);
+        const totalUnitsSold = Math.max(0, totalUnitsBought - totalUnitsRemaining);
+        const batchInvested = items.reduce((a, b) => a + ((b.purchase_price || 0) * (b.initial_stock || b.quantity)), 0);
+
+        return `
+          <div class="batch-header-card">
+            <div>
+              <div style="font-weight: 800; font-size: 14px; color: var(--tint-blue);">📅 Batch: ${batchDate}</div>
+              <div style="font-size: 11px; color: var(--subtext); margin-top: 2px;">
+                ${items.length} items | Bought: ${totalUnitsBought} | Sold: <strong style="color:var(--tint-green);">${totalUnitsSold}</strong>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 10px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Invested</div>
+              <div style="font-weight: 800; font-size: 14px; color: var(--tint-red);">₹${batchInvested}</div>
+            </div>
+          </div>
+
+          ${items.map(p => {
+            const initial = p.initial_stock || p.quantity;
+            const remaining = p.quantity;
+            const sold = Math.max(0, initial - remaining);
+            const isDepleted = remaining <= 0;
+            const isLow = remaining <= 2 && !isDepleted;
+
+            return `
+              <div class="pos-item">
+                <div style="flex: 1; padding-right: 10px;">
+                  <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
+                  <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">
+                    ${p.category} | Cost: ₹${p.purchase_price \vert{}\vert{} 0} \vert{} Sell: ₹${p.price}
+                  </div>
+                  <div style="font-size: 11px; color: var(--text); margin-top: 2px; font-weight: 700;">
+                    Bought: ${initial} | Sold: <span style="color: var(--tint-blue);">${sold}</span>
+                  </div>
+                  <div style="margin-top: 6px;">
+                    <button class="btn-pill-action" onclick="openRestockSheet(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.purchase_price \vert{}\vert{} 0},${p.quantity})">
+                      + Add More Stock
+                    </button>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; font-size: 16px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
+                      ${remaining} left
+                    </div>
+                    <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 6px; background: ${isDepleted ? 'rgba(255, 59, 48, 0.12)' : isLow ? 'rgba(255, 149, 0, 0.12)' : 'rgba(52, 199, 89, 0.12)'}; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
+                      ${isDepleted ? 'Empty' : isLow ? 'Getting Empty Soon' : 'In Stock'}
+                    </span>
+                  </div>
+                  <button class="btn-trash" title="Delete Product" onclick="deleteStockItem(${p.id}, '${p.name.replace(/'/g, "\\'")}')">🗑️</button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        `;
+      }).join('');
+    }
+
+    function filterStockStatus(status, btn) {
+      stockStatusFilter = status;
+      btn.parentElement.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderInventory();
+    }
+
+    async function deleteStockItem(id, name) {
+      if (!confirm(`Delete "${name}" completely? This will also remove its wholesale expense from your ledger.`)) return;
+
+      try {
+        const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Deleted ${name} & its ledger expense`, '🗑️');
+          loadData();
+        }
+      } catch (err) {
+        showToast('Error connecting to server', '❌');
+      }
+    }
+
+    function openAddStockSheet() {
+      document.getElementById('add-stock-sheet').classList.add('active');
+      document.getElementById('new-item-name').focus();
+    }
+
+    function closeAddStockSheet(e) {
+      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
+        document.getElementById('add-stock-sheet').classList.remove('active');
+      }
+    }
+
+    function openRestockSheet(id, name, cost, currentQty) {
+      document.getElementById('restock-item-id').value = id;
+      document.getElementById('restock-item-name').innerText = name;
+      document.getElementById('restock-item-info').innerText = `Cost: ₹${cost} | Currently ${currentQty} in stock`;
+      document.getElementById('restock-item-qty').value = '';
+      document.getElementById('restock-sheet').classList.add('active');
+      setTimeout(() => document.getElementById('restock-item-qty').focus(), 150);
+    }
+
+    function closeRestockSheet(e) {
+      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
+        document.getElementById('restock-sheet').classList.remove('active');
+      }
+    }
+
+    async function submitRestockItem() {
+      const id = document.getElementById('restock-item-id').value;
+      const addQty = parseInt(document.getElementById('restock-item-qty').value, 10);
+
+      if (!id || isNaN(addQty) || addQty <= 0) return showToast('Enter valid quantity', '⚠️');
+
+      const res = await fetch('/api/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, add_quantity: addQty })
+      });
+
+      if (res.ok) {
+        closeRestockSheet();
+        showToast('Added! Expense ledger updated.', '📦');
         loadData();
       }
     }
 
-    // OMNIPOTENT GLOBAL AI DISPATCHER
-    async function dispatchGlobalAI() {
-      const input = document.getElementById('global-ai-input');
-      const question = input.value.trim();
-      if (!question) return;
+    async function submitNewStockItem() {
+      const name = document.getElementById('new-item-name').value.trim();
+      const category = document.getElementById('new-item-category').value.trim() || 'General';
+      const cost = parseFloat(document.getElementById('new-item-cost').value) || 0;
+      const price = parseFloat(document.getElementById('new-item-price').value) || 0;
+      const qty = parseInt(document.getElementById('new-item-qty').value, 10);
+      const today = new Date().toISOString().split('T')[0];
 
-      const respCard = document.getElementById('copilot-response-box');
-      const respText = document.getElementById('copilot-response-text');
-      const actionSlot = document.getElementById('copilot-action-slot');
+      if (!name || isNaN(qty) || qty <= 0) return showToast('Enter valid item details', '⚠️');
 
-      respCard.classList.add('show');
-      respText.innerHTML = '<span style="color: var(--tint-blue);">✦ Aquapet AI is analyzing & executing...</span>';
-      actionSlot.innerHTML = '';
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, category, purchase_price: cost, price, quantity: qty, initial_stock: qty, month_tag: today
+        })
+      });
 
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question })
-        });
-        const data = await res.json();
-        respText.innerText = data.answer;
-        input.value = '';
-
-        if (data.executedAction === 'bill_created' && data.billData) {
-          latestBillData = data.billData;
-          actionSlot.innerHTML = `
-            <button class="btn btn-sm btn-green" onclick="openGeneratedBill()">
-              📄 View & Print Bill
-            </button>
-          `;
-          showToast(`Bill #${data.billData.saleId} generated!`, '🧾');
-          loadData();
-        } 
-        else if (data.executedAction === 'stock_updated') {
-          showToast('Inventory & ledger updated', '📦');
-          loadData();
-        }
-        else if (data.executedAction === 'customer_found' && data.customerPhone) {
-          actionSlot.innerHTML = `
-            <div style="display: flex; gap: 8px; margin-top: 4px;">
-              <a href="tel:${data.customerPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
-              <a href="https://wa.me/91${data.customerPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
-            </div>
-          `;
-        }
-
-      } catch (e) {
-        respText.innerText = "Error communicating with AI copilot.";
+      if (res.ok) {
+        closeAddStockSheet();
+        showToast('Added! Expense ledger updated.', '📦');
+        loadData();
       }
     }
 
-    function openGeneratedBill() {
-      if (!latestBillData) return;
-      document.getElementById('modal-date').innerText = latestBillData.date;
-      document.getElementById('modal-cust').innerText = latestBillData.customer;
-      document.getElementById('modal-phone').innerText = latestBillData.phone;
-      document.getElementById('modal-total').innerText = '₹' + latestBillData.total;
-      document.getElementById('modal-items').innerHTML = latestBillData.items.map(i => `
-        <div style="display:flex; justify-content:space-between; margin:2px 0;">
-          <span>${i.name} x${i.quantity}</span>
-          <span>₹${i.price * i.quantity}</span>
-        </div>
-      `).join('');
-
-      if (latestBillData.discount > 0) {
-        document.getElementById('modal-discount-row').style.display = 'flex';
-        document.getElementById('modal-discount-val').innerText = '-₹' + latestBillData.discount;
-      } else {
-        document.getElementById('modal-discount-row').style.display = 'none';
-      }
-
-      document.getElementById('receipt-modal').classList.add('show');
-    }
-
+    // --- POS BILLING & MODAL ENGINE ---
     function renderPOSPicker() {
       const el = document.getElementById('pos-product-picker');
       const searchQuery = (document.getElementById('pos-search')?.value || '').toLowerCase().trim();
@@ -1282,15 +1264,8 @@
     function modifyCart(id, delta) {
       const p = products.find(item => item.id == id);
       if (!p) return;
-
-      const current = cart[id] || 0;
-      const next = current + delta;
-
-      if (delta > 0 && next > p.quantity) {
-        showToast(`Only ${p.quantity} units available in stock`, '⚠️');
-        return;
-      }
-
+      const next = (cart[id] || 0) + delta;
+      if (delta > 0 && next > p.quantity) return showToast(`Only ${p.quantity} units available`, '⚠️');
       if (next <= 0) delete cart[id];
       else cart[id] = next;
 
@@ -1301,7 +1276,7 @@
 
     function filterPOS(category, btn) {
       selectedCategory = category;
-      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#cat-filters .cat-pill').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderPOSPicker();
     }
@@ -1356,10 +1331,7 @@
 
     function checkoutAndPrint() {
       const finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) {
-        showToast('Please add at least one item to bill', '⚠️');
-        return;
-      }
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) return showToast('Add at least one item', '⚠️');
 
       const rawCust = document.getElementById('cust-name').value.trim();
       const rawPhone = document.getElementById('cust-phone').value.trim();
@@ -1404,11 +1376,32 @@
         document.getElementById('cust-name').value = '';
         document.getElementById('cust-phone').value = '';
         document.getElementById('pos-search').value = '';
-        document.querySelectorAll('.coupon-pill').forEach((b, idx) => b.classList.toggle('active', idx === 0));
         updateTotal();
         loadData();
-      })
-      .catch(err => console.error("Database sync failed:", err));
+      });
+    }
+
+    function openGeneratedBill() {
+      if (!latestBillData) return;
+      document.getElementById('modal-date').innerText = latestBillData.date;
+      document.getElementById('modal-cust').innerText = latestBillData.customer;
+      document.getElementById('modal-phone').innerText = latestBillData.phone;
+      document.getElementById('modal-total').innerText = '₹' + latestBillData.total;
+      document.getElementById('modal-items').innerHTML = latestBillData.items.map(i => `
+        <div style="display:flex; justify-content:space-between; margin:2px 0;">
+          <span>${i.name} x${i.quantity}</span>
+          <span>₹${i.price * i.quantity}</span>
+        </div>
+      `).join('');
+
+      if (latestBillData.discount > 0) {
+        document.getElementById('modal-discount-row').style.display = 'flex';
+        document.getElementById('modal-discount-val').innerText = '-₹' + latestBillData.discount;
+      } else {
+        document.getElementById('modal-discount-row').style.display = 'none';
+      }
+
+      document.getElementById('receipt-modal').classList.add('show');
     }
 
     function triggerIframePrint() {
@@ -1446,19 +1439,9 @@
             </div>
           `).join('')}
           <div class="line"></div>
-          ${latestBillData.discount > 0 ? `
-            <div class="row">
-              <span>Discount:</span>
-              <span>-₹${latestBillData.discount}</span>
-            </div>
-          ` : ''}
-          <div class="row" style="font-weight: bold; font-size: 12px;">
-            <span>TOTAL:</span>
-            <span>₹${latestBillData.total}</span>
-          </div>
-          <div class="center" style="margin-top: 8px;">
-            Thank you! Visit again.
-          </div>
+          ${latestBillData.discount > 0 ? `<div class="row"><span>Discount:</span><span>-₹${latestBillData.discount}</span></div>` : ''}
+          <div class="row" style="font-weight: bold; font-size: 12px;"><span>TOTAL:</span><span>₹${latestBillData.total}</span></div>
+          <div class="center" style="margin-top: 8px;">Thank you! Visit again.</div>
         </body>
         </html>
       `);
@@ -1470,11 +1453,7 @@
       const cleanPhone = latestBillData.phone.replace(/[^0-9]/g, '');
       const itemsText = latestBillData.items.map(i => `• ${i.name} x${i.quantity} = ₹${i.price * i.quantity}`).join('\n');
       const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n\n*Total Payable: ₹${latestBillData.total}*\n\nThank you for shopping with us!`;
-
-      const url = cleanPhone.length >= 10 
-        ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`
-        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-
+      const url = cleanPhone.length >= 10 ? `[https://wa.me/91$](https://wa.me/91$){cleanPhone}?text=${encodeURIComponent(msg)}` : `[https://wa.me/?text=$](https://wa.me/?text=$){encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
 
@@ -1482,265 +1461,150 @@
       if (!latestBillData) return;
       const itemsText = latestBillData.items.map(i => `${i.name} x${i.quantity}  ₹${i.price * i.quantity}`).join('\n');
       const text = `AQUAPET\nPET SHOP & CARE\n--------------------------------\nDate: ${latestBillData.date}\nCust: ${latestBillData.customer}\nPhone: ${latestBillData.phone}\n--------------------------------\n${itemsText}\n--------------------------------\nTOTAL: ₹${latestBillData.total}\n--------------------------------\nThank you! Visit again.`;
-      
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('Receipt copied! Ready for Bluetooth App', '📋');
-      });
+      navigator.clipboard.writeText(text).then(() => showToast('Receipt copied!', '📋'));
     }
 
     function closeReceiptModal() {
       document.getElementById('receipt-modal').classList.remove('show');
     }
 
-    async function deleteBill(saleId) {
-      if (!confirm(`Are you sure you want to delete bill #${saleId}? This will remove it from sales revenue and RESTORE all its items back to stock.`)) {
-        return;
-      }
+    // --- CALCULATOR ENGINE ---
+    function updateCalcScreen() {
+      document.getElementById('calc-display').innerText = calcCurrent;
+    }
+    function calcNumber(num) {
+      if (calcResetOnNext) { calcCurrent = num; calcResetOnNext = false; }
+      else { calcCurrent = (calcCurrent === '0') ? num : calcCurrent + num; }
+      updateCalcScreen();
+    }
+    function calcDecimal() {
+      if (calcResetOnNext) { calcCurrent = '0.'; calcResetOnNext = false; }
+      else if (!calcCurrent.includes('.')) calcCurrent += '.';
+      updateCalcScreen();
+    }
+    function calcClear() { calcCurrent = '0'; calcPrevious = null; calcOp = null; calcResetOnNext = false; updateCalcScreen(); }
+    function calcToggleSign() { calcCurrent = (parseFloat(calcCurrent) * -1).toString(); updateCalcScreen(); }
+    function calcPercent() { calcCurrent = (parseFloat(calcCurrent) / 100).toString(); updateCalcScreen(); }
+    function calcOperator(op) { if (calcOp && !calcResetOnNext) calcEqual(); calcPrevious = parseFloat(calcCurrent); calcOp = op; calcResetOnNext = true; }
+    function calcEqual() {
+      if (!calcOp || calcPrevious === null) return;
+      const current = parseFloat(calcCurrent);
+      let res = 0;
+      if (calcOp === '+') res = calcPrevious + current;
+      else if (calcOp === '-') res = calcPrevious - current;
+      else if (calcOp === '*') res = calcPrevious * current;
+      else if (calcOp === '/') res = current !== 0 ? calcPrevious / current : 0;
+      calcCurrent = (Math.round(res * 100) / 100).toString();
+      calcOp = null; calcPrevious = null; calcResetOnNext = true; updateCalcScreen();
+    }
 
-      try {
-        const res = await fetch(`/api/sales?id=${saleId}`, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.success) {
-          showToast(`Bill #${saleId} deleted & stock restored`, '🔄');
-          loadData();
-        }
-      } catch (err) {
-        showToast('Error connecting to server', '❌');
+    function openCalcBillingSheet() {
+      const amount = Math.round(parseFloat(calcCurrent));
+      if (isNaN(amount) || amount <= 0) return showToast('Calculate a valid total first', '⚠️');
+      document.getElementById('calc-bill-amount-display').innerText = '₹' + amount;
+      document.getElementById('calc-bill-sheet').classList.add('active');
+    }
+    function closeCalcBillingSheet(e) {
+      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
+        document.getElementById('calc-bill-sheet').classList.remove('active');
+      }
+    }
+    async function confirmCalculatedBill() {
+      const amount = Math.round(parseFloat(calcCurrent));
+      const rawName = document.getElementById('calc-cust-name').value.trim();
+      const rawPhone = document.getElementById('calc-cust-phone').value.trim();
+      const rawNote = document.getElementById('calc-order-note').value.trim();
+      const custName = rawName ? rawName : 'Walk-in Counter';
+      const custPhone = rawPhone ? rawPhone : 'N/A';
+      const itemName = rawNote ? rawNote : 'Custom Counter Order';
+
+      const res = await fetch('/api/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: custName, customer_phone: custPhone, total_amount: amount, is_direct_sale: 1,
+          items: [{ id: 0, name: itemName, quantity: 1, price: amount }]
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        closeCalcBillingSheet();
+        latestBillData = {
+          saleId: data.saleId, date: new Date().toLocaleString('en-IN'), customer: custName, phone: custPhone,
+          items: [{ name: itemName, quantity: 1, price: amount }], total: amount, discount: 0
+        };
+        openGeneratedBill();
+        loadData();
+      }
+    }
+
+    // --- EXPENSES & CUSTOMERS ---
+    function renderExpenseBreakdown(list) {
+      const el = document.getElementById('expense-category-list');
+      if (!list || list.length === 0) return el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No expenses logged.</div>';
+      el.innerHTML = list.map(i => `
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--pill-bg);">
+          <span style="font-weight:600;font-size:14px;">${i.category}</span>
+          <span style="font-weight:700;color:var(--tint-red);font-size:14px;">₹${i.total}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderRecentExpenses(list) {
+      const el = document.getElementById('recent-expenses-list');
+      if (!list || list.length === 0) return el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No recent records.</div>';
+      el.innerHTML = list.map(i => `
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 14px;border-radius:14px;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">${i.category}</div>
+            <div style="font-size:12px;color:var(--subtext);">${i.description || 'No note'} • ${new Date(i.created_at).toLocaleDateString()}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${i.amount}</span>
+            <button class="btn-trash" onclick="deleteExpenseItem(${i.id})">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function deleteExpenseItem(id) {
+      if (!confirm("Delete this expense? If linked to inventory, stock will also revert.")) return;
+      const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.stockReverted > 0 ? `Expense removed & ${data.stockReverted} units reverted` : 'Expense removed', '🗑️');
+        loadData();
       }
     }
 
     async function loadCustomerSales() {
       const el = document.getElementById('customer-list');
-      try {
-        const res = await fetch('/api/sales');
-        const sales = await res.json();
-        if (sales && sales.length > 0) {
-          el.innerHTML = sales.map(s => {
-            const hasPhone = s.customer_phone && s.customer_phone !== 'N/A' && s.customer_phone.length >= 8;
-            const cleanPhone = hasPhone ? s.customer_phone.replace(/[^0-9]/g, '') : '';
-            return `
-              <div style="background: var(--pill-bg); padding: 14px; border-radius: 18px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <div>
-                    <div style="font-weight: 700; font-size: 16px;">${s.customer_name || 'Walk-in Customer'}</div>
-                    <div style="font-size: 11px; color: var(--subtext);">Bill #${s.id}</div>
-                  </div>
-                  <div style="font-weight: 700; color: var(--tint-green); font-size: 16px;">₹${s.total_amount}</div>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-                  <div style="font-size: 13px; color: var(--subtext);">${s.customer_phone || 'No phone'}</div>
-                  <div style="font-size: 12px; color: var(--subtext);">${new Date(s.created_at).toLocaleDateString()}</div>
-                </div>
-                <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
-                  ${hasPhone ? `
-                    <a href="tel:${cleanPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
-                    <a href="https://wa.me/91${cleanPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
-                  ` : ''}
-                  <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete & Restock</button>
-                </div>
-              </div>
-            `;
-          }).join('');
-        } else {
-          el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No customer transactions recorded yet.</div>';
-        }
-      } catch(e) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center;">Unable to load customers.</div>';
-      }
-    }
-
-    function filterStockStatus(status, btn) {
-      stockStatusFilter = status;
-      btn.parentElement.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderInventory();
-    }
-
-    function renderInventory() {
-      const el = document.getElementById('inventory-list');
-      const selectedMonth = document.getElementById('stock-month-filter')?.value || 'All';
-      const searchQuery = (document.getElementById('stock-search')?.value || '').toLowerCase().trim();
-
-      let filtered = products;
-
-      if (selectedMonth !== 'All') {
-        filtered = filtered.filter(p => (p.month_tag || 'Sep 2026') === selectedMonth);
-      }
-
-      if (searchQuery) {
-        filtered = filtered.filter(p => 
-          p.name.toLowerCase().includes(searchQuery) || 
-          p.category.toLowerCase().includes(searchQuery)
-        );
-      }
-
-      if (stockStatusFilter === 'low') {
-        filtered = filtered.filter(p => p.quantity <= 2 && p.quantity > 0);
-      } else if (stockStatusFilter === 'empty') {
-        filtered = filtered.filter(p => p.quantity <= 0);
-      }
-
-      if (filtered.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock found.</div>';
-        return;
-      }
-
-      el.innerHTML = filtered.map(p => {
-        const initial = p.initial_stock || p.quantity;
-        const remaining = p.quantity;
-        const sold = Math.max(0, initial - remaining);
-        const isDepleted = remaining <= 0;
-        const isLow = remaining <= 2 && !isDepleted;
-
+      const res = await fetch('/api/sales');
+      const sales = await res.json();
+      if (!sales || sales.length === 0) return el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">No sales recorded yet.</div>';
+      el.innerHTML = sales.map(s => {
+        const hasPhone = s.customer_phone && s.customer_phone !== 'N/A' && s.customer_phone.length >= 8;
+        const clean = hasPhone ? s.customer_phone.replace(/[^0-9]/g, '') : '';
         return `
-          <div class="pos-item">
-            <div style="flex: 1; padding-right: 10px;">
-              <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
-              <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">
-                Cost: ₹${p.purchase_price || 0} | Sell: ₹${p.price}
-              </div>
-              <div style="font-size: 11px; color: var(--text); margin-top: 2px; font-weight: 700;">
-                Bought: ${initial} | Sold: <span style="color: var(--tint-blue);">${sold}</span>
-              </div>
-              <div style="margin-top: 6px;">
-                <button class="btn-pill-action" onclick="openRestockSheet(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.purchase_price || 0}, ${p.quantity})">
-                  + Add More Stock
-                </button>
-              </div>
+          <div style="background:var(--pill-bg);padding:14px;border-radius:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-weight:700;font-size:16px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div>
+              <div style="font-weight:700;color:var(--tint-green);font-size:16px;">₹${s.total_amount}</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <div style="text-align: right;">
-                <div style="font-weight: 700; font-size: 16px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
-                  ${remaining} left
-                </div>
-                <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 6px; background: ${isDepleted ? 'rgba(255, 59, 48, 0.12)' : isLow ? 'rgba(255, 149, 0, 0.12)' : 'rgba(52, 199, 89, 0.12)'}; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">
-                  ${isDepleted ? 'Empty' : isLow ? 'Getting Empty Soon' : 'In Stock'}
-                </span>
-              </div>
-              <button class="btn-trash" title="Delete Product" onclick="deleteStockItem(${p.id}, '${p.name.replace(/'/g, "\\'")}')">🗑️</button>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              ${hasPhone ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;background:var(--tint-blue);">Call</a><a href="[https://wa.me/91$](https://wa.me/91$){clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}
+              <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete & Restock</button>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    async function deleteStockItem(id, name) {
-      if (!confirm(`Delete "${name}" completely? This will also remove its wholesale expense from your ledger.`)) return;
-
-      try {
-        const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.success) {
-          showToast(`Deleted ${name} & its ledger expense`, '🗑️');
-          loadData();
-        }
-      } catch (err) {
-        showToast('Error connecting to server', '❌');
-      }
-    }
-
-    function openAddStockSheet() {
-      document.getElementById('add-stock-sheet').classList.add('active');
-      document.getElementById('new-item-name').focus();
-    }
-
-    function closeAddStockSheet(e) {
-      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
-        document.getElementById('add-stock-sheet').classList.remove('active');
-      }
-    }
-
-    function openRestockSheet(id, name, cost, currentQty) {
-      document.getElementById('restock-item-id').value = id;
-      document.getElementById('restock-item-name').innerText = name;
-      document.getElementById('restock-item-info').innerText = `Cost: ₹${cost} | Currently ${currentQty} in stock`;
-      document.getElementById('restock-item-qty').value = '';
-      document.getElementById('restock-sheet').classList.add('active');
-      setTimeout(() => document.getElementById('restock-item-qty').focus(), 150);
-    }
-
-    function closeRestockSheet(e) {
-      if (!e || e.target.classList.contains('sheet-overlay') || e.target.tagName === 'BUTTON') {
-        document.getElementById('restock-sheet').classList.remove('active');
-      }
-    }
-
-    async function submitRestockItem() {
-      const id = document.getElementById('restock-item-id').value;
-      const addQty = parseInt(document.getElementById('restock-item-qty').value, 10);
-
-      if (!id || isNaN(addQty) || addQty <= 0) {
-        return showToast('Please enter a valid quantity', '⚠️');
-      }
-
-      const res = await fetch('/api/products', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, add_quantity: addQty })
-      });
-
-      if (res.ok) {
-        closeRestockSheet();
-        showToast('Added! Expense ledger updated.', '📦');
-        loadData();
-      } else {
-        showToast('Failed to update stock', '❌');
-      }
-    }
-
-    async function submitNewStockItem() {
-      const name = document.getElementById('new-item-name').value.trim();
-      const category = document.getElementById('new-item-category').value;
-      const month_tag = document.getElementById('new-item-month').value.trim() || 'Sep 2026';
-      const cost = parseFloat(document.getElementById('new-item-cost').value) || 0;
-      const price = parseFloat(document.getElementById('new-item-price').value) || 0;
-      const qty = parseInt(document.getElementById('new-item-qty').value, 10);
-
-      if (!name) return showToast('Please enter product name', '⚠️');
-      if (isNaN(qty) || qty <= 0) return showToast('Please enter valid quantity', '⚠️');
-
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          category,
-          purchase_price: cost,
-          price: price,
-          quantity: qty,
-          initial_stock: qty,
-          month_tag: month_tag
-        })
-      });
-
-      if (res.ok) {
-        document.getElementById('new-item-name').value = '';
-        document.getElementById('new-item-cost').value = '';
-        document.getElementById('new-item-price').value = '';
-        document.getElementById('new-item-qty').value = '';
-        closeAddStockSheet();
-        showToast('Added! Expense ledger updated.', '📦');
-        loadData();
-      } else {
-        showToast('Failed to save product', '❌');
-      }
-    }
-
-    async function saveExpense() {
-      const category = document.getElementById('exp-category').value;
-      const amount = document.getElementById('exp-amount').value;
-      const description = document.getElementById('exp-desc').value;
-      if (!amount) return showToast('Enter amount', '⚠️');
-
-      await fetch('/api/expenses', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category, amount, description })
-      });
-      document.getElementById('exp-amount').value = '';
-      document.getElementById('exp-desc').value = '';
-      showToast('Expense recorded into Balance Sheet', '💸');
-      loadData();
+    async function deleteBill(saleId) {
+      if (!confirm(`Delete bill #${saleId} and restore stock?`)) return;
+      const res = await fetch(`/api/sales?id=${saleId}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) { showToast('Bill deleted and stock restocked', '🔄'); loadData(); }
     }
 
     function switchTab(tab, btn) {
