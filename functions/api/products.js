@@ -1,8 +1,12 @@
 export async function onRequestGet(context) {
-  const { results } = await context.env.DB.prepare(
-    "SELECT id, name, category, purchase_price, price, quantity, initial_stock, month_tag, image_url FROM products ORDER BY category ASC, name ASC"
-  ).all();
-  return Response.json(results || []);
+  try {
+    const { results } = await context.env.DB.prepare(
+      "SELECT * FROM products ORDER BY category ASC, name ASC"
+    ).all();
+    return Response.json(results || []);
+  } catch (err) {
+    return Response.json([]);
+  }
 }
 
 export async function onRequestPost(context) {
@@ -10,42 +14,20 @@ export async function onRequestPost(context) {
   const body = await context.request.json();
   const qty = parseInt(body.quantity, 10) || 0;
   const initialQty = parseInt(body.initial_stock, 10) || qty;
-  const purchasePrice = parseFloat(body.purchase_price || 0);
-  const retailPrice = parseFloat(body.price || 0);
-  const monthTag = body.month_tag || 'Sep 2026';
+  const cost = parseFloat(body.purchase_price || 0);
+  const price = parseFloat(body.price || 0);
+  
+  try {
+    const res = await db.prepare(
+      "INSERT INTO products (name, category, purchase_price, price, quantity, initial_stock) VALUES (?, ?, ?, ?, ?, ?)"
+    ).bind(body.name, body.category || 'General', cost, price, qty, initialQty).run();
 
-  // 1. Insert product
-  const res = await db.prepare(
-    "INSERT INTO products (name, category, purchase_price, price, quantity, initial_stock, month_tag, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-  ).bind(
-    body.name,
-    body.category || 'Top Filter',
-    purchasePrice,
-    retailPrice,
-    qty,
-    initialQty,
-    monthTag,
-    body.image_url || ''
-  ).run();
-
-  const productId = res.meta.last_row_id;
-
-  // 2. Automatically log expense linked to this product ID
-  const totalWholesaleCost = purchasePrice * qty;
-  if (totalWholesaleCost > 0) {
-    const expenseCategory = (body.category === 'Fish') ? 'Breeder Stock' : 'Stock Restock';
-    await db.prepare(
-      "INSERT INTO expenses (category, amount, description, product_id, quantity_added) VALUES (?, ?, ?, ?, ?)"
-    ).bind(
-      expenseCategory,
-      totalWholesaleCost,
-      `Auto-Expense: Added ${qty}x ${body.name} @ ₹${purchasePrice}/pc`,
-      productId,
-      qty
-    ).run();
-  }
-
-  return Response.json({ success: true, id: productId });
+    if (cost * qty > 0) {
+      await db.prepare("INSERT INTO expenses (category, amount, description) VALUES (?, ?, ?)")
+        .bind('Stock Restock', cost * qty, `Auto-Expense: ${qty}x ${body.name}`).run();
+    }
+    return Response.json({ success: true, id: res.meta.last_row_id });
+  } catch(e) { return Response.json({ error: e.message }, { status: 500 }); }
 }
 
 export async function onRequestPatch(context) {
@@ -53,50 +35,18 @@ export async function onRequestPatch(context) {
   const { id, add_quantity } = await context.request.json();
   const addedQty = parseInt(add_quantity, 10);
 
-  if (!id || isNaN(addedQty) || addedQty <= 0) {
-    return Response.json({ error: "Invalid restock parameters" }, { status: 400 });
-  }
-
-  const product = await db.prepare("SELECT name, category, purchase_price FROM products WHERE id = ?").bind(id).first();
-  if (!product) {
-    return Response.json({ error: "Product not found" }, { status: 404 });
-  }
-
-  await db.prepare(
-    "UPDATE products SET quantity = quantity + ?, initial_stock = initial_stock + ? WHERE id = ?"
-  ).bind(addedQty, addedQty, id).run();
-
-  const wholesaleCost = product.purchase_price * addedQty;
-  if (wholesaleCost > 0) {
-    const expenseCategory = (product.category === 'Fish') ? 'Breeder Stock' : 'Stock Restock';
-    await db.prepare(
-      "INSERT INTO expenses (category, amount, description, product_id, quantity_added) VALUES (?, ?, ?, ?, ?)"
-    ).bind(
-      expenseCategory,
-      wholesaleCost,
-      `Auto-Expense: Restocked ${addedQty}x ${product.name} @ ₹${product.purchase_price}/pc`,
-      id,
-      addedQty
-    ).run();
-  }
-
-  return Response.json({ success: true, added: addedQty });
+  try {
+    await db.prepare("UPDATE products SET quantity = quantity + ?, initial_stock = initial_stock + ? WHERE id = ?")
+      .bind(addedQty, addedQty, id).run();
+    return Response.json({ success: true, added: addedQty });
+  } catch(e) { return Response.json({ error: e.message }, { status: 500 }); }
 }
 
 export async function onRequestDelete(context) {
   const db = context.env.DB;
-  const url = new URL(context.request.url);
-  const id = url.searchParams.get("id");
-
-  if (!id) {
-    return Response.json({ error: "Missing product ID" }, { status: 400 });
-  }
-
-  // 1. Delete associated auto-expense records from ledger
-  await db.prepare("DELETE FROM expenses WHERE product_id = ?").bind(id).run();
-
-  // 2. Delete product
-  await db.prepare("DELETE FROM products WHERE id = ?").bind(id).run();
-
-  return Response.json({ success: true, deletedId: id });
+  const id = new URL(context.request.url).searchParams.get("id");
+  try {
+    await db.prepare("DELETE FROM products WHERE id = ?").bind(id).run();
+    return Response.json({ success: true });
+  } catch(e) { return Response.json({ error: e.message }, { status: 500 }); }
 }
