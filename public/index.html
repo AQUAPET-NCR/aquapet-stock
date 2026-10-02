@@ -158,6 +158,47 @@
       50% { opacity: 0.5; transform: scale(0.85); }
     }
 
+    .global-copilot-card {
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
+      border: 1px solid var(--intel-border);
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .copilot-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .copilot-input-row input {
+      border: none;
+      background: transparent;
+      padding: 8px;
+      width: 100%;
+      color: var(--text);
+      font-size: 14.5px;
+      outline: none;
+    }
+
+    .copilot-response-box {
+      display: none;
+      background: var(--pill-bg);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .copilot-response-box.show { display: block; }
+
     .view-tab { display: none; }
     .view-tab.active { display: block; animation: fadeIn 0.25s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -434,22 +475,26 @@
       padding-left: 28px;
     }
 
-    /* iOS Bottom Sheets */
+    /* Fixed Modals: Strict pointer-event & display management */
     .sheet-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
       z-index: 300;
       opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
+      display: none;
+      pointer-events: none;
       align-items: flex-end;
       justify-content: center;
+      transition: opacity 0.25s ease;
     }
-    .sheet-overlay.active { opacity: 1; visibility: visible; }
+    .sheet-overlay.active {
+      display: flex !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
 
     .sheet-content {
       background: var(--modal-bg);
@@ -462,10 +507,7 @@
       max-height: 85vh;
       overflow-y: auto;
       box-shadow: 0 -10px 40px rgba(0,0,0,0.25);
-      transform: translateY(100%);
-      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .sheet-overlay.active .sheet-content { transform: translateY(0); }
 
     .sheet-handle {
       width: 36px;
@@ -481,13 +523,18 @@
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      z-index: 200;
+      z-index: 400;
       justify-content: center;
       align-items: center;
       padding: 16px;
+      pointer-events: none;
     }
-    .receipt-modal-bg.show { display: flex; }
+    .receipt-modal-bg.show {
+      display: flex !important;
+      pointer-events: auto !important;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
 
     .receipt-paper {
       background: #ffffff;
@@ -521,7 +568,7 @@
 
   <div class="toast-capsule" id="app-toast">
     <span id="toast-icon">✨</span>
-    <span id="toast-msg">Stock added & Expense Ledger updated</span>
+    <span id="toast-msg">Updated</span>
   </div>
 
   <header>
@@ -537,6 +584,19 @@
       <span>Online</span>
     </div>
   </header>
+
+  <!-- OMNIPOTENT GLOBAL AI COMMAND COPILOT -->
+  <section class="global-copilot-card">
+    <div class="copilot-input-row">
+      <span style="font-size: 14px; opacity: 0.8;">✦</span>
+      <input type="text" id="global-ai-input" placeholder="Bill items, ask customer spend, stock, or loss..." onkeydown="if(event.key==='Enter') dispatchGlobalAI()">
+      <button class="btn btn-sm" onclick="dispatchGlobalAI()">Send</button>
+    </div>
+    <div class="copilot-response-box" id="copilot-response-box">
+      <div id="copilot-response-text" style="font-weight: 500;"></div>
+      <div id="copilot-action-slot" style="margin-top: 8px;"></div>
+    </div>
+  </section>
 
   <!-- TAB 1: POS BILLING -->
   <section id="view-pos" class="view-tab active">
@@ -678,13 +738,12 @@
     </div>
   </section>
 
-  <!-- TAB 5: STOCK WITH DAY BOOK SCANNER & DATE GROUPING -->
+  <!-- TAB 5: STOCK WITH DAY BOOK SCANNER -->
   <section id="view-inventory" class="view-tab">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
         <h3 style="font-size: 18px;">Stock Inventory</h3>
         <div style="display: flex; gap: 6px;">
-          <!-- Hidden native image upload input accepting camera and gallery -->
           <input type="file" id="daybook-camera-input" accept="image/*" style="display:none;" onchange="handleDayBookImage(this)">
           <button class="btn btn-sm" style="background: linear-gradient(135deg, #0071e3, #af52de);" onclick="triggerImageCapture()">
             📷 Scan Day Book
@@ -708,7 +767,7 @@
     </div>
   </section>
 
-  <!-- DOCK NAVIGATION -->
+  <!-- 5-BUTTON DOCK -->
   <div class="dock-wrap">
     <nav class="dock">
       <button class="active" onclick="switchTab('pos', this)">Billing</button>
@@ -734,7 +793,7 @@
           <input type="date" id="ocr-batch-date" class="app-input" style="padding: 4px 8px; font-weight: 700; width: auto; margin-top: 4px;">
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Total Wholesale Investment</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Total Wholesale</div>
           <div style="font-size: 20px; font-weight: 800; color: var(--tint-red);" id="ocr-total-investment">₹0</div>
         </div>
       </div>
@@ -1053,7 +1112,6 @@
         return;
       }
 
-      // Group products by batch_date
       const batches = {};
       filtered.forEach(p => {
         const dateKey = p.batch_date || p.month_tag || 'Historical Stock';
@@ -1099,7 +1157,7 @@
                     Bought: ${initial} | Sold: <span style="color: var(--tint-blue);">${sold}</span>
                   </div>
                   <div style="margin-top: 6px;">
-                    <button class="btn-pill-action" onclick="openRestockSheet(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.purchase_price \vert{}\vert{} 0},${p.quantity})">
+                    <button class="btn-pill-action" onclick="openRestockSheet(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.purchase_price || 0})">
                       + Add More Stock
                     </button>
                   </div>
@@ -1155,10 +1213,10 @@
       }
     }
 
-    function openRestockSheet(id, name, cost, currentQty) {
+    function openRestockSheet(id, name, cost) {
       document.getElementById('restock-item-id').value = id;
       document.getElementById('restock-item-name').innerText = name;
-      document.getElementById('restock-item-info').innerText = `Cost: ₹${cost} | Currently ${currentQty} in stock`;
+      document.getElementById('restock-item-info').innerText = `Cost: ₹${cost}`;
       document.getElementById('restock-item-qty').value = '';
       document.getElementById('restock-sheet').classList.add('active');
       setTimeout(() => document.getElementById('restock-item-qty').focus(), 150);
@@ -1214,7 +1272,7 @@
       }
     }
 
-    // --- POS BILLING & MODAL ENGINE ---
+    // --- POS BILLING ENGINE ---
     function renderPOSPicker() {
       const el = document.getElementById('pos-product-picker');
       const searchQuery = (document.getElementById('pos-search')?.value || '').toLowerCase().trim();
@@ -1453,7 +1511,7 @@
       const cleanPhone = latestBillData.phone.replace(/[^0-9]/g, '');
       const itemsText = latestBillData.items.map(i => `• ${i.name} x${i.quantity} = ₹${i.price * i.quantity}`).join('\n');
       const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n\n*Total Payable: ₹${latestBillData.total}*\n\nThank you for shopping with us!`;
-      const url = cleanPhone.length >= 10 ? `[https://wa.me/91$](https://wa.me/91$){cleanPhone}?text=${encodeURIComponent(msg)}` : `[https://wa.me/?text=$](https://wa.me/?text=$){encodeURIComponent(msg)}`;
+      const url = cleanPhone.length >= 10 ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
 
@@ -1538,6 +1596,58 @@
       }
     }
 
+    // --- GLOBAL AI COPILOT DISPATCHER ---
+    async function dispatchGlobalAI() {
+      const input = document.getElementById('global-ai-input');
+      const question = input.value.trim();
+      if (!question) return;
+
+      const respCard = document.getElementById('copilot-response-box');
+      const respText = document.getElementById('copilot-response-text');
+      const actionSlot = document.getElementById('copilot-action-slot');
+
+      respCard.classList.add('show');
+      respText.innerHTML = '<span style="color: var(--tint-blue);">✦ Aquapet AI is analyzing & executing...</span>';
+      actionSlot.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+        respText.innerText = data.answer;
+        input.value = '';
+
+        if (data.executedAction === 'bill_created' && data.billData) {
+          latestBillData = data.billData;
+          actionSlot.innerHTML = `
+            <button class="btn btn-sm btn-green" onclick="openGeneratedBill()">
+              📄 View & Print Bill
+            </button>
+          `;
+          showToast(`Bill #${data.billData.saleId} generated!`, '🧾');
+          loadData();
+        } 
+        else if (data.executedAction === 'stock_updated') {
+          showToast('Inventory & ledger updated', '📦');
+          loadData();
+        }
+        else if (data.executedAction === 'customer_found' && data.customerPhone) {
+          actionSlot.innerHTML = `
+            <div style="display: flex; gap: 8px; margin-top: 4px;">
+              <a href="tel:${data.customerPhone}" class="btn btn-sm" style="text-decoration:none; background:var(--tint-blue);">Call</a>
+              <a href="https://wa.me/91${data.customerPhone}" target="_blank" class="btn btn-sm" style="text-decoration:none; background:var(--tint-green);">WhatsApp</a>
+            </div>
+          `;
+        }
+
+      } catch (e) {
+        respText.innerText = "Error communicating with AI copilot.";
+      }
+    }
+
     // --- EXPENSES & CUSTOMERS ---
     function renderExpenseBreakdown(list) {
       const el = document.getElementById('expense-category-list');
@@ -1592,7 +1702,7 @@
               <div style="font-weight:700;color:var(--tint-green);font-size:16px;">₹${s.total_amount}</div>
             </div>
             <div style="display:flex;gap:8px;margin-top:10px;">
-              ${hasPhone ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;background:var(--tint-blue);">Call</a><a href="[https://wa.me/91$](https://wa.me/91$){clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}
+              ${hasPhone ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;background:var(--tint-blue);">Call</a><a href="https://wa.me/91${clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}
               <button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete & Restock</button>
             </div>
           </div>
