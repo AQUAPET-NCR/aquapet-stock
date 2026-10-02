@@ -11,16 +11,34 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     :root {
-      --bg: #000000; --card-bg: #1c1c1e; --card-border: rgba(255, 255, 255, 0.12);
-      --text: #f5f5f7; --subtext: #8e8e93; --tint-blue: #2997ff; --tint-green: #30d158;
-      --tint-orange: #ff9f0a; --tint-red: #ff453a; --pill-bg: #2c2c2e;
+      --bg: #000000;
+      --card-bg: #1c1c1e;
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text: #f5f5f7;
+      --subtext: #8e8e93;
+      --tint-blue: #2997ff;
+      --tint-green: #30d158;
+      --tint-orange: #ff9f0a;
+      --tint-red: #ff453a;
+      --pill-bg: #2c2c2e;
     }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
     button, input, select, .cat-pill, .btn, .calc-btn, .step-btn { touch-action: manipulation; }
 
-    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: calc(env(safe-area-inset-top, 20px) + 16px) 16px calc(env(safe-area-inset-bottom, 20px) + 100px); max-width: 650px; margin: 0 auto; -webkit-font-smoothing: antialiased; }
+    body {
+      background-color: var(--bg); color: var(--text); min-height: 100vh;
+      padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 100px);
+      padding-left: 16px; padding-right: 16px; max-width: 650px; margin: 0 auto; -webkit-font-smoothing: antialiased;
+    }
 
-    .toast-capsule { position: fixed; top: calc(env(safe-area-inset-top, 20px) + 10px); left: 50%; transform: translateX(-50%) translateY(-150%); background: #ffffff; color: #000000; padding: 12px 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 9999; display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 700; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; opacity: 0; pointer-events: none; }
+    .toast-capsule {
+      position: fixed; top: calc(env(safe-area-inset-top, 20px) + 10px); left: 50%; transform: translateX(-50%) translateY(-150%);
+      background: #ffffff; color: #000000; padding: 12px 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      z-index: 9999; display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 700;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; opacity: 0; pointer-events: none;
+    }
     .toast-capsule.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -121,7 +139,6 @@
     <div class="status-badge"><div class="dot-online"></div><span>Online</span></div>
   </header>
 
-  <!-- Global Command Copilot -->
   <section class="copilot-card">
     <div class="copilot-row">
       <span style="font-size: 15px; color: var(--tint-blue);">✦</span>
@@ -591,7 +608,7 @@
         img.onload = async function() {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
-          const maxW = 1000; const maxH = 1000;
+          const maxW = 800; const maxH = 800; // Extra compressed to avoid Cloudflare payload limits
           let w = img.width; let h = img.height;
           if (w > h) { if (w > maxW) { h *= maxW / w; w = maxW; } } else { if (h > maxH) { w *= maxH / h; h = maxH; } }
           canvas.width = w; canvas.height = h;
@@ -605,11 +622,16 @@
               body: JSON.stringify({ imageBase64: compressedBase64 })
             });
             const data = await res.json();
+            
             if (data.items && data.items.length > 0) {
               scannedBatchItems = data.items;
               document.getElementById('ocr-batch-date').value = new Date().toISOString().split('T')[0];
               renderOcrReviewList(); openModal('ocr-modal');
-            } else { alert('AI could not extract rows. Try a closer photo.'); }
+            } else { 
+              let errDetail = data.error || 'Failed to extract rows.';
+              if(data.raw_ai_output) console.log("AI Output:", data.raw_ai_output);
+              alert('AI Error: ' + errDetail + '\n\nTry taking a clearer, closer photo.'); 
+            }
           } catch (err) { alert('Network timeout. Try again.'); } 
           finally { input.value = ''; }
         };
@@ -856,7 +878,7 @@
       let itemsText = '';
       for(let i=0; i<latestBillData.items.length; i++) itemsText += `• ${latestBillData.items[i].name} x${latestBillData.items[i].quantity} = ₹${latestBillData.items[i].price * latestBillData.items[i].quantity}\n`;
       const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n*Total Payable: ₹${latestBillData.total}*\n\nThank you!`;
-      const url = cleanPhone.length >= 10 ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      const url = cleanPhone.length >= 10 ? `[https://wa.me/91$](https://wa.me/91$){cleanPhone}?text=${encodeURIComponent(msg)}` : `[https://wa.me/?text=$](https://wa.me/?text=$){encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
 
@@ -894,6 +916,72 @@
       } catch (e) { document.getElementById('copilot-text').innerText = "Network Error."; }
     }
 
+    // --- EXPENSES & CUSTOMERS ---
+    function renderExpenseBreakdown(list) {
+      const el = document.getElementById('expense-category-list');
+      if (!el) return;
+      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No data</div>'; return; }
+      let html = '';
+      for(let i=0; i<list.length; i++) { html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-weight:600;font-size:14px;">${list[i].category}</span><span style="font-weight:700;color:var(--tint-red);font-size:14px;">₹${list[i].total}</span></div>`; }
+      el.innerHTML = html;
+    }
+
+    function renderRecentExpenses(list) {
+      const el = document.getElementById('recent-expenses-list');
+      if (!el) return;
+      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No records.</div>'; return; }
+      let html = '';
+      for(let i=0; i<list.length; i++) {
+        html += `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 12px;border-radius:12px;"><div><div style="font-weight:600;font-size:14px;">${list[i].category}</div><div style="font-size:12px;color:var(--subtext);">${list[i].description || ''}</div></div><div style="display:flex;align-items:center;gap:12px;"><span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${list[i].amount}</span><button class="btn-trash" onclick="deleteExpenseItem(${list[i].id})">🗑️</button></div></div>`;
+      }
+      el.innerHTML = html;
+    }
+
+    async function deleteExpenseItem(id) {
+      if (!confirm("Delete this expense?")) return;
+      try {
+        const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
+        if (res.ok) { showToast('Removed', '🗑'); loadData(); }
+      } catch(e) { showToast('Error', '❌'); }
+    }
+
+    async function loadCustomerSales() {
+      const el = document.getElementById('customer-list');
+      if (!el) return;
+      try {
+        const res = await fetch('/api/sales');
+        const sales = await res.json();
+        if (!Array.isArray(sales) || sales.length === 0) { el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">No sales</div>'; return; }
+        let html = '';
+        for(let i=0; i<sales.length; i++) {
+          let s = sales[i];
+          let clean = String(s.customer_phone || '').replace(/[^0-9]/g, '');
+          html += `<div style="background:var(--pill-bg);padding:12px;border-radius:16px;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:700;font-size:15px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div><div style="font-weight:700;color:var(--tint-green);font-size:15px;">₹${s.total_amount}</div></div><div style="display:flex;gap:6px;margin-top:8px;">${clean.length >= 8 ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;">Call</a><a href="[https://wa.me/91$](https://wa.me/91$){clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}<button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete</button></div></div>`;
+        }
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">Network Error</div>'; }
+    }
+
+    async function deleteBill(saleId) {
+      if (!confirm(`Delete bill #${saleId}?`)) return;
+      try {
+        const res = await fetch(`/api/sales?id=${saleId}`, { method: 'DELETE' });
+        if (res.ok) { showToast('Deleted', '🔄'); loadData(); }
+      } catch(e) { showToast('Error', '❌'); }
+    }
+
+    async function saveExpense() {
+      let cat = document.getElementById('exp-category').value;
+      let amt = document.getElementById('exp-amount').value;
+      let desc = document.getElementById('exp-desc').value;
+      if (!amt) return showToast('Enter amount', '⚠️');
+      try {
+        await fetch('/api/expenses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: cat, amount: amt, description: desc }) });
+        document.getElementById('exp-amount').value = ''; document.getElementById('exp-desc').value = '';
+        showToast('Saved to ledger', '💸'); loadData();
+      } catch(e) { showToast('Error', '❌'); }
+    }
+
     // --- INVENTORY SAFE RENDERING ---
     function renderInventory() {
       const el = document.getElementById('inventory-list');
@@ -901,6 +989,8 @@
       const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
       const filterInput = document.getElementById('stock-month-filter');
       const selectedMonth = filterInput ? filterInput.value : 'All';
+
+      if (!Array.isArray(products)) products = [];
 
       let filtered = products.filter(p => {
         let pCat = String(p.category || 'Uncategorized').toLowerCase();
@@ -991,7 +1081,7 @@
     async function submitRestockItem() {
       const id = document.getElementById('restock-item-id').value;
       const addQty = parseInt(document.getElementById('restock-item-qty').value, 10);
-      if (!id || isNaN(addQty) || addQty <= 0) return showToast('Enter valid quantity', '⚠️️');
+      if (!id || isNaN(addQty) || addQty <= 0) return showToast('Enter valid quantity', '⚠️');
 
       try {
         const res = await fetch('/api/products', {
@@ -1021,72 +1111,6 @@
           document.getElementById('new-item-name').value = '';
           closeModal('add-stock-modal'); showToast('Item saved', '📦'); loadData();
         }
-      } catch(e) { showToast('Error', '❌'); }
-    }
-
-    // --- EXPENSES & CUSTOMERS ---
-    function renderExpenseBreakdown(list) {
-      const el = document.getElementById('expense-category-list');
-      if (!el) return;
-      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No data</div>'; return; }
-      let html = '';
-      for(let i=0; i<list.length; i++) { html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-weight:600;font-size:14px;">${list[i].category}</span><span style="font-weight:700;color:var(--tint-red);font-size:14px;">₹${list[i].total}</span></div>`; }
-      el.innerHTML = html;
-    }
-
-    function renderRecentExpenses(list) {
-      const el = document.getElementById('recent-expenses-list');
-      if (!el) return;
-      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No records.</div>'; return; }
-      let html = '';
-      for(let i=0; i<list.length; i++) {
-        html += `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 12px;border-radius:12px;"><div><div style="font-weight:600;font-size:14px;">${list[i].category}</div><div style="font-size:12px;color:var(--subtext);">${list[i].description || ''}</div></div><div style="display:flex;align-items:center;gap:12px;"><span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${list[i].amount}</span><button class="btn-trash" onclick="deleteExpenseItem(${list[i].id})">🗑️</button></div></div>`;
-      }
-      el.innerHTML = html;
-    }
-
-    async function deleteExpenseItem(id) {
-      if (!confirm("Delete this expense?")) return;
-      try {
-        const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
-        if (res.ok) { showToast('Removed', '🗑'); loadData(); }
-      } catch(e) { showToast('Error', '❌'); }
-    }
-
-    async function loadCustomerSales() {
-      const el = document.getElementById('customer-list');
-      if (!el) return;
-      try {
-        const res = await fetch('/api/sales');
-        const sales = await res.json();
-        if (!Array.isArray(sales) || sales.length === 0) { el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">No sales</div>'; return; }
-        let html = '';
-        for(let i=0; i<sales.length; i++) {
-          let s = sales[i];
-          let clean = String(s.customer_phone || '').replace(/[^0-9]/g, '');
-          html += `<div style="background:var(--pill-bg);padding:12px;border-radius:16px;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:700;font-size:15px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div><div style="font-weight:700;color:var(--tint-green);font-size:15px;">₹${s.total_amount}</div></div><div style="display:flex;gap:6px;margin-top:8px;">${clean.length >= 8 ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;">Call</a><a href="https://wa.me/91${clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}<button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete</button></div></div>`;
-        }
-        el.innerHTML = html;
-      } catch(e) { el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">Network Error</div>'; }
-    }
-
-    async function deleteBill(saleId) {
-      if (!confirm(`Delete bill #${saleId}?`)) return;
-      try {
-        const res = await fetch(`/api/sales?id=${saleId}`, { method: 'DELETE' });
-        if (res.ok) { showToast('Deleted', '🔄'); loadData(); }
-      } catch(e) { showToast('Error', '❌'); }
-    }
-
-    async function saveExpense() {
-      let cat = document.getElementById('exp-category').value;
-      let amt = document.getElementById('exp-amount').value;
-      let desc = document.getElementById('exp-desc').value;
-      if (!amt) return showToast('Enter amount', '⚠️');
-      try {
-        await fetch('/api/expenses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: cat, amount: amt, description: desc }) });
-        document.getElementById('exp-amount').value = ''; document.getElementById('exp-desc').value = '';
-        showToast('Saved to ledger', '💸'); loadData();
       } catch(e) { showToast('Error', '❌'); }
     }
 
