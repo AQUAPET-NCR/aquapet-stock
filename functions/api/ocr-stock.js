@@ -25,23 +25,19 @@ Example format:
     let aiResponse;
     
     try {
-      // Attempt the vision scan
       aiResponse = await context.env.AI.run('@cf/meta/llama-3.2-11b-vision-instruct', {
         image: [...bytes],
         prompt: visionPrompt,
         max_tokens: 1500
       });
     } catch (apiError) {
-      // Automatically handle the Meta LLaMA 3.2 "agree" license requirement (Error 5016)
+      // Auto-accept Meta License if required
       if (apiError.message && apiError.message.includes("agree")) {
-        // Send the one-time agreement
         await context.env.AI.run('@cf/meta/llama-3.2-11b-vision-instruct', {
           image: [...bytes],
           prompt: "agree",
           max_tokens: 10
         });
-        
-        // Instantly retry the original ledger scan
         aiResponse = await context.env.AI.run('@cf/meta/llama-3.2-11b-vision-instruct', {
           image: [...bytes],
           prompt: visionPrompt,
@@ -52,9 +48,26 @@ Example format:
       }
     }
 
-    let rawOutput = (aiResponse.response || aiResponse.description || aiResponse.result || '').trim();
+    // Safely extract the AI payload
+    let payload = aiResponse.response || aiResponse.result || aiResponse;
+
+    // SCENARIO A: AI returned a direct Array (This caused the previous crash)
+    if (Array.isArray(payload)) {
+      return Response.json({ items: payload });
+    }
+
+    // SCENARIO B: AI returned an Object containing our array
+    if (typeof payload === 'object' && payload !== null) {
+      if (payload.items && Array.isArray(payload.items)) return Response.json({ items: payload.items });
+      // If it's an unrecognized object, convert it to a string so our text parser can handle it safely
+      payload = JSON.stringify(payload);
+    }
+
+    // SCENARIO C: AI returned a text string that we need to clean and parse
+    let rawOutput = String(payload).trim();
     
-    if (rawOutput.startsWith('```json')) rawOutput = rawOutput.replace(/```json/g, '').replace(/```/g, '').trim();
+    // Clean markdown formatting if present
+    if (rawOutput.startsWith('```json')) rawOutput = rawOutput.replace(/```json/gi, '').replace(/```/g, '').trim();
     if (rawOutput.startsWith('```')) rawOutput = rawOutput.replace(/```/g, '').trim();
 
     const jsonStart = rawOutput.indexOf('[');
@@ -62,7 +75,7 @@ Example format:
 
     if (jsonStart === -1 || jsonEnd === -1) {
       return Response.json({ 
-        error: "AI did not return a valid table array.", 
+        error: "AI did not format a valid table. Try a clearer photo.", 
         raw_ai_output: rawOutput 
       }, { status: 422 });
     }
