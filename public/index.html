@@ -112,16 +112,19 @@
     .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; }
     .stat-box .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
 
+    /* Apple-Style Calculator */
     .calc-container { max-width: 330px; margin: 0 auto; }
-    .calc-screen { text-align: right; font-size: 44px; font-weight: 300; padding: 10px 4px; min-height: 70px; display: flex; align-items: flex-end; justify-content: flex-end; }
+    .calc-screen { text-align: right; font-size: 44px; font-weight: 300; padding: 10px 4px; min-height: 70px; display: flex; align-items: flex-end; justify-content: flex-end; transition: opacity 0.1s; }
     .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .calc-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
     .calc-btn:active { transform: scale(0.92); opacity: 0.7; }
     .calc-btn-gray { background: #505050; color: #fff; }
     .calc-btn-dark { background: #333333; color: #fff; font-weight: 600; }
-    .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 600; }
+    .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 600; transition: background 0.2s, color 0.2s; }
+    .calc-btn-orange.active-op { background: #ffffff; color: #ff9f0a; } /* iOS Visual Feedback */
     .calc-btn-zero { grid-column: span 2; aspect-ratio: auto; border-radius: 35px; justify-content: flex-start; padding-left: 28px; }
 
+    /* Modals */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.7);
@@ -144,18 +147,14 @@
     .receipt-paper { background: #ffffff; color: #000000; width: 100%; max-width: 320px; border-radius: 18px; padding: 18px; font-family: monospace; font-size: 12px; line-height: 1.4; margin: auto; }
 
     .dock-wrap {
-      position: fixed;
-      bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
-      left: 0; right: 0;
-      display: flex; justify-content: center;
-      z-index: 50; pointer-events: none;
+      position: fixed; bottom: calc(env(safe-area-inset-bottom, 20px) + 12px); left: 0; right: 0;
+      display: flex; justify-content: center; z-index: 50; pointer-events: none;
     }
     .dock {
       pointer-events: auto;
       background: rgba(28, 28, 30, 0.85);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 32px; padding: 6px; display: flex; gap: 4px;
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 32px; padding: 6px; display: flex; gap: 4px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .dock button { background: transparent; border: none; padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--subtext); border-radius: 24px; cursor: pointer; transition: 0.2s; }
@@ -168,7 +167,6 @@
 
     .btn-pill-action { background: var(--pill-bg); border: none; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--tint-blue); cursor: pointer; transition: 0.1s; }
     .btn-pill-action:active { background: rgba(41, 151, 255, 0.2); transform: scale(0.95); }
-    
     .btn-trash { background: transparent; border: none; color: var(--subtext); padding: 8px; cursor: pointer; font-size: 16px; transition: 0.1s; }
     .btn-trash:active { color: var(--tint-red); transform: scale(0.9); }
 
@@ -191,12 +189,10 @@
         <div class="greeting-title">Mittar</div>
       </div>
     </div>
-    <div class="status-badge">
-      <div class="dot-online"></div>
-      <span>Online</span>
-    </div>
+    <div class="status-badge"><div class="dot-online"></div><span>Online</span></div>
   </header>
 
+  <!-- Global Command Copilot -->
   <section class="copilot-card">
     <div class="copilot-row">
       <span style="font-size: 15px; color: var(--tint-blue);">✦</span>
@@ -250,7 +246,7 @@
     </div>
   </section>
 
-  <!-- TAB 2: CALCULATOR -->
+  <!-- TAB 2: APPLE CALCULATOR -->
   <section id="view-calculator" class="view-tab">
     <div class="card calc-container">
       <div class="calc-screen" id="calc-display">0</div>
@@ -258,28 +254,28 @@
         <button class="calc-btn calc-btn-gray" onclick="calcClear()">AC</button>
         <button class="calc-btn calc-btn-gray" onclick="calcToggleSign()">±</button>
         <button class="calc-btn calc-btn-gray" onclick="calcPercent()">%</button>
-        <button class="calc-btn calc-btn-orange" onclick="calcOperator('/')">÷</button>
+        <button id="calc-op-div" class="calc-btn calc-btn-orange" onclick="calcOperator('/', 'calc-op-div')">÷</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('7')">7</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('8')">8</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('9')">9</button>
-        <button class="calc-btn calc-btn-orange" onclick="calcOperator('*')">×</button>
+        <button id="calc-op-mul" class="calc-btn calc-btn-orange" onclick="calcOperator('*', 'calc-op-mul')">×</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('4')">4</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('5')">5</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('6')">6</button>
-        <button class="calc-btn calc-btn-orange" onclick="calcOperator('-')">−</button>
+        <button id="calc-op-sub" class="calc-btn calc-btn-orange" onclick="calcOperator('-', 'calc-op-sub')">−</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('1')">1</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('2')">2</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('3')">3</button>
-        <button class="calc-btn calc-btn-orange" onclick="calcOperator('+')">+</button>
+        <button id="calc-op-add" class="calc-btn calc-btn-orange" onclick="calcOperator('+', 'calc-op-add')">+</button>
         <button class="calc-btn calc-btn-dark calc-btn-zero" onclick="calcNumber('0')">0</button>
         <button class="calc-btn calc-btn-dark" onclick="calcDecimal()">.</button>
-        <button class="calc-btn calc-btn-orange" onclick="calcEqual()">=</button>
+        <button class="calc-btn calc-btn-orange" onclick="calcEqual(false)">=</button>
       </div>
       <button class="btn btn-green" style="width: 100%; margin-top: 16px;" onclick="openCalcBillingSheet()">🧾 Bill This Total</button>
     </div>
   </section>
 
-  <!-- TAB 3: BALANCE SHEET -->
+  <!-- TAB 3: BALANCE SHEET & EXPENSE LEDGER -->
   <section id="view-balancesheet" class="view-tab">
     <div class="stats-grid">
       <div class="stat-box"><div class="title">Today's Sales</div><div class="val" id="metric-today" style="color: var(--tint-green);">₹0</div></div>
@@ -325,7 +321,7 @@
     </div>
   </section>
 
-  <!-- TAB 5: STOCK WITH SCANNER -->
+  <!-- TAB 5: INVENTORY -->
   <section id="view-inventory" class="view-tab">
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
@@ -345,8 +341,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 6px 10px; background: var(--pill-bg); border-radius: 12px; font-size: 13px;">
         <span style="font-weight: 600;">Batch Filter:</span>
         <select id="stock-month-filter" onchange="renderInventory()" style="background: transparent; border: none; font-weight: 700; color: var(--tint-blue); outline: none;">
-          <option value="All">All Batches</option>
-          <option value="2026-10-02" selected>02 Oct 2026</option>
+          <option value="All" selected>All Batches</option>
         </select>
       </div>
       <div id="inventory-list"></div>
@@ -364,7 +359,7 @@
     </nav>
   </div>
 
-  <!-- ALL MODALS BELOW -->
+  <!-- MODALS -->
   <div class="modal-overlay" id="ocr-modal" onclick="closeOnOutsideClick(event, 'ocr-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -472,7 +467,7 @@
 
   <iframe id="print-iframe"></iframe>
 
-  <!-- ==================== JAVASCRIPT ENGINE ==================== -->
+  <!-- ==================== LOGIC ==================== -->
   <script>
     let products = [];
     let cart = {};
@@ -482,10 +477,6 @@
     let latestBillData = null;
     let stockStatusFilter = 'all';
     let scannedBatchItems = [];
-    let calcCurrent = '0';
-    let calcPrevious = null;
-    let calcOp = null;
-    let calcResetOnNext = false;
 
     function showToast(msg, icon) {
       const toast = document.getElementById('app-toast');
@@ -508,11 +499,8 @@
     function closeOnOutsideClick(event, modalId) { if (event.target.id === modalId) closeModal(modalId); }
 
     function switchTab(tab, btn) {
-      const allTabs = document.querySelectorAll('.view-tab');
-      for (let i=0; i<allTabs.length; i++) allTabs[i].classList.remove('active');
-      const allBtns = document.querySelectorAll('.dock button');
-      for (let i=0; i<allBtns.length; i++) allBtns[i].classList.remove('active');
-      
+      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.dock button').forEach(b => b.classList.remove('active'));
       const target = document.getElementById('view-' + tab);
       if (target) target.classList.add('active');
       if (btn) btn.classList.add('active');
@@ -522,23 +510,48 @@
       if (tab === 'inventory') renderInventory();
     }
 
+    // --- DATA LOADING & BATCH FILTER CONFIG ---
+    function populateBatchFilter() {
+      const filterSelect = document.getElementById('stock-month-filter');
+      if (!filterSelect) return;
+      const uniqueDates = new Set();
+      products.forEach(p => {
+        if (p.batch_date) uniqueDates.add(p.batch_date);
+        else if (p.month_tag) uniqueDates.add(p.month_tag);
+      });
+      let html = `<option value="All" selected>All Batches</option>`;
+      Array.from(uniqueDates).sort().reverse().forEach(date => {
+        html += `<option value="${date}">${date}</option>`;
+      });
+      filterSelect.innerHTML = html;
+    }
+
     async function loadData() {
       try {
         const prodRes = await fetch('/api/products');
-        if (prodRes.ok) products = await prodRes.json();
+        if (prodRes.ok) {
+          products = await prodRes.json();
+          if (!Array.isArray(products)) products = [];
+          populateBatchFilter();
+        }
         
         const sumRes = await fetch('/api/summary');
         if (sumRes.ok) {
           const sum = await sumRes.json();
-          document.getElementById('metric-today').innerText = '₹' + sum.todaySales;
-          document.getElementById('metric-sales').innerText = '₹' + sum.totalSales;
-          document.getElementById('metric-expenses').innerText = '₹' + sum.totalExpenses;
-          document.getElementById('metric-profit').innerText = '₹' + sum.netProfit;
-          document.getElementById('metric-inv-valuation').innerText = '₹' + sum.inventoryValuation;
-          document.getElementById('metric-inv-units').innerText = sum.totalInventoryUnits + ' units';
-          renderExpenseBreakdown(sum.expenseBreakdown || []);
-          renderRecentExpenses(sum.recentExpenses || []);
+          document.getElementById('metric-today').innerText = '₹' + (sum.todaySales || 0);
+          document.getElementById('metric-sales').innerText = '₹' + (sum.totalSales || 0);
+          document.getElementById('metric-expenses').innerText = '₹' + (sum.totalExpenses || 0);
+          document.getElementById('metric-profit').innerText = '₹' + (sum.netProfit || 0);
+          document.getElementById('metric-inv-valuation').innerText = '₹' + (sum.inventoryValuation || 0);
+          document.getElementById('metric-inv-units').innerText = (sum.totalInventoryUnits || 0) + ' units';
         }
+
+        const expRes = await fetch('/api/expenses');
+        if (expRes.ok) {
+          const expList = await expRes.json();
+          renderRecentExpenses(expList || []);
+        }
+        
         renderPOSPicker();
         renderInventory();
         loadCustomerSales();
@@ -623,38 +636,46 @@
       const el = document.getElementById('pos-product-picker');
       const searchInput = document.getElementById('pos-search');
       const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      
+      if (!Array.isArray(products)) products = [];
 
-      let filtered = [];
-      for (let i=0; i<products.length; i++) {
-        let p = products[i];
-        let pass = true;
-        let pCat = (p.category || '').toLowerCase();
-        let pName = (p.name || '').toLowerCase();
-
-        if (selectedCategory !== 'All' && !pCat.includes(selectedCategory.toLowerCase())) pass = false;
-        if (searchQuery && pass) {
-          if (!pName.includes(searchQuery) && !pCat.includes(searchQuery)) pass = false;
+      let filtered = products.filter(p => {
+        let pCat = (p.category || 'Uncategorized').toLowerCase();
+        let pName = (p.name || 'Unnamed').toLowerCase();
+        
+        let matchCat = true;
+        if (selectedCategory !== 'All') {
+          let sCat = selectedCategory.toLowerCase();
+          matchCat = pCat.includes(sCat) || sCat.includes(pCat) || pCat === sCat;
         }
-        if (pass) filtered.push(p);
-      }
+        
+        let matchSearch = true;
+        if (searchQuery) {
+          matchSearch = pName.includes(searchQuery) || pCat.includes(searchQuery);
+        }
+        
+        return matchCat && matchSearch;
+      });
 
       if (filtered.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No items found.</div>';
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching items.</div>';
         return;
       }
 
       let html = '';
-      for (let i=0; i<filtered.length; i++) {
-        let p = filtered[i];
+      filtered.forEach(p => {
         let qtyInCart = cart[p.id] || 0;
         let isOutOfStock = p.quantity <= 0;
         let reachedMax = qtyInCart >= p.quantity;
+        let nameStr = p.name || 'Unnamed';
+        let priceStr = p.price || 0;
+        let qtyStr = p.quantity || 0;
 
         html += `
           <div class="pos-item" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
             <div>
-              <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
-              <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'};">₹${p.price} | ${isOutOfStock ? 'Out' : p.quantity + ' left'}</div>
+              <div style="font-weight: 600; font-size: 15px;">${nameStr}</div>
+              <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'};">₹${priceStr} | ${isOutOfStock ? 'Out' : qtyStr + ' left'}</div>
             </div>
             <div>
               ${isOutOfStock ? `<span style="font-size: 12px; color: var(--tint-red); font-weight: 700;">Out</span>` 
@@ -667,7 +688,7 @@
               ` : `<button class="btn btn-sm" onclick="modifyCart(${p.id}, 1)">+ Add</button>`}
             </div>
           </div>`;
-      }
+      });
       el.innerHTML = html;
     }
 
@@ -710,6 +731,7 @@
     function updateTotal() {
       let sub = calculateRawSubtotal();
       let finalAmt = sub;
+
       if (discountPercent > 0) {
         finalAmt = Math.max(0, sub - ((sub * discountPercent) / 100));
         document.getElementById('discount-note').innerText = '(' + discountPercent + '% OFF)';
@@ -735,7 +757,7 @@
 
     function checkoutAndPrint() {
       let finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) return alert('Add items to bill');
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) return showToast('Add items to bill', '⚠️');
 
       let rawName = document.getElementById('cust-name').value.trim();
       let rawPhone = document.getElementById('cust-phone').value.trim();
@@ -746,7 +768,7 @@
       for (let id in cart) {
         let p = null;
         for (let i=0; i<products.length; i++) { if (products[i].id == id) p = products[i]; }
-        if (p) items.push({ id: p.id, name: p.name, quantity: cart[id], price: p.price });
+        if (p) items.push({ id: p.id, name: p.name || 'Unnamed', quantity: cart[id], price: p.price || 0 });
       }
 
       let sub = calculateRawSubtotal();
@@ -818,168 +840,70 @@
       navigator.clipboard.writeText(text).then(() => showToast('Copied to Clipboard!', '📋'));
     }
 
-    // --- INVENTORY SAFE RENDERING ---
-    function renderInventory() {
-      const el = document.getElementById('inventory-list');
-      const searchInput = document.getElementById('stock-search');
-      const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      const filterInput = document.getElementById('stock-month-filter');
-      const selectedMonth = filterInput ? filterInput.value : 'All';
-
-      let filtered = [];
-      for (let i=0; i<products.length; i++) {
-        let p = products[i];
-        let pass = true;
-        let pCat = (p.category || '').toLowerCase();
-        let pName = (p.name || '').toLowerCase();
-        
-        if (selectedMonth !== 'All' && (p.batch_date || p.month_tag) !== selectedMonth) pass = false;
-        if (searchQuery && pass) {
-          if (!pName.includes(searchQuery) && !pCat.includes(searchQuery)) pass = false;
-        }
-        if (stockStatusFilter === 'low' && pass) { if (p.quantity > 2 || p.quantity <= 0) pass = false; }
-        if (stockStatusFilter === 'empty' && pass) { if (p.quantity > 0) pass = false; }
-        if (pass) filtered.push(p);
-      }
-
-      if (filtered.length === 0) { el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock.</div>'; return; }
-
-      const batches = {};
-      for (let i=0; i<filtered.length; i++) {
-        let p = filtered[i];
-        let dateKey = p.batch_date || p.month_tag || 'Historical Stock';
-        if (!batches[dateKey]) batches[dateKey] = [];
-        batches[dateKey].push(p);
-      }
-
-      let html = '';
-      for (const batchDate in batches) {
-        const items = batches[batchDate];
-        let bought = 0, rem = 0, invest = 0;
-        for (let i=0; i<items.length; i++) {
-          bought += (items[i].initial_stock || items[i].quantity);
-          rem += items[i].quantity;
-          invest += ((items[i].purchase_price || 0) * (items[i].initial_stock || items[i].quantity));
-        }
-        let sold = Math.max(0, bought - rem);
-
-        html += `<div class="batch-header-card"><div><div style="font-weight: 800; font-size: 13px; color: var(--tint-blue);">📅 Batch: ${batchDate}</div><div style="font-size: 11px; color: var(--subtext); margin-top: 2px;">${items.length} items | Bought: ${bought} | Sold: <strong style="color:var(--tint-green);">${sold}</strong></div></div><div style="text-align: right;"><div style="font-size: 10px; font-weight: 700; color: var(--subtext);">Invested</div><div style="font-weight: 800; font-size: 14px; color: var(--tint-red);">₹${invest}</div></div></div>`;
-
-        for (let i=0; i<items.length; i++) {
-          let p = items[i];
-          let pInit = p.initial_stock || p.quantity;
-          let pSold = Math.max(0, pInit - p.quantity);
-          let isDepleted = p.quantity <= 0;
-          let isLow = p.quantity <= 2 && !isDepleted;
-          let cleanName = (p.name||'').replace(/'/g, "\\'");
-
-          html += `
-            <div class="pos-item">
-              <div style="flex: 1; padding-right: 8px;">
-                <div style="font-weight: 600; font-size: 15px;">${p.name||'Unnamed'}</div>
-                <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">${p.category||'Uncategorized'} | Cost: ₹${p.purchase_price || 0} | Sell: ₹${p.price}</div>
-                <div style="font-size: 12px; color: var(--text); margin-top: 4px; font-weight: 700;">Bought: ${pInit} | Sold: <span style="color: var(--tint-blue);">${pSold}</span></div>
-                <div style="margin-top: 8px;"><button class="btn-pill-action" onclick="openRestockModal(${p.id}, '${cleanName}', ${p.purchase_price || 0})">+ Add Stock</button></div>
-              </div>
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="text-align: right;"><div style="font-weight: 700; font-size: 17px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">${p.quantity} left</div></div>
-                <button class="btn-trash" onclick="deleteStockItem(${p.id}, '${cleanName}')">🗑️</button>
-              </div>
-            </div>`;
-        }
-      }
-      el.innerHTML = html;
+    // --- CALCULATOR ENGINE (IOS STYLE) ---
+    function updateCalcScreen() { 
+      let display = document.getElementById('calc-display');
+      let parts = calcCurrent.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      display.innerText = parts.join('.');
+    }
+    
+    function clearActiveOp() {
+      document.querySelectorAll('.calc-btn-orange').forEach(b => b.classList.remove('active-op'));
     }
 
-    function filterStockStatus(status, btn) {
-      stockStatusFilter = status;
-      const pills = btn.parentElement.querySelectorAll('.cat-pill');
-      for (let i=0; i<pills.length; i++) pills[i].classList.remove('active');
-      btn.classList.add('active');
-      renderInventory();
-    }
-
-    async function deleteStockItem(id, name) {
-      if (!confirm("Delete " + name + " and its wholesale ledger entry?")) return;
-      const res = await fetch("/api/products?id=" + id, { method: 'DELETE' });
-      const data = await res.json();
-      if (data.success) { showToast('Deleted ' + name, '🗑️'); loadData(); }
-    }
-
-    function openRestockModal(id, name, cost) {
-      document.getElementById('restock-item-id').value = id;
-      document.getElementById('restock-item-name').innerText = name;
-      document.getElementById('restock-item-info').innerText = 'Cost: ₹' + cost;
-      document.getElementById('restock-item-qty').value = '';
-      openModal('restock-modal');
-    }
-
-    async function submitRestockItem() {
-      const id = document.getElementById('restock-item-id').value;
-      const addQty = parseInt(document.getElementById('restock-item-qty').value, 10);
-      if (!id || isNaN(addQty) || addQty <= 0) return alert('Enter valid quantity');
-
-      const res = await fetch('/api/products', {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: id, add_quantity: addQty })
-      });
-      if (res.ok) { closeModal('restock-modal'); showToast('Restocked!', '📦'); loadData(); }
-    }
-
-    async function submitNewStockItem() {
-      const name = document.getElementById('new-item-name').value.trim();
-      const category = document.getElementById('new-item-category').value.trim() || 'General';
-      const cost = parseFloat(document.getElementById('new-item-cost').value) || 0;
-      const price = parseFloat(document.getElementById('new-item-price').value) || 0;
-      const qty = parseInt(document.getElementById('new-item-qty').value, 10);
-      const today = new Date().toISOString().split('T')[0];
-
-      if (!name || isNaN(qty) || qty <= 0) return alert('Enter valid details');
-
-      const res = await fetch('/api/products', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, category: category, purchase_price: cost, price: price, quantity: qty, initial_stock: qty, month_tag: today, batch_date: today })
-      });
-      if (res.ok) {
-        document.getElementById('new-item-name').value = '';
-        closeModal('add-stock-modal'); showToast('Item saved', '📦'); loadData();
-      }
-    }
-
-    // --- CALCULATOR ---
-    function updateCalcScreen() { document.getElementById('calc-display').innerText = calcCurrent; }
     function calcNumber(num) {
-      if (calcResetOnNext) { calcCurrent = num; calcResetOnNext = false; }
+      if (calcResetOnNext) { calcCurrent = num; calcResetOnNext = false; clearActiveOp(); }
       else { calcCurrent = (calcCurrent === '0') ? num : calcCurrent + num; }
       updateCalcScreen();
     }
     function calcDecimal() {
-      if (calcResetOnNext) { calcCurrent = '0.'; calcResetOnNext = false; }
+      if (calcResetOnNext) { calcCurrent = '0.'; calcResetOnNext = false; clearActiveOp(); }
       else if (!calcCurrent.includes('.')) calcCurrent += '.';
       updateCalcScreen();
     }
-    function calcClear() { calcCurrent = '0'; calcPrevious = null; calcOp = null; calcResetOnNext = false; updateCalcScreen(); }
-    function calcToggleSign() { calcCurrent = (parseFloat(calcCurrent) * -1).toString(); updateCalcScreen(); }
-    function calcPercent() { calcCurrent = (parseFloat(calcCurrent) / 100).toString(); updateCalcScreen(); }
-    function calcOperator(op) { if (calcOp && !calcResetOnNext) calcEqual(); calcPrevious = parseFloat(calcCurrent); calcOp = op; calcResetOnNext = true; }
-    function calcEqual() {
+    function calcClear() { calcCurrent = '0'; calcPrevious = null; calcOp = null; calcResetOnNext = false; clearActiveOp(); updateCalcScreen(); }
+    function calcToggleSign() { calcCurrent = (parseFloat(calcCurrent.replace(/,/g, '')) * -1).toString(); updateCalcScreen(); }
+    function calcPercent() { calcCurrent = (parseFloat(calcCurrent.replace(/,/g, '')) / 100).toString(); updateCalcScreen(); }
+    
+    function calcOperator(op, btnId) { 
+      if (calcOp && !calcResetOnNext) calcEqual(true); 
+      calcPrevious = parseFloat(calcCurrent.replace(/,/g, '')); 
+      calcOp = op; 
+      calcResetOnNext = true; 
+      
+      const screen = document.getElementById('calc-display');
+      screen.style.opacity = '0.3';
+      setTimeout(() => screen.style.opacity = '1', 80);
+      
+      clearActiveOp();
+      if(btnId) document.getElementById(btnId).classList.add('active-op');
+    }
+    
+    function calcEqual(isInternal = false) {
       if (!calcOp || calcPrevious === null) return;
-      let cur = parseFloat(calcCurrent); let res = 0;
-      if (calcOp === '+') res = calcPrevious + cur; if (calcOp === '-') res = calcPrevious - cur;
-      if (calcOp === '*') res = calcPrevious * cur; if (calcOp === '/') res = cur !== 0 ? calcPrevious / cur : 0;
+      let cur = parseFloat(calcCurrent.replace(/,/g, '')); 
+      let res = 0;
+      if (calcOp === '+') res = calcPrevious + cur;
+      if (calcOp === '-') res = calcPrevious - cur;
+      if (calcOp === '*') res = calcPrevious * cur;
+      if (calcOp === '/') res = cur !== 0 ? calcPrevious / cur : 0;
+      
       calcCurrent = (Math.round(res * 100) / 100).toString();
-      calcOp = null; calcPrevious = null; calcResetOnNext = true; updateCalcScreen();
+      if(!isInternal) { calcOp = null; calcPrevious = null; clearActiveOp(); }
+      calcResetOnNext = true; 
+      updateCalcScreen();
     }
 
     function openCalcBillingSheet() {
-      let amt = Math.round(parseFloat(calcCurrent));
-      if (isNaN(amt) || amt <= 0) return alert('Calculate total first');
+      let amt = Math.round(parseFloat(calcCurrent.replace(/,/g, '')));
+      if (isNaN(amt) || amt <= 0) return showToast('Calculate total first', '⚠️');
       document.getElementById('calc-bill-amount-display').innerText = '₹' + amt;
       openModal('calc-bill-modal');
     }
 
     async function confirmCalculatedBill() {
-      let amt = Math.round(parseFloat(calcCurrent));
+      let amt = Math.round(parseFloat(calcCurrent.replace(/,/g, '')));
       let rawName = document.getElementById('calc-cust-name').value.trim();
       let rawPhone = document.getElementById('calc-cust-phone').value.trim();
       let rawNote = document.getElementById('calc-order-note').value.trim();
@@ -1028,7 +952,8 @@
     // --- EXPENSES & CUSTOMERS ---
     function renderExpenseBreakdown(list) {
       const el = document.getElementById('expense-category-list');
-      if (!list || list.length === 0) return el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No data</div>';
+      if (!el) return;
+      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No data</div>'; return; }
       let html = '';
       for(let i=0; i<list.length; i++) { html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-weight:600;font-size:14px;">${list[i].category}</span><span style="font-weight:700;color:var(--tint-red);font-size:14px;">₹${list[i].total}</span></div>`; }
       el.innerHTML = html;
@@ -1036,7 +961,8 @@
 
     function renderRecentExpenses(list) {
       const el = document.getElementById('recent-expenses-list');
-      if (!list || list.length === 0) return el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No data</div>';
+      if (!el) return;
+      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No records.</div>'; return; }
       let html = '';
       for(let i=0; i<list.length; i++) {
         html += `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 12px;border-radius:12px;"><div><div style="font-weight:600;font-size:14px;">${list[i].category}</div><div style="font-size:12px;color:var(--subtext);">${list[i].description || ''}</div></div><div style="display:flex;align-items:center;gap:12px;"><span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${list[i].amount}</span><button class="btn-trash" onclick="deleteExpenseItem(${list[i].id})">🗑️</button></div></div>`;
@@ -1047,14 +973,15 @@
     async function deleteExpenseItem(id) {
       if (!confirm("Delete this expense?")) return;
       const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
-      if (res.ok) { showToast('Removed', '🗑️️'); loadData(); }
+      if (res.ok) { showToast('Removed', '🗑'); loadData(); }
     }
 
     async function loadCustomerSales() {
       const el = document.getElementById('customer-list');
+      if (!el) return;
       const res = await fetch('/api/sales');
       const sales = await res.json();
-      if (!sales || sales.length === 0) return el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">No sales</div>';
+      if (!sales || sales.length === 0) { el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">No sales</div>'; return; }
       let html = '';
       for(let i=0; i<sales.length; i++) {
         let s = sales[i];
@@ -1074,10 +1001,136 @@
       let cat = document.getElementById('exp-category').value;
       let amt = document.getElementById('exp-amount').value;
       let desc = document.getElementById('exp-desc').value;
-      if (!amt) return alert('Enter amount');
+      if (!amt) return showToast('Enter amount', '⚠️');
       await fetch('/api/expenses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: cat, amount: amt, description: desc }) });
       document.getElementById('exp-amount').value = ''; document.getElementById('exp-desc').value = '';
-      showToast('Expense saved', '💸'); loadData();
+      showToast('Saved to ledger', '💸'); loadData();
+    }
+
+    // --- INVENTORY RENDERING (SAFE) ---
+    function renderInventory() {
+      const el = document.getElementById('inventory-list');
+      const searchInput = document.getElementById('stock-search');
+      const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const filterInput = document.getElementById('stock-month-filter');
+      const selectedMonth = filterInput ? filterInput.value : 'All';
+
+      if (!Array.isArray(products)) products = [];
+
+      let filtered = products.filter(p => {
+        let pCat = (p.category || 'Uncategorized').toLowerCase();
+        let pName = (p.name || 'Unnamed').toLowerCase();
+        let pBatch = p.batch_date || p.month_tag || 'Historical Stock';
+        
+        let matchBatch = (selectedMonth === 'All' || pBatch === selectedMonth);
+        let matchSearch = (!searchQuery || pName.includes(searchQuery) || pCat.includes(searchQuery));
+        let matchStatus = true;
+        
+        if (stockStatusFilter === 'low' && (p.quantity > 2 || p.quantity <= 0)) matchStatus = false;
+        if (stockStatusFilter === 'empty' && p.quantity > 0) matchStatus = false;
+
+        return matchBatch && matchSearch && matchStatus;
+      });
+
+      if (filtered.length === 0) { el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock.</div>'; return; }
+
+      const batches = {};
+      filtered.forEach(p => {
+        let dateKey = p.batch_date || p.month_tag || 'Historical Stock';
+        if (!batches[dateKey]) batches[dateKey] = [];
+        batches[dateKey].push(p);
+      });
+
+      let html = '';
+      for (const batchDate in batches) {
+        const items = batches[batchDate];
+        let bought = 0, rem = 0, invest = 0;
+        items.forEach(b => {
+          bought += (b.initial_stock || b.quantity);
+          rem += b.quantity;
+          invest += ((b.purchase_price || 0) * (b.initial_stock || b.quantity));
+        });
+        let sold = Math.max(0, bought - rem);
+
+        html += `<div class="batch-header-card"><div><div style="font-weight: 800; font-size: 13px; color: var(--tint-blue);">📅 Batch: ${batchDate}</div><div style="font-size: 11px; color: var(--subtext); margin-top: 2px;">${items.length} items | Bought: ${bought} | Sold: <strong style="color:var(--tint-green);">${sold}</strong></div></div><div style="text-align: right;"><div style="font-size: 10px; font-weight: 700; color: var(--subtext);">Invested</div><div style="font-weight: 800; font-size: 14px; color: var(--tint-red);">₹${invest}</div></div></div>`;
+
+        items.forEach(p => {
+          let pInit = p.initial_stock || p.quantity;
+          let pSold = Math.max(0, pInit - p.quantity);
+          let isDepleted = p.quantity <= 0;
+          let isLow = p.quantity <= 2 && !isDepleted;
+          let cleanName = (p.name||'Unnamed').replace(/'/g, "\\'");
+
+          html += `
+            <div class="pos-item">
+              <div style="flex: 1; padding-right: 8px;">
+                <div style="font-weight: 600; font-size: 15px;">${p.name||'Unnamed'}</div>
+                <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">${p.category||'General'} | Cost: ₹${p.purchase_price || 0} | Sell: ₹${p.price}</div>
+                <div style="font-size: 12px; color: var(--text); margin-top: 4px; font-weight: 700;">Bought: ${pInit} | Sold: <span style="color: var(--tint-blue);">${pSold}</span></div>
+                <div style="margin-top: 8px;"><button class="btn-pill-action" onclick="openRestockModal(${p.id}, '${cleanName}', ${p.purchase_price || 0})">+ Add Stock</button></div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="text-align: right;"><div style="font-weight: 700; font-size: 17px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">${p.quantity} left</div></div>
+                <button class="btn-trash" onclick="deleteStockItem(${p.id}, '${cleanName}')">🗑️</button>
+              </div>
+            </div>`;
+        });
+      }
+      el.innerHTML = html;
+    }
+
+    function filterStockStatus(status, btn) {
+      stockStatusFilter = status;
+      const pills = btn.parentElement.querySelectorAll('.cat-pill');
+      for (let i=0; i<pills.length; i++) pills[i].classList.remove('active');
+      btn.classList.add('active');
+      renderInventory();
+    }
+
+    async function deleteStockItem(id, name) {
+      if (!confirm(`Delete ${name}? Linked ledger expenses revert too.`)) return;
+      const res = await fetch("/api/products?id=" + id, { method: 'DELETE' });
+      if (res.ok) { showToast('Deleted ' + name, '🗑️'); loadData(); }
+    }
+
+    function openRestockModal(id, name, cost) {
+      document.getElementById('restock-item-id').value = id;
+      document.getElementById('restock-item-name').innerText = name;
+      document.getElementById('restock-item-info').innerText = 'Cost: ₹' + cost;
+      document.getElementById('restock-item-qty').value = '';
+      openModal('restock-modal');
+    }
+
+    async function submitRestockItem() {
+      const id = document.getElementById('restock-item-id').value;
+      const addQty = parseInt(document.getElementById('restock-item-qty').value, 10);
+      if (!id || isNaN(addQty) || addQty <= 0) return showToast('Enter valid quantity', '⚠️');
+
+      const res = await fetch('/api/products', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id, add_quantity: addQty })
+      });
+      if (res.ok) { closeModal('restock-modal'); showToast('Restocked!', '📦'); loadData(); }
+    }
+
+    async function submitNewStockItem() {
+      const name = document.getElementById('new-item-name').value.trim();
+      const category = document.getElementById('new-item-category').value.trim() || 'General';
+      const cost = parseFloat(document.getElementById('new-item-cost').value) || 0;
+      const price = parseFloat(document.getElementById('new-item-price').value) || 0;
+      const qty = parseInt(document.getElementById('new-item-qty').value, 10);
+      const today = new Date().toISOString().split('T')[0];
+
+      if (!name || isNaN(qty) || qty <= 0) return showToast('Enter valid details', '⚠️');
+
+      const res = await fetch('/api/products', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, category: category, purchase_price: cost, price: price, quantity: qty, initial_stock: qty, month_tag: today, batch_date: today })
+      });
+      if (res.ok) {
+        document.getElementById('new-item-name').value = '';
+        closeModal('add-stock-modal'); showToast('Item saved', '📦'); loadData();
+      }
     }
 
     // Init App
