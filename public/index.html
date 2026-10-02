@@ -31,10 +31,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     }
 
-    /* Prevents iOS from delaying clicks and removes double-tap-to-zoom */
-    button, input, select, .cat-pill, .btn, .calc-btn, .step-btn {
-      touch-action: manipulation;
-    }
+    button, input, select, .cat-pill, .btn, .calc-btn, .step-btn { touch-action: manipulation; }
 
     body {
       background-color: var(--bg);
@@ -49,7 +46,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Dynamic Toast */
     .toast-capsule {
       position: fixed;
       top: calc(env(safe-area-inset-top, 20px) + 10px);
@@ -91,7 +87,7 @@
     .app-input { background: var(--pill-bg); border: none; padding: 12px 14px; border-radius: 12px; color: var(--text); font-size: 15px; outline: none; width: 100%; }
     
     .btn { background: var(--tint-blue); color: #fff; border: none; padding: 14px; border-radius: 14px; font-weight: 600; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: 0.15s ease; }
-    .btn:active { transform: scale(0.96); opacity: 0.8; } /* Adds physical tap feedback */
+    .btn:active { transform: scale(0.96); opacity: 0.8; }
     .btn-green { background: var(--tint-green); }
     .btn-red { background: var(--tint-red); }
     .btn-sm { padding: 8px 12px; font-size: 13px; border-radius: 10px; }
@@ -116,7 +112,6 @@
     .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; }
     .stat-box .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
 
-    /* Calculator */
     .calc-container { max-width: 330px; margin: 0 auto; }
     .calc-screen { text-align: right; font-size: 44px; font-weight: 300; padding: 10px 4px; min-height: 70px; display: flex; align-items: flex-end; justify-content: flex-end; }
     .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
@@ -127,14 +122,11 @@
     .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 600; }
     .calc-btn-zero { grid-column: span 2; aspect-ratio: auto; border-radius: 35px; justify-content: flex-start; padding-left: 28px; }
 
-    /* Unified Strict Modals */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-      z-index: 1000;
-      display: none; /* Hard display hidden so it CANNOT steal clicks when closed */
-      align-items: flex-end; justify-content: center;
+      z-index: 1000; display: none; align-items: flex-end; justify-content: center;
     }
     .modal-overlay.active { display: flex; }
     
@@ -151,25 +143,19 @@
 
     .receipt-paper { background: #ffffff; color: #000000; width: 100%; max-width: 320px; border-radius: 18px; padding: 18px; font-family: monospace; font-size: 12px; line-height: 1.4; margin: auto; }
 
-    /* Bottom Dock */
     .dock-wrap {
       position: fixed;
       bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
       left: 0; right: 0;
-      display: flex;
-      justify-content: center;
-      z-index: 50;
-      pointer-events: none; /* Allows scrolling & tapping behind the dock bounds */
+      display: flex; justify-content: center;
+      z-index: 50; pointer-events: none;
     }
     .dock {
-      pointer-events: auto; /* Buttons inside are clickable */
+      pointer-events: auto;
       background: rgba(28, 28, 30, 0.85);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 32px;
-      padding: 6px;
-      display: flex;
-      gap: 4px;
+      border-radius: 32px; padding: 6px; display: flex; gap: 4px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .dock button { background: transparent; border: none; padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--subtext); border-radius: 24px; cursor: pointer; transition: 0.2s; }
@@ -190,7 +176,6 @@
     #print-iframe { display: none; width: 0; height: 0; }
   </style>
 </head>
-<!-- ontouchstart="" enables active CSS states on iOS elements -->
 <body ontouchstart="">
 
   <div class="toast-capsule" id="app-toast">
@@ -212,7 +197,6 @@
     </div>
   </header>
 
-  <!-- Global Command Copilot -->
   <section class="copilot-card">
     <div class="copilot-row">
       <span style="font-size: 15px; color: var(--tint-blue);">✦</span>
@@ -275,22 +259,18 @@
         <button class="calc-btn calc-btn-gray" onclick="calcToggleSign()">±</button>
         <button class="calc-btn calc-btn-gray" onclick="calcPercent()">%</button>
         <button class="calc-btn calc-btn-orange" onclick="calcOperator('/')">÷</button>
-
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('7')">7</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('8')">8</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('9')">9</button>
         <button class="calc-btn calc-btn-orange" onclick="calcOperator('*')">×</button>
-
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('4')">4</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('5')">5</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('6')">6</button>
         <button class="calc-btn calc-btn-orange" onclick="calcOperator('-')">−</button>
-
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('1')">1</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('2')">2</button>
         <button class="calc-btn calc-btn-dark" onclick="calcNumber('3')">3</button>
         <button class="calc-btn calc-btn-orange" onclick="calcOperator('+')">+</button>
-
         <button class="calc-btn calc-btn-dark calc-btn-zero" onclick="calcNumber('0')">0</button>
         <button class="calc-btn calc-btn-dark" onclick="calcDecimal()">.</button>
         <button class="calc-btn calc-btn-orange" onclick="calcEqual()">=</button>
@@ -307,7 +287,6 @@
       <div class="stat-box"><div class="title">Total Expenses</div><div class="val" id="metric-expenses" style="color: var(--tint-red);">₹0</div></div>
       <div class="stat-box"><div class="title">Net Profit</div><div class="val" id="metric-profit" style="color: var(--tint-blue);">₹0</div></div>
     </div>
-
     <div class="card" style="background: rgba(41, 151, 255, 0.05);">
       <div style="font-size: 11px; font-weight: 700; color: var(--subtext); text-transform: uppercase;">Inventory Valuation</div>
       <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px;">
@@ -315,7 +294,6 @@
         <div style="font-size: 13px; font-weight: 600; color: var(--subtext);" id="metric-inv-units">0 units</div>
       </div>
     </div>
-
     <div class="card">
       <h3 style="font-size: 17px; margin-bottom: 12px;">+ Record Other Expense</h3>
       <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -330,7 +308,6 @@
         <button class="btn" style="background: var(--tint-red);" onclick="saveExpense()">Add to Ledger</button>
       </div>
     </div>
-
     <div class="card">
       <h3 style="font-size: 17px; margin-bottom: 12px;">Recent Ledger</h3>
       <div id="recent-expenses-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
@@ -355,19 +332,16 @@
         <h3 style="font-size: 18px;">Stock Inventory</h3>
         <div style="display: flex; gap: 6px;">
           <input type="file" id="daybook-camera-input" accept="image/*" style="display:none;" onchange="handleDayBookImage(this)">
-          <button class="btn btn-sm" style="background: linear-gradient(135deg, #0071e3, #af52de);" onclick="triggerImageCapture()">📷 Scan Day Book</button>
+          <button class="btn btn-sm" style="background: linear-gradient(135deg, #0071e3, #af52de);" onclick="document.getElementById('daybook-camera-input').click()">📷 Scan Day Book</button>
           <button class="btn btn-sm" onclick="openModal('add-stock-modal')">+ Manual</button>
         </div>
       </div>
-
       <input type="text" id="stock-search" class="app-input" placeholder="🔍 Search stock..." oninput="renderInventory()">
-      
       <div class="category-scroll">
         <button class="cat-pill active" onclick="filterStockStatus('all', this)">All Stock</button>
         <button class="cat-pill" onclick="filterStockStatus('low', this)">⚠️ Getting Empty (≤2)</button>
         <button class="cat-pill" onclick="filterStockStatus('empty', this)">🔴 Empty (0)</button>
       </div>
-
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 6px 10px; background: var(--pill-bg); border-radius: 12px; font-size: 13px;">
         <span style="font-weight: 600;">Batch Filter:</span>
         <select id="stock-month-filter" onchange="renderInventory()" style="background: transparent; border: none; font-weight: 700; color: var(--tint-blue); outline: none;">
@@ -375,7 +349,6 @@
           <option value="2026-10-02" selected>02 Oct 2026</option>
         </select>
       </div>
-
       <div id="inventory-list"></div>
     </div>
   </section>
@@ -391,9 +364,7 @@
     </nav>
   </div>
 
-  <!-- ALL MODALS BELOW (Display None safely enforced) -->
-
-  <!-- 1. OCR Review Modal -->
+  <!-- ALL MODALS BELOW -->
   <div class="modal-overlay" id="ocr-modal" onclick="closeOnOutsideClick(event, 'ocr-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -415,7 +386,6 @@
     </div>
   </div>
 
-  <!-- 2. Manual Add Stock Modal -->
   <div class="modal-overlay" id="add-stock-modal" onclick="closeOnOutsideClick(event, 'add-stock-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
@@ -435,7 +405,6 @@
     </div>
   </div>
 
-  <!-- 3. Restock Modal -->
   <div class="modal-overlay" id="restock-modal" onclick="closeOnOutsideClick(event, 'restock-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -452,7 +421,6 @@
     </div>
   </div>
 
-  <!-- 4. Calculator Bill Details Modal -->
   <div class="modal-overlay" id="calc-bill-modal" onclick="closeOnOutsideClick(event, 'calc-bill-modal')">
     <div class="modal-sheet">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -472,7 +440,6 @@
     </div>
   </div>
 
-  <!-- 5. Digital Receipt Preview Modal -->
   <div class="modal-overlay" id="receipt-modal" onclick="closeOnOutsideClick(event, 'receipt-modal')">
     <div class="receipt-paper" onclick="event.stopPropagation()">
       <div style="text-align: center; margin-bottom: 8px;">
@@ -505,7 +472,7 @@
 
   <iframe id="print-iframe"></iframe>
 
-  <!-- ==================== JAVASCRIPT SYSTEM ==================== -->
+  <!-- ==================== JAVASCRIPT ENGINE ==================== -->
   <script>
     let products = [];
     let cart = {};
@@ -520,7 +487,6 @@
     let calcOp = null;
     let calcResetOnNext = false;
 
-    // --- UI HELPERS ---
     function showToast(msg, icon) {
       const toast = document.getElementById('app-toast');
       document.getElementById('toast-msg').innerText = msg;
@@ -537,22 +503,13 @@
       else el.innerText = "Good Evening,";
     }
 
-    function openModal(id) {
-      document.getElementById(id).classList.add('active');
-    }
-    
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('active');
-    }
-    
-    function closeOnOutsideClick(event, modalId) {
-      if (event.target.id === modalId) closeModal(modalId);
-    }
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function closeOnOutsideClick(event, modalId) { if (event.target.id === modalId) closeModal(modalId); }
 
     function switchTab(tab, btn) {
       const allTabs = document.querySelectorAll('.view-tab');
       for (let i=0; i<allTabs.length; i++) allTabs[i].classList.remove('active');
-      
       const allBtns = document.querySelectorAll('.dock button');
       for (let i=0; i<allBtns.length; i++) allBtns[i].classList.remove('active');
       
@@ -565,7 +522,6 @@
       if (tab === 'inventory') renderInventory();
     }
 
-    // --- DATA LOADING ---
     async function loadData() {
       try {
         const prodRes = await fetch('/api/products');
@@ -580,11 +536,9 @@
           document.getElementById('metric-profit').innerText = '₹' + sum.netProfit;
           document.getElementById('metric-inv-valuation').innerText = '₹' + sum.inventoryValuation;
           document.getElementById('metric-inv-units').innerText = sum.totalInventoryUnits + ' units';
-          
           renderExpenseBreakdown(sum.expenseBreakdown || []);
           renderRecentExpenses(sum.recentExpenses || []);
         }
-        
         renderPOSPicker();
         renderInventory();
         loadCustomerSales();
@@ -594,20 +548,16 @@
     }
 
     // --- DAY BOOK OCR ---
-    function triggerImageCapture() {
-      document.getElementById('daybook-camera-input').click();
-    }
-
+    function triggerImageCapture() { document.getElementById('daybook-camera-input').click(); }
     function handleDayBookImage(input) {
       if (!input.files || input.files.length === 0) return;
       showToast('Scanning via AI Vision...', '📷');
       const reader = new FileReader();
       reader.onload = async function(e) {
-        const imageBase64 = e.target.result;
         try {
           const res = await fetch('/api/ocr-stock', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64: imageBase64 })
+            body: JSON.stringify({ imageBase64: e.target.result })
           });
           const data = await res.json();
           if (data.items && data.items.length > 0) {
@@ -615,22 +565,16 @@
             document.getElementById('ocr-batch-date').value = new Date().toISOString().split('T')[0];
             renderOcrReviewList();
             openModal('ocr-modal');
-          } else {
-            alert('Could not extract ledger. Please retake photo.');
-          }
-        } catch (err) {
-          alert('Network timeout. Try again.');
-        } finally {
-          input.value = '';
-        }
+          } else { alert('Could not extract ledger. Please retake photo.'); }
+        } catch (err) { alert('Network timeout. Try again.'); } 
+        finally { input.value = ''; }
       };
       reader.readAsDataURL(input.files[0]);
     }
 
     function renderOcrReviewList() {
       const container = document.getElementById('ocr-items-container');
-      let total = 0;
-      let html = '';
+      let total = 0; let html = '';
       for (let i=0; i<scannedBatchItems.length; i++) {
         let item = scannedBatchItems[i];
         let rowCost = (item.purchase_price || 0) * (item.quantity || 0);
@@ -657,42 +601,228 @@
     }
 
     function updateOcrItem(index, key, val) {
-      if (key === 'quantity' || key === 'purchase_price' || key === 'price') {
-        scannedBatchItems[index][key] = parseFloat(val) || 0;
-      } else {
-        scannedBatchItems[index][key] = val;
-      }
+      if (key === 'quantity' || key === 'purchase_price' || key === 'price') scannedBatchItems[index][key] = parseFloat(val) || 0;
+      else scannedBatchItems[index][key] = val;
       renderOcrReviewList();
     }
-
-    function removeOcrItem(index) {
-      scannedBatchItems.splice(index, 1);
-      renderOcrReviewList();
-    }
+    function removeOcrItem(index) { scannedBatchItems.splice(index, 1); renderOcrReviewList(); }
 
     async function confirmAndCommitBatch() {
       if (scannedBatchItems.length === 0) return alert('No items to save.');
-      const batchDate = document.getElementById('ocr-batch-date').value;
       showToast('Saving batch...', '⏳');
-
       const res = await fetch('/api/batch-stock', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ batch_date: batchDate, items: scannedBatchItems })
+        body: JSON.stringify({ batch_date: document.getElementById('ocr-batch-date').value, items: scannedBatchItems })
       });
       const data = await res.json();
-      if (data.success) {
-        closeModal('ocr-modal');
-        showToast(`Saved ${data.totalItems} items!`, '📦');
-        loadData();
+      if (data.success) { closeModal('ocr-modal'); showToast(`Saved ${data.totalItems} items!`, '📦'); loadData(); }
+    }
+
+    // --- POS BILLING & SAFE FILTERING ---
+    function renderPOSPicker() {
+      const el = document.getElementById('pos-product-picker');
+      const searchInput = document.getElementById('pos-search');
+      const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+      let filtered = [];
+      for (let i=0; i<products.length; i++) {
+        let p = products[i];
+        let pass = true;
+        let pCat = (p.category || '').toLowerCase();
+        let pName = (p.name || '').toLowerCase();
+
+        if (selectedCategory !== 'All' && !pCat.includes(selectedCategory.toLowerCase())) pass = false;
+        if (searchQuery && pass) {
+          if (!pName.includes(searchQuery) && !pCat.includes(searchQuery)) pass = false;
+        }
+        if (pass) filtered.push(p);
+      }
+
+      if (filtered.length === 0) {
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No items found.</div>';
+        return;
+      }
+
+      let html = '';
+      for (let i=0; i<filtered.length; i++) {
+        let p = filtered[i];
+        let qtyInCart = cart[p.id] || 0;
+        let isOutOfStock = p.quantity <= 0;
+        let reachedMax = qtyInCart >= p.quantity;
+
+        html += `
+          <div class="pos-item" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
+            <div>
+              <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
+              <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'};">₹${p.price} | ${isOutOfStock ? 'Out' : p.quantity + ' left'}</div>
+            </div>
+            <div>
+              ${isOutOfStock ? `<span style="font-size: 12px; color: var(--tint-red); font-weight: 700;">Out</span>` 
+              : qtyInCart > 0 ? `
+                <div class="stepper">
+                  <button class="step-btn" onclick="modifyCart(${p.id}, -1)">−</button>
+                  <span class="step-qty">${qtyInCart}</span>
+                  <button class="step-btn" ${reachedMax ? 'disabled' : ''} onclick="modifyCart(${p.id}, 1)">+</button>
+                </div>
+              ` : `<button class="btn btn-sm" onclick="modifyCart(${p.id}, 1)">+ Add</button>`}
+            </div>
+          </div>`;
+      }
+      el.innerHTML = html;
+    }
+
+    function modifyCart(id, delta) {
+      let p = null;
+      for (let i=0; i<products.length; i++) { if (products[i].id === id) p = products[i]; }
+      if (!p) return;
+      let next = (cart[id] || 0) + delta;
+      if (delta > 0 && next > p.quantity) return showToast(`Only ${p.quantity} available`, '⚠️');
+      if (next <= 0) delete cart[id]; else cart[id] = next;
+      customOverrideTotal = null; updateTotal(); renderPOSPicker();
+    }
+
+    function filterPOS(category, btn) {
+      selectedCategory = category;
+      const pills = document.querySelectorAll('#cat-filters .cat-pill');
+      for (let i=0; i<pills.length; i++) pills[i].classList.remove('active');
+      btn.classList.add('active');
+      renderPOSPicker();
+    }
+
+    function applyCoupon(percent, btn) {
+      discountPercent = percent;
+      const pills = btn.parentElement.querySelectorAll('.cat-pill');
+      for (let i=0; i<pills.length; i++) pills[i].classList.remove('active');
+      btn.classList.add('active');
+      customOverrideTotal = null; updateTotal();
+    }
+
+    function calculateRawSubtotal() {
+      let sub = 0;
+      for (let id in cart) {
+        let p = null;
+        for (let i=0; i<products.length; i++) { if (products[i].id == id) p = products[i]; }
+        if (p) sub += p.price * cart[id];
+      }
+      return sub;
+    }
+
+    function updateTotal() {
+      let sub = calculateRawSubtotal();
+      let finalAmt = sub;
+      if (discountPercent > 0) {
+        finalAmt = Math.max(0, sub - ((sub * discountPercent) / 100));
+        document.getElementById('discount-note').innerText = '(' + discountPercent + '% OFF)';
+      } else { document.getElementById('discount-note').innerText = ''; }
+
+      if (customOverrideTotal !== null) {
+        finalAmt = customOverrideTotal;
+        document.getElementById('discount-note').innerText = '(Edited)';
+      }
+      finalAmt = Math.round(finalAmt);
+      document.getElementById('display-bill-total').innerText = '₹' + finalAmt;
+      return finalAmt;
+    }
+
+    function editBillPrice() {
+      let current = updateTotal();
+      let newPrice = prompt("Enter revised total (₹):", current);
+      if (newPrice !== null && !isNaN(newPrice) && newPrice.trim() !== '') {
+        customOverrideTotal = parseFloat(newPrice);
+        updateTotal();
       }
     }
 
-    // --- INVENTORY ---
+    function checkoutAndPrint() {
+      let finalTotal = updateTotal();
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) return alert('Add items to bill');
+
+      let rawName = document.getElementById('cust-name').value.trim();
+      let rawPhone = document.getElementById('cust-phone').value.trim();
+      let custName = rawName ? rawName : 'Walk-in Customer';
+      let custPhone = rawPhone ? rawPhone : 'N/A';
+
+      let items = [];
+      for (let id in cart) {
+        let p = null;
+        for (let i=0; i<products.length; i++) { if (products[i].id == id) p = products[i]; }
+        if (p) items.push({ id: p.id, name: p.name, quantity: cart[id], price: p.price });
+      }
+
+      let sub = calculateRawSubtotal();
+      let diff = (discountPercent > 0 || customOverrideTotal !== null) ? Math.round(sub - finalTotal) : 0;
+
+      latestBillData = { date: new Date().toLocaleString('en-IN'), customer: custName, phone: custPhone, items: items, total: finalTotal, discount: diff };
+      openGeneratedBill();
+
+      fetch('/api/sales', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customer_name: custName, customer_phone: custPhone, total_amount: finalTotal, items: items })
+      }).then(res => res.json()).then(data => {
+        cart = {}; customOverrideTotal = null; discountPercent = 0;
+        document.getElementById('cust-name').value = ''; document.getElementById('cust-phone').value = ''; document.getElementById('pos-search').value = '';
+        const pills = document.querySelectorAll('.coupon-pill');
+        for(let i=0; i<pills.length; i++) { if(i===0) pills[i].classList.add('active'); else pills[i].classList.remove('active'); }
+        updateTotal(); loadData();
+      });
+    }
+
+    function openGeneratedBill() {
+      if (!latestBillData) return;
+      document.getElementById('modal-date').innerText = latestBillData.date;
+      document.getElementById('modal-cust').innerText = latestBillData.customer;
+      document.getElementById('modal-phone').innerText = latestBillData.phone;
+      document.getElementById('modal-total').innerText = '₹' + latestBillData.total;
+      
+      let html = '';
+      for(let i=0; i<latestBillData.items.length; i++) {
+        let item = latestBillData.items[i];
+        html += `<div style="display:flex; justify-content:space-between; margin:2px 0;"><span>${item.name} x${item.quantity}</span><span>₹${item.price * item.quantity}</span></div>`;
+      }
+      document.getElementById('modal-items').innerHTML = html;
+
+      if (latestBillData.discount > 0) {
+        document.getElementById('modal-discount-row').style.display = 'flex';
+        document.getElementById('modal-discount-val').innerText = '-₹' + latestBillData.discount;
+      } else { document.getElementById('modal-discount-row').style.display = 'none'; }
+
+      openModal('receipt-modal');
+    }
+
+    function triggerIframePrint() {
+      if (!latestBillData) return;
+      const iframe = document.getElementById('print-iframe');
+      let html = `<!DOCTYPE html><html><head><style>@page { size: 58mm auto; margin: 0; } body { font-family: monospace; font-size: 11px; width: 54mm; margin: 0; padding: 2mm; } .center { text-align: center; } .line { border-bottom: 1px dashed #000; margin: 4px 0; } .row { display: flex; justify-content: space-between; }</style></head><body onload="window.focus(); window.print();"><div class="center"><h3>AQUAPET</h3><div>PET SHOP</div><div>${latestBillData.date}</div></div><div class="line"></div><div>Cust: ${latestBillData.customer}</div><div>Tel: ${latestBillData.phone}</div><div class="line"></div>`;
+      for(let i=0; i<latestBillData.items.length; i++) { html += `<div class="row"><span>${latestBillData.items[i].name} x${latestBillData.items[i].quantity}</span><span>₹${latestBillData.items[i].price * latestBillData.items[i].quantity}</span></div>`; }
+      html += `<div class="line"></div>`;
+      if(latestBillData.discount > 0) html += `<div class="row"><span>Discount:</span><span>-₹${latestBillData.discount}</span></div>`;
+      html += `<div class="row" style="font-weight: bold; font-size: 12px;"><span>TOTAL:</span><span>₹${latestBillData.total}</span></div><div class="center" style="margin-top: 8px;">Visit again.</div></body></html>`;
+      iframe.contentWindow.document.open(); iframe.contentWindow.document.write(html); iframe.contentWindow.document.close();
+    }
+
+    function shareBillWhatsApp() {
+      if (!latestBillData) return;
+      const cleanPhone = latestBillData.phone.replace(/[^0-9]/g, '');
+      let itemsText = '';
+      for(let i=0; i<latestBillData.items.length; i++) itemsText += `• ${latestBillData.items[i].name} x${latestBillData.items[i].quantity} = ₹${latestBillData.items[i].price * latestBillData.items[i].quantity}\n`;
+      const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n*Total Payable: ₹${latestBillData.total}*\n\nThank you!`;
+      const url = cleanPhone.length >= 10 ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    function copyThermalText() {
+      if (!latestBillData) return;
+      let text = `AQUAPET\nPET SHOP & CARE\n--------------------------------\nDate: ${latestBillData.date}\nCust: ${latestBillData.customer}\nPhone: ${latestBillData.phone}\n--------------------------------\n`;
+      for(let i=0; i<latestBillData.items.length; i++) text += `${latestBillData.items[i].name} x${latestBillData.items[i].quantity}  ₹${latestBillData.items[i].price * latestBillData.items[i].quantity}\n`;
+      text += `--------------------------------\nTOTAL: ₹${latestBillData.total}\n--------------------------------\nThank you! Visit again.`;
+      navigator.clipboard.writeText(text).then(() => showToast('Copied to Clipboard!', '📋'));
+    }
+
+    // --- INVENTORY SAFE RENDERING ---
     function renderInventory() {
       const el = document.getElementById('inventory-list');
       const searchInput = document.getElementById('stock-search');
       const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      
       const filterInput = document.getElementById('stock-month-filter');
       const selectedMonth = filterInput ? filterInput.value : 'All';
 
@@ -700,27 +830,19 @@
       for (let i=0; i<products.length; i++) {
         let p = products[i];
         let pass = true;
+        let pCat = (p.category || '').toLowerCase();
+        let pName = (p.name || '').toLowerCase();
         
         if (selectedMonth !== 'All' && (p.batch_date || p.month_tag) !== selectedMonth) pass = false;
-        
         if (searchQuery && pass) {
-          if (!p.name.toLowerCase().includes(searchQuery) && !p.category.toLowerCase().includes(searchQuery)) {
-            pass = false;
-          }
+          if (!pName.includes(searchQuery) && !pCat.includes(searchQuery)) pass = false;
         }
-        if (stockStatusFilter === 'low' && pass) {
-          if (p.quantity > 2 || p.quantity <= 0) pass = false;
-        }
-        if (stockStatusFilter === 'empty' && pass) {
-          if (p.quantity > 0) pass = false;
-        }
+        if (stockStatusFilter === 'low' && pass) { if (p.quantity > 2 || p.quantity <= 0) pass = false; }
+        if (stockStatusFilter === 'empty' && pass) { if (p.quantity > 0) pass = false; }
         if (pass) filtered.push(p);
       }
 
-      if (filtered.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock.</div>';
-        return;
-      }
+      if (filtered.length === 0) { el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching stock.</div>'; return; }
 
       const batches = {};
       for (let i=0; i<filtered.length; i++) {
@@ -734,7 +856,6 @@
       for (const batchDate in batches) {
         const items = batches[batchDate];
         let bought = 0, rem = 0, invest = 0;
-        
         for (let i=0; i<items.length; i++) {
           bought += (items[i].initial_stock || items[i].quantity);
           rem += items[i].quantity;
@@ -742,19 +863,7 @@
         }
         let sold = Math.max(0, bought - rem);
 
-        html += `
-          <div class="batch-header-card">
-            <div>
-              <div style="font-weight: 800; font-size: 13px; color: var(--tint-blue);">📅 Batch: ${batchDate}</div>
-              <div style="font-size: 11px; color: var(--subtext); margin-top: 2px;">
-                ${items.length} items | Bought: ${bought} | Sold: <strong style="color:var(--tint-green);">${sold}</strong>
-              </div>
-            </div>
-            <div style="text-align: right;">
-              <div style="font-size: 10px; font-weight: 700; color: var(--subtext);">Invested</div>
-              <div style="font-weight: 800; font-size: 14px; color: var(--tint-red);">₹${invest}</div>
-            </div>
-          </div>`;
+        html += `<div class="batch-header-card"><div><div style="font-weight: 800; font-size: 13px; color: var(--tint-blue);">📅 Batch: ${batchDate}</div><div style="font-size: 11px; color: var(--subtext); margin-top: 2px;">${items.length} items | Bought: ${bought} | Sold: <strong style="color:var(--tint-green);">${sold}</strong></div></div><div style="text-align: right;"><div style="font-size: 10px; font-weight: 700; color: var(--subtext);">Invested</div><div style="font-weight: 800; font-size: 14px; color: var(--tint-red);">₹${invest}</div></div></div>`;
 
         for (let i=0; i<items.length; i++) {
           let p = items[i];
@@ -762,24 +871,18 @@
           let pSold = Math.max(0, pInit - p.quantity);
           let isDepleted = p.quantity <= 0;
           let isLow = p.quantity <= 2 && !isDepleted;
-          let cleanName = p.name.replace(/'/g, "\\'");
+          let cleanName = (p.name||'').replace(/'/g, "\\'");
 
           html += `
             <div class="pos-item">
               <div style="flex: 1; padding-right: 8px;">
-                <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
-                <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">${p.category} | Cost: ₹${p.purchase_price || 0} | Sell: ₹${p.price}</div>
-                <div style="font-size: 12px; color: var(--text); margin-top: 4px; font-weight: 700;">
-                  Bought: ${pInit} | Sold: <span style="color: var(--tint-blue);">${pSold}</span>
-                </div>
-                <div style="margin-top: 8px;">
-                  <button class="btn-pill-action" onclick="openRestockModal(${p.id}, '${cleanName}', ${p.purchase_price || 0})">+ Add Stock</button>
-                </div>
+                <div style="font-weight: 600; font-size: 15px;">${p.name||'Unnamed'}</div>
+                <div style="font-size: 12px; color: var(--subtext); margin-top: 2px;">${p.category||'Uncategorized'} | Cost: ₹${p.purchase_price || 0} | Sell: ₹${p.price}</div>
+                <div style="font-size: 12px; color: var(--text); margin-top: 4px; font-weight: 700;">Bought: ${pInit} | Sold: <span style="color: var(--tint-blue);">${pSold}</span></div>
+                <div style="margin-top: 8px;"><button class="btn-pill-action" onclick="openRestockModal(${p.id}, '${cleanName}', ${p.purchase_price || 0})">+ Add Stock</button></div>
               </div>
               <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="text-align: right;">
-                  <div style="font-weight: 700; font-size: 17px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">${p.quantity} left</div>
-                </div>
+                <div style="text-align: right;"><div style="font-weight: 700; font-size: 17px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">${p.quantity} left</div></div>
                 <button class="btn-trash" onclick="deleteStockItem(${p.id}, '${cleanName}')">🗑️</button>
               </div>
             </div>`;
@@ -839,231 +942,8 @@
       });
       if (res.ok) {
         document.getElementById('new-item-name').value = '';
-        closeModal('add-stock-modal');
-        showToast('Item saved', '📦');
-        loadData();
+        closeModal('add-stock-modal'); showToast('Item saved', '📦'); loadData();
       }
-    }
-
-    // --- POS BILLING ---
-    function renderPOSPicker() {
-      const el = document.getElementById('pos-product-picker');
-      const searchInput = document.getElementById('pos-search');
-      const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
-
-      let filtered = [];
-      for (let i=0; i<products.length; i++) {
-        let p = products[i];
-        let pass = true;
-        if (selectedCategory !== 'All' && !p.category.toLowerCase().includes(selectedCategory.toLowerCase())) pass = false;
-        if (searchQuery && pass) {
-          if (!p.name.toLowerCase().includes(searchQuery) && !p.category.toLowerCase().includes(searchQuery)) pass = false;
-        }
-        if (pass) filtered.push(p);
-      }
-
-      if (filtered.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No items.</div>';
-        return;
-      }
-
-      let html = '';
-      for (let i=0; i<filtered.length; i++) {
-        let p = filtered[i];
-        let qtyInCart = cart[p.id] || 0;
-        let isOutOfStock = p.quantity <= 0;
-        let reachedMax = qtyInCart >= p.quantity;
-
-        html += `
-          <div class="pos-item" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
-            <div>
-              <div style="font-weight: 600; font-size: 15px;">${p.name}</div>
-              <div style="font-size: 12px; color: ${isOutOfStock ? 'var(--tint-red)' : 'var(--subtext)'};">₹${p.price} | ${isOutOfStock ? 'Out' : p.quantity + ' left'}</div>
-            </div>
-            <div>
-              ${isOutOfStock ? `<span style="font-size: 12px; color: var(--tint-red); font-weight: 700;">Out</span>` 
-              : qtyInCart > 0 ? `
-                <div class="stepper">
-                  <button class="step-btn" onclick="modifyCart(${p.id}, -1)">−</button>
-                  <span class="step-qty">${qtyInCart}</span>
-                  <button class="step-btn" ${reachedMax ? 'disabled' : ''} onclick="modifyCart(${p.id}, 1)">+</button>
-                </div>
-              ` : `<button class="btn btn-sm" onclick="modifyCart(${p.id}, 1)">+ Add</button>`}
-            </div>
-          </div>`;
-      }
-      el.innerHTML = html;
-    }
-
-    function modifyCart(id, delta) {
-      let p = null;
-      for (let i=0; i<products.length; i++) { if (products[i].id === id) p = products[i]; }
-      if (!p) return;
-      
-      let next = (cart[id] || 0) + delta;
-      if (delta > 0 && next > p.quantity) return showToast('Limit reached', '⚠️');
-      if (next <= 0) delete cart[id];
-      else cart[id] = next;
-
-      customOverrideTotal = null;
-      updateTotal();
-      renderPOSPicker();
-    }
-
-    function filterPOS(category, btn) {
-      selectedCategory = category;
-      const pills = document.querySelectorAll('#cat-filters .cat-pill');
-      for (let i=0; i<pills.length; i++) pills[i].classList.remove('active');
-      btn.classList.add('active');
-      renderPOSPicker();
-    }
-
-    function applyCoupon(percent, btn) {
-      discountPercent = percent;
-      const pills = btn.parentElement.querySelectorAll('.cat-pill');
-      for (let i=0; i<pills.length; i++) pills[i].classList.remove('active');
-      btn.classList.add('active');
-      customOverrideTotal = null;
-      updateTotal();
-    }
-
-    function calculateRawSubtotal() {
-      let sub = 0;
-      for (let id in cart) {
-        let p = null;
-        for (let i=0; i<products.length; i++) { if (products[i].id == id) p = products[i]; }
-        if (p) sub += p.price * cart[id];
-      }
-      return sub;
-    }
-
-    function updateTotal() {
-      let sub = calculateRawSubtotal();
-      let finalAmt = sub;
-
-      if (discountPercent > 0) {
-        let dVal = (sub * discountPercent) / 100;
-        finalAmt = Math.max(0, sub - dVal);
-        document.getElementById('discount-note').innerText = '(' + discountPercent + '% OFF)';
-      } else {
-        document.getElementById('discount-note').innerText = '';
-      }
-
-      if (customOverrideTotal !== null) {
-        finalAmt = customOverrideTotal;
-        document.getElementById('discount-note').innerText = '(Edited)';
-      }
-
-      finalAmt = Math.round(finalAmt);
-      document.getElementById('display-bill-total').innerText = '₹' + finalAmt;
-      return finalAmt;
-    }
-
-    function editBillPrice() {
-      let current = updateTotal();
-      let newPrice = prompt("Enter revised total (₹):", current);
-      if (newPrice !== null && !isNaN(newPrice) && newPrice.trim() !== '') {
-        customOverrideTotal = parseFloat(newPrice);
-        updateTotal();
-      }
-    }
-
-    function checkoutAndPrint() {
-      let finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) return alert('Add items to bill');
-
-      let rawName = document.getElementById('cust-name').value.trim();
-      let rawPhone = document.getElementById('cust-phone').value.trim();
-      let custName = rawName ? rawName : 'Walk-in Customer';
-      let custPhone = rawPhone ? rawPhone : 'N/A';
-
-      let items = [];
-      for (let id in cart) {
-        let p = null;
-        for (let i=0; i<products.length; i++) { if (products[i].id == id) p = products[i]; }
-        if (p) items.push({ id: p.id, name: p.name, quantity: cart[id], price: p.price });
-      }
-
-      let sub = calculateRawSubtotal();
-      let diff = (discountPercent > 0 || customOverrideTotal !== null) ? Math.round(sub - finalTotal) : 0;
-
-      latestBillData = {
-        date: new Date().toLocaleString('en-IN'),
-        customer: custName, phone: custPhone, items: items, total: finalTotal, discount: diff
-      };
-
-      openGeneratedBill();
-
-      fetch('/api/sales', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_name: custName, customer_phone: custPhone, total_amount: finalTotal, items: items })
-      }).then(res => res.json()).then(data => {
-        cart = {};
-        customOverrideTotal = null; discountPercent = 0;
-        document.getElementById('cust-name').value = '';
-        document.getElementById('cust-phone').value = '';
-        document.getElementById('pos-search').value = '';
-        const pills = document.querySelectorAll('.coupon-pill');
-        for(let i=0; i<pills.length; i++) { if(i===0) pills[i].classList.add('active'); else pills[i].classList.remove('active'); }
-        updateTotal(); loadData();
-      });
-    }
-
-    function openGeneratedBill() {
-      if (!latestBillData) return;
-      document.getElementById('modal-date').innerText = latestBillData.date;
-      document.getElementById('modal-cust').innerText = latestBillData.customer;
-      document.getElementById('modal-phone').innerText = latestBillData.phone;
-      document.getElementById('modal-total').innerText = '₹' + latestBillData.total;
-      
-      let html = '';
-      for(let i=0; i<latestBillData.items.length; i++) {
-        let item = latestBillData.items[i];
-        html += `<div style="display:flex; justify-content:space-between; margin:2px 0;"><span>${item.name} x${item.quantity}</span><span>₹${item.price * item.quantity}</span></div>`;
-      }
-      document.getElementById('modal-items').innerHTML = html;
-
-      if (latestBillData.discount > 0) {
-        document.getElementById('modal-discount-row').style.display = 'flex';
-        document.getElementById('modal-discount-val').innerText = '-₹' + latestBillData.discount;
-      } else {
-        document.getElementById('modal-discount-row').style.display = 'none';
-      }
-
-      openModal('receipt-modal');
-    }
-
-    function triggerIframePrint() {
-      if (!latestBillData) return;
-      const iframe = document.getElementById('print-iframe');
-      const doc = iframe.contentWindow.document;
-      let html = `<!DOCTYPE html><html><head><style>@page { size: 58mm auto; margin: 0; } body { font-family: monospace; font-size: 11px; width: 54mm; margin: 0; padding: 2mm; } .center { text-align: center; } .line { border-bottom: 1px dashed #000; margin: 4px 0; } .row { display: flex; justify-content: space-between; }</style></head><body onload="window.focus(); window.print();"><div class="center"><h3>AQUAPET</h3><div>PET SHOP</div><div>${latestBillData.date}</div></div><div class="line"></div><div>Cust: ${latestBillData.customer}</div><div>Tel: ${latestBillData.phone}</div><div class="line"></div>`;
-      for(let i=0; i<latestBillData.items.length; i++) {
-        let item = latestBillData.items[i];
-        html += `<div class="row"><span>${item.name} x${item.quantity}</span><span>₹${item.price * item.quantity}</span></div>`;
-      }
-      html += `<div class="line"></div>`;
-      if(latestBillData.discount > 0) html += `<div class="row"><span>Discount:</span><span>-₹${latestBillData.discount}</span></div>`;
-      html += `<div class="row" style="font-weight: bold; font-size: 12px;"><span>TOTAL:</span><span>₹${latestBillData.total}</span></div><div class="center" style="margin-top: 8px;">Visit again.</div></body></html>`;
-      doc.open(); doc.write(html); doc.close();
-    }
-
-    function shareBillWhatsApp() {
-      if (!latestBillData) return;
-      const cleanPhone = latestBillData.phone.replace(/[^0-9]/g, '');
-      let itemsText = '';
-      for(let i=0; i<latestBillData.items.length; i++) { itemsText += `• ${latestBillData.items[i].name} x${latestBillData.items[i].quantity} = ₹${latestBillData.items[i].price * latestBillData.items[i].quantity}\n`; }
-      const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n*Total Payable: ₹${latestBillData.total}*\n\nThank you!`;
-      const url = cleanPhone.length >= 10 ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-      window.open(url, '_blank');
-    }
-
-    function copyThermalText() {
-      if (!latestBillData) return;
-      let text = `AQUAPET\nPET SHOP & CARE\n--------------------------------\nDate: ${latestBillData.date}\nCust: ${latestBillData.customer}\nPhone: ${latestBillData.phone}\n--------------------------------\n`;
-      for(let i=0; i<latestBillData.items.length; i++) { text += `${latestBillData.items[i].name} x${latestBillData.items[i].quantity}  ₹${latestBillData.items[i].price * latestBillData.items[i].quantity}\n`; }
-      text += `--------------------------------\nTOTAL: ₹${latestBillData.total}\n--------------------------------\nThank you! Visit again.`;
-      navigator.clipboard.writeText(text).then(() => showToast('Copied to Clipboard!', '📋'));
     }
 
     // --- CALCULATOR ---
@@ -1084,12 +964,9 @@
     function calcOperator(op) { if (calcOp && !calcResetOnNext) calcEqual(); calcPrevious = parseFloat(calcCurrent); calcOp = op; calcResetOnNext = true; }
     function calcEqual() {
       if (!calcOp || calcPrevious === null) return;
-      let cur = parseFloat(calcCurrent);
-      let res = 0;
-      if (calcOp === '+') res = calcPrevious + cur;
-      if (calcOp === '-') res = calcPrevious - cur;
-      if (calcOp === '*') res = calcPrevious * cur;
-      if (calcOp === '/') res = cur !== 0 ? calcPrevious / cur : 0;
+      let cur = parseFloat(calcCurrent); let res = 0;
+      if (calcOp === '+') res = calcPrevious + cur; if (calcOp === '-') res = calcPrevious - cur;
+      if (calcOp === '*') res = calcPrevious * cur; if (calcOp === '/') res = cur !== 0 ? calcPrevious / cur : 0;
       calcCurrent = (Math.round(res * 100) / 100).toString();
       calcOp = null; calcPrevious = null; calcResetOnNext = true; updateCalcScreen();
     }
@@ -1162,7 +1039,7 @@
       if (!list || list.length === 0) return el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No data</div>';
       let html = '';
       for(let i=0; i<list.length; i++) {
-        html += `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 14px;border-radius:12px;"><div><div style="font-weight:600;font-size:14px;">${list[i].category}</div><div style="font-size:12px;color:var(--subtext);">${list[i].description || ''}</div></div><div style="display:flex;align-items:center;gap:12px;"><span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${list[i].amount}</span><button class="btn-trash" onclick="deleteExpenseItem(${list[i].id})">🗑️</button></div></div>`;
+        html += `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 12px;border-radius:12px;"><div><div style="font-weight:600;font-size:14px;">${list[i].category}</div><div style="font-size:12px;color:var(--subtext);">${list[i].description || ''}</div></div><div style="display:flex;align-items:center;gap:12px;"><span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${list[i].amount}</span><button class="btn-trash" onclick="deleteExpenseItem(${list[i].id})">🗑️</button></div></div>`;
       }
       el.innerHTML = html;
     }
@@ -1170,7 +1047,7 @@
     async function deleteExpenseItem(id) {
       if (!confirm("Delete this expense?")) return;
       const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
-      if (res.ok) { showToast('Removed', '🗑️'); loadData(); }
+      if (res.ok) { showToast('Removed', '🗑️️'); loadData(); }
     }
 
     async function loadCustomerSales() {
@@ -1181,7 +1058,8 @@
       let html = '';
       for(let i=0; i<sales.length; i++) {
         let s = sales[i];
-        html += `<div style="background:var(--pill-bg);padding:14px;border-radius:16px;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:700;font-size:16px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div><div style="font-weight:700;color:var(--tint-green);font-size:16px;">₹${s.total_amount}</div></div><div style="display:flex;gap:6px;margin-top:10px;"><button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete</button></div></div>`;
+        let clean = (s.customer_phone && s.customer_phone !== 'N/A') ? s.customer_phone.replace(/[^0-9]/g, '') : '';
+        html += `<div style="background:var(--pill-bg);padding:12px;border-radius:16px;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:700;font-size:15px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div><div style="font-weight:700;color:var(--tint-green);font-size:15px;">₹${s.total_amount}</div></div><div style="display:flex;gap:6px;margin-top:8px;">${clean.length >= 8 ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;">Call</a><a href="https://wa.me/91${clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}<button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete</button></div></div>`;
       }
       el.innerHTML = html;
     }
