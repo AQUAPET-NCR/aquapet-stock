@@ -11,34 +11,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     :root {
-      --bg: #000000;
-      --card-bg: #1c1c1e;
-      --card-border: rgba(255, 255, 255, 0.12);
-      --text: #f5f5f7;
-      --subtext: #8e8e93;
-      --tint-blue: #2997ff;
-      --tint-green: #30d158;
-      --tint-orange: #ff9f0a;
-      --tint-red: #ff453a;
-      --pill-bg: #2c2c2e;
+      --bg: #000000; --card-bg: #1c1c1e; --card-border: rgba(255, 255, 255, 0.12);
+      --text: #f5f5f7; --subtext: #8e8e93; --tint-blue: #2997ff; --tint-green: #30d158;
+      --tint-orange: #ff9f0a; --tint-red: #ff453a; --pill-bg: #2c2c2e;
     }
-
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
     button, input, select, .cat-pill, .btn, .calc-btn, .step-btn { touch-action: manipulation; }
 
-    body {
-      background-color: var(--bg); color: var(--text); min-height: 100vh;
-      padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
-      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 100px);
-      padding-left: 16px; padding-right: 16px; max-width: 650px; margin: 0 auto; -webkit-font-smoothing: antialiased;
-    }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: calc(env(safe-area-inset-top, 20px) + 16px) 16px calc(env(safe-area-inset-bottom, 20px) + 100px); max-width: 650px; margin: 0 auto; -webkit-font-smoothing: antialiased; }
 
-    .toast-capsule {
-      position: fixed; top: calc(env(safe-area-inset-top, 20px) + 10px); left: 50%; transform: translateX(-50%) translateY(-150%);
-      background: #ffffff; color: #000000; padding: 12px 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      z-index: 9999; display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 700;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; opacity: 0; pointer-events: none;
-    }
+    .toast-capsule { position: fixed; top: calc(env(safe-area-inset-top, 20px) + 10px); left: 50%; transform: translateX(-50%) translateY(-150%); background: #ffffff; color: #000000; padding: 12px 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 9999; display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 700; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; opacity: 0; pointer-events: none; }
     .toast-capsule.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -83,7 +65,7 @@
     .stat-box .title { font-size: 11px; color: var(--subtext); text-transform: uppercase; font-weight: 700; }
     .stat-box .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
 
-    /* --- iOS CALCULATOR STYLES --- */
+    /* iOS CALCULATOR */
     .calc-container { max-width: 330px; margin: 0 auto; }
     .calc-screen { text-align: right; font-size: 54px; font-weight: 300; padding: 10px 4px; min-height: 80px; display: flex; align-items: flex-end; justify-content: flex-end; transition: opacity 0.1s; letter-spacing: -0.03em; }
     .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
@@ -91,10 +73,11 @@
     .calc-btn:active { opacity: 0.6; }
     .calc-btn-gray { background: #a5a5a5; color: #000; font-weight: 500; }
     .calc-btn-dark { background: #333333; color: #fff; font-weight: 400; }
-    .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 500; }
-    .calc-btn-orange.active-op { background: #ffffff; color: #ff9f0a; } /* The Apple Inverted Highlight */
+    .calc-btn-orange { background: #ff9f0a; color: #fff; font-weight: 500; transition: background 0.2s, color 0.2s; }
+    .calc-btn-orange.active-op { background: #ffffff; color: #ff9f0a; }
     .calc-btn-zero { grid-column: span 2; aspect-ratio: auto; border-radius: 35px; justify-content: flex-start; padding-left: 28px; }
 
+    /* Modals */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
     .modal-overlay.active { display: flex; }
     .modal-sheet { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px 24px 0 0; padding: 20px 20px calc(env(safe-area-inset-bottom, 20px) + 20px); width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -116,7 +99,6 @@
     .btn-pill-action:active { background: rgba(41, 151, 255, 0.2); transform: scale(0.95); }
     .btn-trash { background: transparent; border: none; color: var(--subtext); padding: 8px; cursor: pointer; font-size: 16px; transition: 0.1s; }
     .btn-trash:active { color: var(--tint-red); transform: scale(0.9); }
-
     .batch-header-card { background: rgba(41, 151, 255, 0.08); border-radius: 12px; padding: 12px; margin: 12px 0 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(41, 151, 255, 0.2); }
     #print-iframe { display: none; width: 0; height: 0; }
   </style>
@@ -467,22 +449,21 @@
       if (tab === 'inventory') renderInventory();
     }
 
-    // --- DATA LOADING ---
+    // --- DATA LOADING & SAFETY ---
     async function loadData() {
       try {
         const prodRes = await fetch('/api/products');
         if (prodRes.ok) {
-          products = await prodRes.json();
-          if (!Array.isArray(products)) products = [];
+          const pData = await prodRes.json();
+          products = Array.isArray(pData) ? pData : [];
           
-          // Populate Batch Filter
           const filterSelect = document.getElementById('stock-month-filter');
           const uniqueDates = new Set();
           products.forEach(p => { if (p.batch_date) uniqueDates.add(p.batch_date); else if (p.month_tag) uniqueDates.add(p.month_tag); });
           let batchHtml = `<option value="All">All Batches</option>`;
           Array.from(uniqueDates).sort().reverse().forEach(date => { batchHtml += `<option value="${date}">${date}</option>`; });
           if(filterSelect) filterSelect.innerHTML = batchHtml;
-        }
+        } else { products = []; }
         
         const sumRes = await fetch('/api/summary');
         if (sumRes.ok) {
@@ -498,15 +479,13 @@
         const expRes = await fetch('/api/expenses');
         if (expRes.ok) {
           const expList = await expRes.json();
-          renderRecentExpenses(expList || []);
+          renderRecentExpenses(Array.isArray(expList) ? expList : []);
         }
         
         renderPOSPicker();
         renderInventory();
         loadCustomerSales();
-      } catch (err) {
-        console.warn("Backend API not reachable:", err);
-      }
+      } catch (err) { console.warn("Backend API not reachable:", err); }
     }
 
     // --- APPLE-STYLE CALCULATOR ---
@@ -518,11 +497,14 @@
       return parts.join('.');
     }
 
-    function updateCalcScreen() { 
+    function flashScreen() {
       const display = document.getElementById('calc-display');
-      display.innerText = formatNumberWithCommas(calcCurrent);
-      display.style.opacity = '0.4';
-      setTimeout(() => display.style.opacity = '1', 50);
+      display.style.opacity = '0.3';
+      setTimeout(() => display.style.opacity = '1', 80);
+    }
+
+    function updateCalcScreen() { 
+      document.getElementById('calc-display').innerText = formatNumberWithCommas(calcCurrent);
     }
     
     function clearActiveOp() { document.querySelectorAll('.calc-btn-orange').forEach(b => b.classList.remove('active-op')); }
@@ -542,15 +524,16 @@
     function calcPercent() { calcCurrent = (parseFloat(calcCurrent.replace(/,/g, '')) / 100).toString(); updateCalcScreen(); }
     
     function calcOperator(op, btnId) { 
-      if (calcOp && !calcResetOnNext) calcEqual(); 
+      if (calcOp && !calcResetOnNext) calcEqual(true); 
       calcPrevious = parseFloat(calcCurrent.replace(/,/g, '')); 
       calcOp = op; 
       calcResetOnNext = true; 
       clearActiveOp();
       if(btnId) document.getElementById(btnId).classList.add('active-op');
+      flashScreen();
     }
     
-    function calcEqual() {
+    function calcEqual(isInternal = false) {
       if (!calcOp || calcPrevious === null) return;
       let cur = parseFloat(calcCurrent.replace(/,/g, '')); 
       let res = 0;
@@ -560,7 +543,8 @@
       if (calcOp === '/') res = cur !== 0 ? calcPrevious / cur : 0;
       
       calcCurrent = (Math.round(res * 100) / 100).toString();
-      calcOp = null; calcPrevious = null; calcResetOnNext = true; clearActiveOp();
+      if(!isInternal) { calcOp = null; calcPrevious = null; clearActiveOp(); flashScreen(); }
+      calcResetOnNext = true; 
       updateCalcScreen();
     }
 
@@ -580,19 +564,21 @@
       let custPhone = rawPhone ? rawPhone : 'N/A';
       let itemName = rawNote ? rawNote : 'Custom Order';
 
-      const res = await fetch('/api/sales', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_name: custName, customer_phone: custPhone, total_amount: amt, is_direct_sale: 1, items: [{ id: 0, name: itemName, quantity: 1, price: amt }] })
-      });
-      const data = await res.json();
-      if (data.success) {
-        closeModal('calc-bill-modal');
-        latestBillData = { saleId: data.saleId, date: new Date().toLocaleString('en-IN'), customer: custName, phone: custPhone, items: [{ name: itemName, quantity: 1, price: amt }], total: amt, discount: 0 };
-        openGeneratedBill(); loadData();
-      }
+      try {
+        const res = await fetch('/api/sales', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customer_name: custName, customer_phone: custPhone, total_amount: amt, is_direct_sale: 1, items: [{ id: 0, name: itemName, quantity: 1, price: amt }] })
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeModal('calc-bill-modal');
+          latestBillData = { saleId: data.saleId, date: new Date().toLocaleString('en-IN'), customer: custName, phone: custPhone, items: [{ name: itemName, quantity: 1, price: amt }], total: amt, discount: 0 };
+          openGeneratedBill(); loadData();
+        }
+      } catch(e) { showToast('Error creating bill', '❌'); }
     }
 
-    // --- DAY BOOK OCR SCANNING ---
+    // --- DAY BOOK OCR COMPRESSION ---
     function triggerImageCapture() { document.getElementById('daybook-camera-input').click(); }
     function handleDayBookImage(input) {
       if (!input.files || input.files.length === 0) return;
@@ -603,7 +589,6 @@
       
       reader.onload = function(e) {
         img.onload = async function() {
-          // Downscale the image so it doesn't break Cloudflare's payload limits
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           const maxW = 1000; const maxH = 1000;
@@ -671,25 +656,25 @@
     async function confirmAndCommitBatch() {
       if (scannedBatchItems.length === 0) return alert('No items to save.');
       showToast('Saving batch...', '⏳');
-      const res = await fetch('/api/batch-stock', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ batch_date: document.getElementById('ocr-batch-date').value, items: scannedBatchItems })
-      });
-      const data = await res.json();
-      if (data.success) { closeModal('ocr-modal'); showToast(`Saved ${data.totalItems} items!`, '📦'); loadData(); }
+      try {
+        const res = await fetch('/api/batch-stock', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ batch_date: document.getElementById('ocr-batch-date').value, items: scannedBatchItems })
+        });
+        const data = await res.json();
+        if (data.success) { closeModal('ocr-modal'); showToast(`Saved ${data.totalItems} items!`, '📦'); loadData(); }
+      } catch(e) { showToast('Error saving batch', '❌'); }
     }
 
-    // --- POS BILLING & SAFE FILTERING ---
+    // --- POS BILLING & STRICT SAFETY ---
     function renderPOSPicker() {
       const el = document.getElementById('pos-product-picker');
       const searchInput = document.getElementById('pos-search');
       const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
       
-      if (!Array.isArray(products)) products = [];
-
       let filtered = products.filter(p => {
-        let pCat = (p.category || 'Uncategorized').toLowerCase();
-        let pName = (p.name || 'Unnamed').toLowerCase();
+        let pCat = String(p.category || 'Uncategorized').toLowerCase();
+        let pName = String(p.name || 'Unnamed').toLowerCase();
         
         let matchCat = true;
         if (selectedCategory !== 'All') {
@@ -698,16 +683,13 @@
         }
         
         let matchSearch = true;
-        if (searchQuery) {
-          matchSearch = pName.includes(searchQuery) || pCat.includes(searchQuery);
-        }
+        if (searchQuery) { matchSearch = pName.includes(searchQuery) || pCat.includes(searchQuery); }
         
         return matchCat && matchSearch;
       });
 
       if (filtered.length === 0) {
-        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No matching items.</div>';
-        return;
+        el.innerHTML = '<div style="color: var(--subtext); text-align: center; padding: 20px;">No items.</div>'; return;
       }
 
       let html = '';
@@ -803,7 +785,7 @@
 
     function checkoutAndPrint() {
       let finalTotal = updateTotal();
-      if (finalTotal <= 0 && Object.keys(cart).length === 0) return showToast('Add items to bill', '⚠️️');
+      if (finalTotal <= 0 && Object.keys(cart).length === 0) return showToast('Add items to bill', '⚠️');
 
       let rawName = document.getElementById('cust-name').value.trim();
       let rawPhone = document.getElementById('cust-phone').value.trim();
@@ -874,7 +856,7 @@
       let itemsText = '';
       for(let i=0; i<latestBillData.items.length; i++) itemsText += `• ${latestBillData.items[i].name} x${latestBillData.items[i].quantity} = ₹${latestBillData.items[i].price * latestBillData.items[i].quantity}\n`;
       const msg = `*AQUAPET - INVOICE*\nDate: ${latestBillData.date}\nCustomer: ${latestBillData.customer}\n\n*Items:*\n${itemsText}\n*Total Payable: ₹${latestBillData.total}*\n\nThank you!`;
-      const url = cleanPhone.length >= 10 ? `[https://wa.me/91$](https://wa.me/91$){cleanPhone}?text=${encodeURIComponent(msg)}` : `[https://wa.me/?text=$](https://wa.me/?text=$){encodeURIComponent(msg)}`;
+      const url = cleanPhone.length >= 10 ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
 
@@ -920,11 +902,9 @@
       const filterInput = document.getElementById('stock-month-filter');
       const selectedMonth = filterInput ? filterInput.value : 'All';
 
-      if (!Array.isArray(products)) products = [];
-
       let filtered = products.filter(p => {
-        let pCat = (p.category || 'Uncategorized').toLowerCase();
-        let pName = (p.name || 'Unnamed').toLowerCase();
+        let pCat = String(p.category || 'Uncategorized').toLowerCase();
+        let pName = String(p.name || 'Unnamed').toLowerCase();
         let pBatch = p.batch_date || p.month_tag || 'Historical Stock';
         
         let matchBatch = (selectedMonth === 'All' || pBatch === selectedMonth);
@@ -964,7 +944,7 @@
           let pSold = Math.max(0, pInit - p.quantity);
           let isDepleted = p.quantity <= 0;
           let isLow = p.quantity <= 2 && !isDepleted;
-          let cleanName = (p.name||'Unnamed').replace(/'/g, "\\'");
+          let cleanName = String(p.name||'Unnamed').replace(/'/g, "\\'");
 
           html += `
             <div class="pos-item">
@@ -976,7 +956,7 @@
               </div>
               <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="text-align: right;"><div style="font-weight: 700; font-size: 17px; color: ${isDepleted ? 'var(--tint-red)' : isLow ? 'var(--tint-orange)' : 'var(--tint-green)'};">${p.quantity} left</div></div>
-                <button class="btn-trash" onclick="deleteStockItem(${p.id}, '${cleanName}')">🗑️️</button>
+                <button class="btn-trash" onclick="deleteStockItem(${p.id}, '${cleanName}')">🗑️</button>
               </div>
             </div>`;
         });
@@ -994,8 +974,10 @@
 
     async function deleteStockItem(id, name) {
       if (!confirm(`Delete ${name}? Linked ledger expenses revert too.`)) return;
-      const res = await fetch("/api/products?id=" + id, { method: 'DELETE' });
-      if (res.ok) { showToast('Deleted ' + name, '🗑️'); loadData(); }
+      try {
+        const res = await fetch("/api/products?id=" + id, { method: 'DELETE' });
+        if (res.ok) { showToast('Deleted ' + name, '🗑️'); loadData(); }
+      } catch(e) { showToast('Error', '❌'); }
     }
 
     function openRestockModal(id, name, cost) {
@@ -1009,13 +991,15 @@
     async function submitRestockItem() {
       const id = document.getElementById('restock-item-id').value;
       const addQty = parseInt(document.getElementById('restock-item-qty').value, 10);
-      if (!id || isNaN(addQty) || addQty <= 0) return showToast('Enter valid quantity', '⚠️');
+      if (!id || isNaN(addQty) || addQty <= 0) return showToast('Enter valid quantity', '⚠️️');
 
-      const res = await fetch('/api/products', {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: id, add_quantity: addQty })
-      });
-      if (res.ok) { closeModal('restock-modal'); showToast('Restocked!', '📦'); loadData(); }
+      try {
+        const res = await fetch('/api/products', {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id, add_quantity: addQty })
+        });
+        if (res.ok) { closeModal('restock-modal'); showToast('Restocked!', '📦'); loadData(); }
+      } catch(e) { showToast('Error', '❌'); }
     }
 
     async function submitNewStockItem() {
@@ -1028,14 +1012,82 @@
 
       if (!name || isNaN(qty) || qty <= 0) return showToast('Enter valid details', '⚠️');
 
-      const res = await fetch('/api/products', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, category: category, purchase_price: cost, price: price, quantity: qty, initial_stock: qty, month_tag: today, batch_date: today })
-      });
-      if (res.ok) {
-        document.getElementById('new-item-name').value = '';
-        closeModal('add-stock-modal'); showToast('Item saved', '📦'); loadData();
+      try {
+        const res = await fetch('/api/products', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: name, category: category, purchase_price: cost, price: price, quantity: qty, initial_stock: qty, month_tag: today, batch_date: today })
+        });
+        if (res.ok) {
+          document.getElementById('new-item-name').value = '';
+          closeModal('add-stock-modal'); showToast('Item saved', '📦'); loadData();
+        }
+      } catch(e) { showToast('Error', '❌'); }
+    }
+
+    // --- EXPENSES & CUSTOMERS ---
+    function renderExpenseBreakdown(list) {
+      const el = document.getElementById('expense-category-list');
+      if (!el) return;
+      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No data</div>'; return; }
+      let html = '';
+      for(let i=0; i<list.length; i++) { html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="font-weight:600;font-size:14px;">${list[i].category}</span><span style="font-weight:700;color:var(--tint-red);font-size:14px;">₹${list[i].total}</span></div>`; }
+      el.innerHTML = html;
+    }
+
+    function renderRecentExpenses(list) {
+      const el = document.getElementById('recent-expenses-list');
+      if (!el) return;
+      if (!list || list.length === 0) { el.innerHTML = '<div style="color:var(--subtext);font-size:13px;">No records.</div>'; return; }
+      let html = '';
+      for(let i=0; i<list.length; i++) {
+        html += `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--pill-bg);padding:10px 12px;border-radius:12px;"><div><div style="font-weight:600;font-size:14px;">${list[i].category}</div><div style="font-size:12px;color:var(--subtext);">${list[i].description || ''}</div></div><div style="display:flex;align-items:center;gap:12px;"><span style="font-weight:700;color:var(--tint-red);font-size:15px;">-₹${list[i].amount}</span><button class="btn-trash" onclick="deleteExpenseItem(${list[i].id})">🗑️</button></div></div>`;
       }
+      el.innerHTML = html;
+    }
+
+    async function deleteExpenseItem(id) {
+      if (!confirm("Delete this expense?")) return;
+      try {
+        const res = await fetch(`/api/expenses?id=${id}`, { method: 'DELETE' });
+        if (res.ok) { showToast('Removed', '🗑'); loadData(); }
+      } catch(e) { showToast('Error', '❌'); }
+    }
+
+    async function loadCustomerSales() {
+      const el = document.getElementById('customer-list');
+      if (!el) return;
+      try {
+        const res = await fetch('/api/sales');
+        const sales = await res.json();
+        if (!Array.isArray(sales) || sales.length === 0) { el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">No sales</div>'; return; }
+        let html = '';
+        for(let i=0; i<sales.length; i++) {
+          let s = sales[i];
+          let clean = String(s.customer_phone || '').replace(/[^0-9]/g, '');
+          html += `<div style="background:var(--pill-bg);padding:12px;border-radius:16px;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:700;font-size:15px;">${s.customer_name || 'Walk-in'}</div><div style="font-size:11px;color:var(--subtext);">Bill #${s.id}</div></div><div style="font-weight:700;color:var(--tint-green);font-size:15px;">₹${s.total_amount}</div></div><div style="display:flex;gap:6px;margin-top:8px;">${clean.length >= 8 ? `<a href="tel:${clean}" class="btn btn-sm" style="text-decoration:none;">Call</a><a href="https://wa.me/91${clean}" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--tint-green);">WhatsApp</a>` : ''}<button class="btn btn-sm btn-red" onclick="deleteBill(${s.id})">🗑️ Delete</button></div></div>`;
+        }
+        el.innerHTML = html;
+      } catch(e) { el.innerHTML = '<div style="color:var(--subtext);text-align:center;padding:20px;">Network Error</div>'; }
+    }
+
+    async function deleteBill(saleId) {
+      if (!confirm(`Delete bill #${saleId}?`)) return;
+      try {
+        const res = await fetch(`/api/sales?id=${saleId}`, { method: 'DELETE' });
+        if (res.ok) { showToast('Deleted', '🔄'); loadData(); }
+      } catch(e) { showToast('Error', '❌'); }
+    }
+
+    async function saveExpense() {
+      let cat = document.getElementById('exp-category').value;
+      let amt = document.getElementById('exp-amount').value;
+      let desc = document.getElementById('exp-desc').value;
+      if (!amt) return showToast('Enter amount', '⚠️');
+      try {
+        await fetch('/api/expenses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: cat, amount: amt, description: desc }) });
+        document.getElementById('exp-amount').value = ''; document.getElementById('exp-desc').value = '';
+        showToast('Saved to ledger', '💸'); loadData();
+      } catch(e) { showToast('Error', '❌'); }
     }
 
     // Init App
